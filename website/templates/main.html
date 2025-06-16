@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Main | Image Traditional{% endblock %}
+
+{% block content %}
+<style>
+    .main-container {
+        max-width: 960px;
+        margin: 60px auto;
+        display: flex;
+        gap: 24px;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 0 20px;
+    }
+
+    .action-card {
+        width: 280px;
+        height: 200px;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .action-card h2 {
+        margin-bottom: 10px;
+        font-size: 1.4rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .action-card p {
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .action-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        color: rgb(255, 184, 70);
+    }
+
+    .book-wear {
+        background: linear-gradient(135deg, #11c08e, #059781);
+    }
+
+    .check-availability {
+        background: linear-gradient(135deg, #3f51b5, #1a237e);
+    }
+
+    .modify-booking {
+        background: linear-gradient(135deg, #0f7996, #094d50);
+    }
+
+    .payment {
+        background: linear-gradient(135deg, #388e3c, #1b5e20);
+    }
+
+    .delete-booking {
+        background: linear-gradient(135deg, #f44336, #b71c1c);
+    }
+
+    .profile-container {
+        max-width: 960px;
+        margin: 40px auto 80px;
+        background: linear-gradient(135deg, #4ade80, #16a34a);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 6px 25px rgba(22, 163, 74, 0.4);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-container h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .profile-container p {
+        font-size: 1.1rem;
+        margin-bottom: 24px;
+        max-width: 600px;
+    }
+
+    .btn-view-profile {
+        background: #059669;
+        padding: 12px 28px;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.6);
+        transition: background-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-view-profile:hover {
+        background: #047857;
+        box-shadow: 0 6px 15px rgba(4, 120, 87, 0.8);
+    }
+
+    /* Calendar container styling */
+    .calendar-container {
+        max-width: 400px;
+        margin: 40px auto 60px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+        padding: 24px;
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .calendar-container h2 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+    .calendar-container form {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .calendar-container input[type="date"] {
+        padding: 8px 12px;
+        border: 1.8px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+    .calendar-container input[type="date"]:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+    .calendar-container button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+    .calendar-container button:hover {
+        background-color: #2980b9;
+    }
+
+    @media (max-width: 920px) {
+        .main-container {
+            justify-content: center;
+            gap: 20px;
+        }
+        .action-card {
+            width: 90vw;
+            max-width: 400px;
+        }
+
+        .profile-container {
+            padding: 16px;
+            max-width: 90vw;
+        }
+
+        .calendar-container {
+            max-width: 90vw;
+            padding: 16px;
+        }
+    }
+</style>
+
+<!-- Calendar Block -->
+<div class="calendar-container">
+    <h2>View Bookings by Date</h2>
+    <form method="POST" action="/calendar">
+        <input type="date" name="date" required value="{{ date }}">
+        <button type="submit">Show Bookings</button>
+    </form>
+</div>
+
+<div class="main-container">
+    <!-- Booking Block -->
+    <a href="/book" class="action-card book-wear">
+        <h2>Book Traditional Wear</h2>
+        <p>Click here to book your product</p>
+    </a>
+
+    <!-- Check Availability Block -->
+    <a href="/check" class="action-card check-availability">
+        <h2>Check Availability</h2>
+        <p>See if your product is available</p>
+    </a>
+
+    <!-- Modify Booking Block -->
+    <a href="/modify" class="action-card modify-booking">
+        <h2>Modify Booking</h2>
+        <p>Update or replace your booking</p>
+    </a>
+
+    <!-- Payment Block -->
+    <a href="/pay_remaining" class="action-card payment">
+        <h2>Payment</h2>
+        <p>Pay your remaining amount</p>
+    </a>
+
+    <!-- Delete Booking Block -->
+    <a href="/delete" class="action-card delete-booking">
+        <h2>Delete Booking</h2>
+        <p>Cancel your booking and refund</p>
+    </a>
+</div>
+
+<!-- Profile Container -->
+<div class="profile-container">
+    <h2>Find Profile</h2>
+    <p>Manage and view Profiles.</p>
+    <a href="/profile" class="btn-view-profile">
+        🔍 View Full Profile
+    </a>
+</div>
+
+{% endblock %}

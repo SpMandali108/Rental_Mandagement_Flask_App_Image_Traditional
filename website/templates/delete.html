@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Booking | Image Traditional{% endblock %}
+
+{% block content %}
+<style>
+  /* Use flexbox on container to center the form vertically and horizontally */
+  .delete-container {
+    min-height: 80vh; /* or 100vh if you want full screen height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Form container with fixed width and padding */
+  .form-box {
+    width: 360px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 24px 20px;
+    box-sizing: border-box;
+  }
+
+  /* Make sure form elements take full width */
+  form input[type="text"],
+  form input[type="date"],
+  form input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  /* Submit button style */
+  form input[type="submit"] {
+    background: linear-gradient(135deg, #388e3c, #1b5e20);
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+  }
+
+  form input[type="submit"]:hover {
+    background: linear-gradient(135deg, #2e7d32, #145214);
+  }
+</style>
+
+<div class="delete-container">
+  <div class="form-box">
+    <h2 style="text-align:center; margin-bottom: 20px;">Delete Booking Product & Update Payment</h2>
+    <form method="POST" action="{{ url_for('auth.delete') }}">
+      <label for="mobile">Mobile Number</label>
+      <input type="text" id="mobile" name="mobile" placeholder="Enter mobile number" required pattern="\d{10}" title="10 digit mobile number">
+
+      <label for="date">Booking Date</label>
+      <input type="date" id="date" name="date" required>
+
+      <label for="product">Product Name</label>
+      <input type="text" id="product" name="product" placeholder="Enter product name" required>
+
+      <label for="price_diff">Price Difference (Amount Paid)</label>
+      <input type="number" id="price_diff" name="price_diff" placeholder="Enter price difference" min="1" required>
+
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+</div>
+{% endblock %}

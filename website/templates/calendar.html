@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Calendar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center"><i class="bi bi-calendar3"></i> 📅 Booking Calendar</h2>
+
+    <form method="POST" class="mb-4">
+        <div class="input-group">
+            <input type="date" name="date" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% if date %}
+        <h4 class="text-success">Bookings for <strong>{{ date }}</strong></h4>
+
+        {% if bookings %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped mt-3">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Address</th>
+                            <th>Deposit</th>
+                            <th>Group</th>
+                            <th>Reference</th>
+                            <th>Products</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                            <td>{{ b.Name }}</td>
+                            <td>{{ b.mobile }}</td>
+                            <td>{{ b.address }}</td>
+                            <td>{{ b.deposit }}</td>
+                            <td>{{ b.group }}</td>
+                            <td>{{ b.reference }}</td>
+                            <td>{{ b.products | join(', ') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-danger">No bookings found for {{ date }}.</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

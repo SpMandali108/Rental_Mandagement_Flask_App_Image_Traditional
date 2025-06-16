@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Profile{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-4 text-center">📋 Customer Profile</h2>
+
+    <form method="POST" class="mb-6 flex items-center gap-2 justify-center">
+        <input type="text" name="mobile" placeholder="Enter Mobile Number" class="border p-2 rounded" required>
+        <button type="submit" class="bg-blue-600 text-black px-4 py-2 rounded hover:bg-blue-700">🔍 View Profile</button>
+    </form>
+
+    {% if customer %}
+        <div class="space-y-2 text-gray-800">
+            <div><strong>Name:</strong> {{ customer.Name }}</div>
+            <div><strong>Mobile:</strong> {{ customer.mobile }}</div>
+            <div><strong>Address:</strong> {{ customer.address }}</div>
+            <div><strong>Reference:</strong> {{ customer.reference }}</div>
+            <div><strong>Deposit:</strong> {{ customer.deposit }}</div>
+            <div><strong>Group:</strong> {{ customer.group }}</div>
+            <div><strong>Total Price:</strong> ₹{{ customer.total_price }}</div>
+            <div><strong>Given Price:</strong> ₹{{ customer.given_price }}</div>
+            <div><strong>Remaining:</strong> ₹{{ customer.remaining }}</div>
+        </div>
+
+        {% if customer.bookings %}
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-2">📅 Booking History</h3>
+                {% for date, items in customer.bookings.items() %}
+                    <div class="mb-2">
+                        <div class="font-bold">{{ date }}</div>
+                        <ul class="list-disc list-inside ml-4">
+                            {% for item in items %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
