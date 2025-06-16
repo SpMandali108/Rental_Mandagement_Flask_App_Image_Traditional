@@ -113,7 +113,8 @@ Thank you for your prompt payment!
             message,
             send_time.hour,
             send_time.minute,
-            wait_time=10,
+            wait_time=10
+            ,
             tab_close=True,
             close_time=3
         )
@@ -144,7 +145,7 @@ We’re excited to dress you in style! 💃
 """
 
     try:
-        send_time = datetime.now() + timedelta(minutes=1)
+        send_time = datetime.now() + timedelta(minutes=1,seconds=10)
         sendwhatmsg(
             f"+91{mobile[-10:]}",
             message,
