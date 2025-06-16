@@ -580,6 +580,7 @@ def fancy():
         booking_data = {
             'name': request.form['name'],
             'mobile': request.form['mobile'],
+            'Address': request.form['address'],
             'start_date': request.form['start_date'],
             'end_date': request.form['end_date'],
             'price': float(request.form['price']),
