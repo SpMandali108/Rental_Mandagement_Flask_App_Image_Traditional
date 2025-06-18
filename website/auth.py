@@ -10,7 +10,7 @@ import os
 auth = Blueprint('auth', __name__)
 
 # Simple MongoDB Setup - Keep your original connection
-client = MongoClient('mongodb+srv://Image_Traditional:ImgTradeandCreate1008@imagetraditional.eragdwv.mongodb.net/')
+client = MongoClient('mongodb+srv://ImageTraditional:EDIOTATqNapCTgKn@image-traditional.eubkdxa.mongodb.net/')
 db = client['Image_Traditional']
 collection = db['Form']
 
