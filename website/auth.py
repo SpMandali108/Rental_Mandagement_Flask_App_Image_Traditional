@@ -107,16 +107,16 @@ Thank you for your prompt payment!
 """
 
     try:
-        send_time = datetime.now() + timedelta(minutes=1)
+        send_time = datetime.now() + timedelta(minutes=1,seconds =10)
         sendwhatmsg(
             f"+91{mobile[-10:]}",
             message,
             send_time.hour,
             send_time.minute,
-            wait_time=10
+            wait_time=30
             ,
             tab_close=True,
-            close_time=3
+            close_time=8
         )
     except Exception as e:
         print(f"Error sending WhatsApp message to {mobile}:", e)
@@ -151,9 +151,9 @@ We’re excited to dress you in style! 💃
             message,
             send_time.hour,
             send_time.minute,
-            wait_time=10,
+            wait_time=30,
             tab_close=True,
-            close_time=3
+            close_time=8
         )
     except Exception as e:
         print(f"❌ Error sending WhatsApp message to {mobile}: {e}")
