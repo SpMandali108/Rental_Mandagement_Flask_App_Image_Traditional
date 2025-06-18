@@ -1,200 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Home | Image Traditional{% endblock %}</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/fontawesome.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/brands.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-     <link rel="icon" type="image/x-icon" href = {{ url_for('static', filename='navratri_logo.jpg') }}>
+    
+    <!-- Bootstrap & jQuery -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='navratri_logo.jpg') }}">
+    
     <style>
+        :root {
+            /* Light theme colors */
+            --primary-color: #c62828;
+            --primary-hover: #b71c1c;
+            --secondary-color: #d32f2f;
+            --accent-color: #ff6b6b;
+            
+            /* Light theme backgrounds */
+            --bg-primary: linear-gradient(135deg, #f3b1c8, #ffa07a);
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --bg-header: rgba(255, 255, 255, 0.98);
+            --bg-sidebar: #c62828;
+            --bg-overlay: rgba(0, 0, 0, 0.5);
+            
+            /* Light theme text */
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-white: #ffffff;
+            --text-muted: #999999;
+            
+            /* Light theme borders */
+            --border-light: rgba(255, 255, 255, 0.2);
+            --border-dark: rgba(0, 0, 0, 0.1);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-smooth: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+        
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --primary-color: #ff6b6b;
+            --primary-hover: #ff5252;
+            --secondary-color: #ff4444;
+            --accent-color: #ff8a80;
+            
+            /* Dark theme backgrounds */
+            --bg-primary: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            --bg-card: rgba(45, 45, 45, 0.95);
+            --bg-header: rgba(30, 30, 30, 0.98);
+            --bg-sidebar: #2d2d2d;
+            --bg-overlay: rgba(0, 0, 0, 0.7);
+            
+            /* Dark theme text */
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-white: #ffffff;
+            --text-muted: #aaaaaa;
+            
+            /* Dark theme borders */
+            --border-light: rgba(255, 255, 255, 0.1);
+            --border-dark: rgba(255, 255, 255, 0.2);
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #f3b1c8, #ffa07a);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background var(--transition-smooth), color var(--transition-smooth);
+            line-height: 1.6;
         }
-
-        header {
-            background-color: white;
-            padding: 20px 40px;
+        
+        /* Header Styles */
+        .main-header {
+            background: var(--bg-header);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all var(--transition-smooth);
+        }
+        
+        .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-
+        
         .logo {
             display: flex;
             align-items: center;
             text-decoration: none;
+            transition: transform var(--transition-fast);
         }
-
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
         .logo img {
             height: 50px;
-            margin-right: 12px;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            box-shadow: var(--shadow-sm);
         }
-
+        
         .logo-text {
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #c62828;
+            color: var(--primary-color);
+            transition: color var(--transition-smooth);
         }
-
-        nav {
-            display: none;
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-
-        .hamburger {
-            font-size: 28px;
+        
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--text-muted);
+            border-radius: 15px;
             cursor: pointer;
-            color: #c62828;
-            z-index: 110;
-            user-select: none;
+            transition: background var(--transition-smooth);
+            border: none;
+            outline: none;
         }
-
-        #sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 109;
-            top: 0;
-            right: 0; /* CHANGED to right */
-            background-color: #c62828;
-            overflow-x: hidden;
-            transition: 0.3s;
-            padding-top: 60px;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.3); /* CHANGED shadow direction */
+        
+        .theme-toggle:hover {
+            background: var(--text-secondary);
         }
-
-        #sidebar a {
-            padding: 15px 30px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            color: white;
-            display: block;
-            transition: background-color 0.2s;
-        }
-
-        #sidebar a:hover {
-            background-color: #b71c1c;
-        }
-
-        #sidebar .closebtn {
+        
+        .theme-toggle-slider {
             position: absolute;
-            top: 15px;
-            left: 25px; /* CHANGED from right: 25px */
-            font-size: 36px;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--text-white);
+            border-radius: 50%;
+            transition: transform var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        [data-theme="dark"] .theme-toggle {
+            background: var(--primary-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(30px);
+        }
+        
+        /* Hamburger Menu */
+        .hamburger-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
             cursor: pointer;
-            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all var(--transition-fast);
         }
-
-        main {
-            flex-grow: 1;
-            padding: 40px 20px;
+        
+        .hamburger-btn:hover {
+            background: var(--border-light);
+            transform: scale(1.1);
         }
-
-        footer {
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-sidebar);
+            z-index: 1100;
+            transition: right var(--transition-smooth);
+            padding-top: 4rem;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .sidebar.active {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .sidebar-title {
+            color: var(--text-white);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--text-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background var(--transition-fast);
+        }
+        
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-white);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            font-weight: 400;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--text-white);
+            padding-left: 2rem;
+        }
+        
+        .sidebar-nav a i {
+            width: 20px;
+            margin-right: 0.75rem;
             text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            color: #999;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-overlay);
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-smooth);
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Footer */
+        .main-footer {
+            background: var(--bg-header);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+        
+        [data-theme="dark"] .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+        }
+        
+        [data-theme="dark"] .alert-danger {
+            background: rgba(244, 67, 54, 0.2);
+            color: #e57373;
+        }
+        
+        .alert-dismissible .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .alert-dismissible .btn-close:hover {
+            opacity: 1;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                padding: 0;
+            }
+            
+            .logo img {
+                height: 40px;
+                width: 40px;
+            }
+            
+            .logo-text {
+                font-size: 1.25rem;
+            }
+            
+            .sidebar {
+                width: 280px;
+            }
+            
+            .main-content {
+                padding: 1rem 0.5rem;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-controls {
+                gap: 0.5rem;
+            }
+            
+            .theme-toggle {
+                width: 50px;
+                height: 25px;
+            }
+            
+            .theme-toggle-slider {
+                width: 20px;
+                height: 20px;
+                font-size: 0.6rem;
+            }
+            
+            [data-theme="dark"] .theme-toggle-slider {
+                transform: translateX(25px);
+            }
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+        
+        /* Loading Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .main-content {
+            animation: fadeIn 0.6s ease-out;
         }
     </style>
+    
     {% block head %}{% endblock %}
 </head>
-
 <body>
-    <header>
-        <a href="/" class="logo">
-            <img src="{{ url_for('static', filename='navratri_logo.jpg') }}" alt="Navratri Logo" />
-            <div class="logo-text">Image Traditional</div>
-        </a>
-
-        <!-- Hamburger icon -->
-        <div class="hamburger" onclick="toggleSidebar()">
-            <i class="fas fa-bars"></i>
-        </div>
-
-        <!-- Sidebar (opens from right now) -->
-        <div id="sidebar">
-            <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>
-            <a href="/login">Login</a>
-            <a href="/logout">Logout</a>
-            <a href="/calendar">Calendar</a>
-            <a href="/book">Book Traditional Wear</a>
-            <a href="/check">Check Availability</a>
-            <a href="/modify">Modify Booking</a>
-            <a href="/pay_remaining">Payment</a>
-            <a href="/delete">Delete Booking</a>
-            <a href="/profile">View Profile</a>
-            <a href="/fancy">Fancy Dress</a>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <img src="{{ url_for('static', filename='navratri_logo.jpg') }}" alt="Image Traditional Logo">
+                <span class="logo-text">Image Traditional</span>
+            </a>
+            
+            <div class="header-controls">
+                <!-- Dark Mode Toggle -->
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                    <div class="theme-toggle-slider">
+                        <span id="theme-icon">🌙</span>
+                    </div>
+                </button>
+                
+                <!-- Hamburger Menu -->
+                <button class="hamburger-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
     </header>
-
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">Menu</h3>
+            <button class="sidebar-close" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+            <a href="/calendar"><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/book"><i class="fas fa-shopping-bag"></i> Book Traditional Wear</a>
+            <a href="/fancy"><i class="fas fa-mask"></i> Fancy Dress</a>
+            <a href="/check"><i class="fas fa-search"></i> Check Availability</a>
+            <a href="/modify"><i class="fas fa-edit"></i> Modify Booking</a>
+            <a href="/pay_remaining"><i class="fas fa-credit-card"></i> Payment</a>
+            <a href="/delete"><i class="fas fa-trash-alt"></i> Delete Booking</a>
+        </nav>
+    </div>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          {% if category == 'error' %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+        {% if messages %}
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        <strong>{{ 'Error!' if category == 'error' else 'Success!' }}</strong>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
             </div>
-          {% else %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
+        {% endif %}
     {% endwith %}
-
-    <main>
+    
+    <!-- Main Content -->
+    <main class="main-content">
         {% block content %}{% endblock %}
     </main>
-
-    <footer>
-        &copy; 2025 Image Traditional. All rights reserved.
+    
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p class="footer-text">&copy; 2025 Image Traditional. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Us</a>
+                <a href="/about">About Us</a>
+            </div>
+        </div>
     </footer>
-
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            if (sidebar.style.width === "250px") {
-                sidebar.style.width = "0";
+        // Theme Management
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                html.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
             } else {
-                sidebar.style.width = "250px";
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
             }
         }
-
-        // Optional: close sidebar when clicking outside it
-        window.onclick = function(event) {
-            const sidebar = document.getElementById("sidebar");
-            if (sidebar.style.width === "250px" && !event.target.closest('#sidebar') && !event.target.closest('.hamburger')) {
-                sidebar.style.width = "0";
+        
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+            } else {
+                themeIcon.textContent = '🌙';
             }
         }
+        
+        // Sidebar Management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Prevent body scroll when sidebar is open
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+        
+        // Auto-dismiss alerts after 5 seconds
+        function autoDismissAlerts() {
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        }
+        
+        // Close sidebar on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+            }
+        });
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            autoDismissAlerts();
+        });
+        
+        // Handle responsive sidebar behavior
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
     </script>
+    
+    {% block scripts %}{% endblock %}
 </body>
-
 </html>
