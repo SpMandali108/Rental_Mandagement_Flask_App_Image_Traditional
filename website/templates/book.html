@@ -3,7 +3,7 @@
 
 <div class="booking-wrapper">
   <div class="booking-header">
-    <h1 class="page-title">📝 New Booking</h1>
+    <h1 class="page-title" style="color: #00a2ff;">📝 New Booking</h1>
     <p class="page-subtitle">Create a new booking entry</p>
   </div>
 
@@ -63,7 +63,8 @@
                 <label class="booking-label">Products</label>
                 <input type="text" name="product" required placeholder="Product names (comma separated)" class="form-input">
               </div>
-              <button type="button" onclick="removeBookingRow(this)" class="remove-btn" title="Remove this booking">
+              <button type="button" onclick="removeBookingRow(this)" class="remove-btn" title="Remove this booking"
+              >
                 <i class="remove-icon">🗑️</i>
               </button>
             </div>
@@ -314,7 +315,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background-color: #27ae60;
+    background-color: #16213e;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -326,9 +327,9 @@
   }
 
   .add-btn:hover {
-    background-color: #229954;
+    background-color: #16213e;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 28, 121, 0.3);
   }
 
   .remove-btn {
@@ -367,7 +368,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background-color: #3498db;
+    background-color: #16213e;
     color: white;
     border: none;
     padding: 15px 35px;
@@ -380,7 +381,7 @@
   }
 
   .submit-btn:hover {
-    background-color: #2980b9;
+    background-color: #16213e;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(52, 152, 219, 0.3);
   }

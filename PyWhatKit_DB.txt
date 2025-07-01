@@ -188,3 +188,23 @@ Time: 15:5
 Phone Number: +919327836080
 Message: ✅ *Booking Confirmation*Hello Shashwat Mandali,Your booking is confirmed!📅 Bookings:2025-06-18: K99💰 Total: ₹1000💵 Paid: ₹500💸 Remaining: ₹500Thank you for choosing Image Traditional!
 --------------------
+Date: 1/7/2025
+Time: 16:23
+Phone Number: +919327836080
+Message: ✅ *Booking Confirmation*Hello Shashwat Mandali,Your booking is confirmed!📅 Bookings:2025-06-18: K992025-07-01: K108, K100💰 Total: ₹6000💵 Paid: ₹3500💸 Remaining: ₹2500Thank you for choosing Image Traditional!
+--------------------
+Date: 1/7/2025
+Time: 16:27
+Phone Number: +919327836080
+Message: ✅ *Booking Confirmation*Hello Shashwat Mandali,Your booking is confirmed!📅 Bookings:2025-06-18: K992025-07-01: K100, K108, K12025-07-02: K108, K100💰 Total: ₹9000💵 Paid: ₹4500💸 Remaining: ₹4500Thank you for choosing Image Traditional!
+--------------------
+Date: 1/7/2025
+Time: 16:35
+Phone Number: +919327836080
+Message: ♻️ *Booking Updated*Hello Shashwat Mandali,Your booking on 2025-07-02 has been changed.🔁 From: K1➡️ To: K100💰 Total: ₹9000💵 Paid: ₹4500💸 Remaining: ₹4500Thank you for staying with Image Traditional!
+--------------------
+Date: 1/7/2025
+Time: 16:40
+Phone Number: +919327836080
+Message: 💳 *Payment Received*Hello Shashwat Mandali,We have received your payment.💰 Total: ₹9000💵 Paid: ₹5000💸 Remaining: ₹4000Thank you for your prompt payment!
+--------------------

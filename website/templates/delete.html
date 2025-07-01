@@ -39,7 +39,7 @@
 
   /* Submit button style */
   form input[type="submit"] {
-    background: linear-gradient(135deg, #388e3c, #1b5e20);
+    background: #16213e;
     color: white;
     font-weight: 700;
     border: none;
@@ -51,25 +51,23 @@
     transition: background 0.3s ease;
   }
 
-  form input[type="submit"]:hover {
-    background: linear-gradient(135deg, #2e7d32, #145214);
-  }
+  
 </style>
 
 <div class="delete-container">
   <div class="form-box">
-    <h2 style="text-align:center; margin-bottom: 20px;">Delete Booking Product & Update Payment</h2>
+    <h2 style="text-align:center; margin-bottom: 20px; color: #16213e;">Delete Booking Product & Update Payment</h2>
     <form method="POST" action="{{ url_for('auth.delete') }}">
       <label for="mobile">Mobile Number</label>
       <input type="text" id="mobile" name="mobile" placeholder="Enter mobile number" required pattern="\d{10}" title="10 digit mobile number">
 
-      <label for="date">Booking Date</label>
+      <label for="date" style="color: #16213e;">Booking Date</label>
       <input type="date" id="date" name="date" required>
 
-      <label for="product">Product Name</label>
+      <label for="product" style="color: #16213e;">Product Name</label>
       <input type="text" id="product" name="product" placeholder="Enter product name" required>
 
-      <label for="price_diff">Price Difference (Amount Paid)</label>
+      <label for="price_diff" style="color: #16213e;">Price Difference (Amount Paid)</label>
       <input type="number" id="price_diff" name="price_diff" placeholder="Enter price difference" min="1" required>
 
       <input type="submit" value="Submit">
