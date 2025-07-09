@@ -538,6 +538,8 @@ from flask import request, jsonify
 
 @auth.route('/fancy', methods=['GET', 'POST'])
 def fancy():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     if request.method == 'POST':
         data = request.get_json()
 
