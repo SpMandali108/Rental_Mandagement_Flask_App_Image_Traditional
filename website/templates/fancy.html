@@ -297,98 +297,112 @@
 </div>
 
 <script>
-    // Form validation and enhancement
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('fancyBookingForm');
-        const startDateInput = document.getElementById('start_date');
-        const endDateInput = document.getElementById('end_date');
-        const mobileInput = document.getElementById('mobile');
-        
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        startDateInput.setAttribute('min', today);
-        endDateInput.setAttribute('min', today);
-        
-        // Update end date minimum when start date changes
-        startDateInput.addEventListener('change', function() {
-            endDateInput.setAttribute('min', this.value);
-            if (endDateInput.value && endDateInput.value < this.value) {
-                endDateInput.value = this.value;
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('fancyBookingForm');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const mobileInput = document.getElementById('mobile');
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    startDateInput.setAttribute('min', today);
+    endDateInput.setAttribute('min', today);
+
+    // Ensure end date is not before start date
+    startDateInput.addEventListener('change', function () {
+        endDateInput.setAttribute('min', this.value);
+        if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value;
+        }
+    });
+
+    // Mobile number validation (only 10 digits)
+    mobileInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+        }
+    });
+
+    // Handle form submission using fetch
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        const mobile = mobileInput.value;
+
+        // Date and mobile validation
+        if (startDate > endDate) {
+            alert('End date must be on or after the start date!');
+            return;
+        }
+
+        if (mobile.length !== 10) {
+            alert('Please enter a valid 10-digit mobile number!');
+            return;
+        }
+
+        // Prepare form data as JSON
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
         });
-        
-        // Mobile number validation
-        mobileInput.addEventListener('input', function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            if (this.value.length > 10) {
-                this.value = this.value.slice(0, 10);
-            }
-        });
-        
-        // Form submission
-        form.addEventListener('submit', function(e) {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
-            const mobile = mobileInput.value;
-            
-            // Validate dates
-            if (startDate > endDate) {
-                e.preventDefault();
-                alert('End date must be on or after the start date!');
-                return false;
-            }
-            
-            // Validate mobile number
-            if (mobile.length !== 10) {
-                e.preventDefault();
-                alert('Please enter a valid 10-digit mobile number!');
-                return false;
-            }
-            
-            // If validation passes, you can submit the form
-            // For demo purposes, we'll prevent submission and show success
-            e.preventDefault();
-            
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <strong>Success!</strong> Your fancy dress booking has been submitted successfully.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            `;
-            
-            // Insert alert at the top of main content
-            const main = document.querySelector('main');
-            main.insertBefore(alertDiv, main.firstChild);
-            
-            // Scroll to top to show the alert
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Reset form
-            form.reset();
-            
-            // Remove alert after 5 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
-        });
-        
-        // Add floating animation to form elements on focus
-        const formControls = document.querySelectorAll('.form-control');
-        formControls.forEach(control => {
-            control.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-                this.parentElement.style.transition = 'transform 0.2s ease';
+
+        try {
+            const response = await fetch("/fancy", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
             });
-            
-            control.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'scale(1)';
-            });
+
+            if (response.ok) {
+                showSuccess();
+                form.reset();
+            } else {
+                alert('Failed to submit booking. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('An error occurred. Please try again.');
+        }
+    });
+
+    function showSuccess() {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <strong>Success!</strong> Your fancy dress booking has been submitted successfully.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        `;
+
+        const main = document.querySelector('main');
+        main.insertBefore(alertDiv, main.firstChild);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        setTimeout(() => {
+            if (alertDiv.parentNode) alertDiv.remove();
+        }, 5000);
+    }
+
+    // Input focus animation
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+        control.addEventListener('focus', function () {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.2s ease';
+        });
+
+        control.addEventListener('blur', function () {
+            this.parentElement.style.transform = 'scale(1)';
         });
     });
+});
 </script>
+
 {% endblock %}

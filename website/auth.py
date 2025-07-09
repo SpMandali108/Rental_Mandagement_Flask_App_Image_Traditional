@@ -13,6 +13,7 @@ auth = Blueprint('auth', __name__)
 client = MongoClient('mongodb+srv://ImageTraditional:EDIOTATqNapCTgKn@image-traditional.eubkdxa.mongodb.net/')
 db = client['Image_Traditional']
 collection = db['Form']
+fancy_collection = db['Fancy']
 
 # Simple Admin credentials - Keep your original ones
 load_dotenv()
@@ -278,17 +279,7 @@ def book():
             }
             collection.insert_one(new_customer)
 
-        try:
-            send_whatsapp_message(
-                mobile,
-                Name,
-                bookings if customer else new_customer["bookings"],
-                updated_total if customer else total_price,
-                updated_given if customer else given_price_val,
-                action_type="booking"
-            )
-        except Exception as e:
-            print("Error sending WhatsApp message:", e)
+       
 
         flash("✅ Booking successful!", "success")
         return redirect(url_for('auth.book'))
@@ -364,18 +355,7 @@ def modify():
         )
 
         customer = collection.find_one({"mobile": mobile})
-        send_whatsapp_message(
-            mobile,
-            customer.get("Name", "Customer"),
-            customer['bookings'],
-            customer['total_price'],
-            customer.get('given_price', 0),
-            action_type="update",
-            old_products=old_products,
-            new_products=new_products,
-            date=date
-        )
-
+       
         flash(f"✅ Booking updated for {mobile} on {date}!", "success")
         return redirect(url_for('auth.modify'))
 
@@ -415,18 +395,7 @@ def pay_remaining():
         new_given_price = given_price + pay_amount_val
         collection.update_one({"_id": customer['_id']}, {"$set": {"given_price": new_given_price}})
 
-        try:
-            send_whatsapp_message(
-                mobile,
-                customer.get("Name", "Customer"),
-                customer.get("bookings", {}),
-                total_price,
-                new_given_price,
-                action_type="payment"
-            )
-        except Exception as e:
-            print(f"WhatsApp message failed: {e}")
-
+       
         flash(f"✅ Payment of ₹{pay_amount_val} accepted! Remaining: ₹{total_price - new_given_price}", "success")
         return redirect(url_for('auth.pay_remaining'))
 
@@ -484,16 +453,7 @@ def delete():
             }}
         )
 
-        send_whatsapp_message(
-            mobile,
-            customer.get("Name", "Customer"),
-            bookings,
-            new_price,
-            existing_given,
-            action_type="delete",
-            old_products=[product],
-            date=date
-        )
+     
 
         flash(f"✅ Product '{product}' removed from booking on {date}. Price reduced by ₹{price_diff}.", "success")
         return redirect(url_for('auth.delete'))
@@ -571,11 +531,33 @@ def calendar():
 
 
 # MongoDB setup
-fancy_collection = db["Fancy"]
 
+
+
+from flask import request, jsonify
 
 @auth.route('/fancy', methods=['GET', 'POST'])
 def fancy():
+    if request.method == 'POST':
+        data = request.get_json()
+
+        booking_data = {
+            'name': data.get('name'),
+            'mobile': data.get('mobile'),
+            'Address': data.get('address'),
+            'start_date': data.get('start_date'),
+            'end_date': data.get('end_date'),
+            'price': float(data.get('price', 0)),
+            'costume': data.get('costume'),
+            'details': data.get('details'),
+            'timestamp': datetime.now()
+        }
+
+        fancy_collection.insert_one(booking_data)
+        return jsonify({'status': 'success'}), 200
+
+    return render_template('fancy.html')
+
     if request.method == 'POST':
         booking_data = {
             'name': request.form['name'],
@@ -592,19 +574,10 @@ def fancy():
         # Save to MongoDB
         fancy_collection.insert_one(booking_data)
 
-        # Call fancy WhatsApp message function
-        bookings_dict = {
-            f"{booking_data['start_date']} to {booking_data['end_date']}": [booking_data['costume']]
-        }
-        send_whatsapp_message_fancy(
-            mobile=booking_data['mobile'],
-            name=booking_data['name'],
-            bookings_dict=bookings_dict,
-            price=booking_data['price'],
-            action_type="booking"
-        )
 
-        flash('Booking submitted successfully and WhatsApp message sent! 📩', 'success')
+        
+      
+        flash('Booking submitted successfully', 'success')
         return redirect(url_for('auth.fancy'))
 
     return render_template('fancy.html')
