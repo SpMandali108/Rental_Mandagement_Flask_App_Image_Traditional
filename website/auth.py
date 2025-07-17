@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from pymongo import MongoClient
-from bson.regex import Regex
 from pywhatkit import sendwhatmsg
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -9,13 +8,13 @@ import os
 
 auth = Blueprint('auth', __name__)
 
-# Simple MongoDB Setup - Keep your original connection
+
 client = MongoClient('mongodb+srv://ImageTraditional:EDIOTATqNapCTgKn@image-traditional.eubkdxa.mongodb.net/')
 db = client['Image_Traditional']
 collection = db['Form']
 fancy_collection = db['Fancy']
 
-# Simple Admin credentials - Keep your original ones
+
 load_dotenv()
 ADMIN_ID = os.getenv("ADMIN_ID")
 ADMIN_PASS = os.getenv("ADMIN_PASS")
@@ -160,7 +159,7 @@ We’re excited to dress you in style! 💃
         print(f"❌ Error sending WhatsApp message to {mobile}: {e}")
 
 
-# ------------------- LOGIN -------------------
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -176,21 +175,18 @@ def login():
             return render_template('login.html')
     return render_template('login.html')
 
-# ------------------- MAIN PAGE -------------------
 @auth.route('/main')
 def main():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
     return render_template('main.html')
 
-# ------------------- LOGOUT -------------------
 @auth.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash("🔒 You have been logged out.", "info")
     return redirect(url_for('auth.login'))
 
-# ------------------- BOOK PAGE -------------------
 @auth.route('/book', methods=['GET', 'POST'])
 def book():
     if not session.get('logged_in'):
