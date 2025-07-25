@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from pymongo import MongoClient
-from pywhatkit import sendwhatmsg
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
