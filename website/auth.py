@@ -10,14 +10,14 @@ auth = Blueprint('auth', __name__)
 
 load_dotenv()
 
-mongoUrl = os.getenv("client")
+mongoUrl = os.environ.get("client")
 client = MongoClient(mongoUrl)
 db = client['Image_Traditional']
 collection = db['Form']
 fancy_collection = db['Fancy']
 
-ADMIN_ID = os.getenv("ADMIN_ID")
-ADMIN_PASS = os.getenv("ADMIN_PASS")
+ADMIN_ID = os.environ.get("ADMIN_ID")
+ADMIN_PASS = os.environ.get("ADMIN_PASS")
 
 def check_booking_conflict(date, products, exclude_mobile=None):
     """Check if products are already booked on given date"""
