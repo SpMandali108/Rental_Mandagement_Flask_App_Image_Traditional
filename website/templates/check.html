@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Check Availability | Image Traditional{% endblock %}
+
+
+
+{% block content %}
+<div style="max-width: 500px; margin: auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; color: #16213e; margin-bottom: 25px;">Check Product Availability</h2>
+    <form method="POST" action="/check">
+        <div style="margin-bottom: 15px;">
+            <label for="product" style="display: block; font-weight: 500; margin-bottom: 5px; color: #16213e;">Product Name</label>
+            <input type="text" id="product" name="product" required
+                style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+        </div>
+        <div style="margin-bottom: 25px;">
+            <label for="date" style="display: block; font-weight: 500; margin-bottom: 5px; color: #16213e;">Date</label>
+            <input type="date" id="date" name="date" required
+                style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+        </div>
+        <button type="submit"
+            style="width: 100%; background-color: #16213e; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: 600; cursor: pointer;">
+            Check Availability
+        </button>
+    </form>
+
+    {% if status %}
+        <p style="text-align: center; margin-top: 20px; color:  color ; font-weight: 600; font-size: 18px;">
+            {{ status }}
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

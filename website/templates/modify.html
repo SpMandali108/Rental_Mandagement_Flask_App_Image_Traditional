@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div style="max-width: 500px; margin: 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9;">
+    <h2 style="text-align: center; margin-bottom: 20px;color: #16213e">Modify Customer Booking</h2>
+    <form method="POST">
+      <div style="margin-bottom: 15px;">
+        <label for="mobile" style="display: block; font-weight: 600; margin-bottom: 5px;  color: #16213e;">Mobile Number:</label>
+        <input type="text" id="mobile" name="mobile" required placeholder="Enter mobile number" 
+          style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" />
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label for="date" style="display: block; font-weight: 600; margin-bottom: 5px; color: #16213e;">Date (to modify booking):</label>
+        <input type="date" id="date" name="date" required
+          style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" />
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label for="old_products" style="display: block; font-weight: 600; margin-bottom: 5px; color: #16213e;">
+          Old Product IDs (comma separated to replace):
+        </label>
+        <input type="text" id="old_products" name="old_products" placeholder="e.g. P001,P002"
+          style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" />
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label for="new_products" style="display: block; font-weight: 600; margin-bottom: 5px; color: #16213e;">
+          New Product IDs (comma separated to add):
+        </label>
+        <input type="text" id="new_products" name="new_products" placeholder="e.g. P010,P011"
+          style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" />
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label for="price_diff" style="display: block; font-weight: 600; margin-bottom: 5px; color: #16213e;">
+          Price Difference (add/subtract amount):
+        </label>
+        <input type="number" id="price_diff" name="price_diff" placeholder="e.g. 500 or -200"
+          style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" />
+      </div>
+
+      <button type="submit" 
+        style="width: 100%; padding: 10px; background-color: #16213e; border: none; border-radius: 5px; color: white; font-weight: 700; cursor: pointer;">
+        Update Booking
+      </button>
+    </form>
+  </div>
+{% endblock %}

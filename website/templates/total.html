@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Summary{% endblock %}
+
+{% block content %}
+<div class="container">
+   
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="icon">📊</i>
+            Booking Summary
+        </h1>
+        <p class="page-subtitle">Overview of your booking performance and revenue</p>
+    </div>
+
+   
+    <div class="summary-grid">
+        
+        <div class="summary-card traditional">
+            <div class="card-header">
+                <div class="card-icon">📸</div>
+                <div class="card-title">Traditional Bookings</div>
+            </div>
+            <div class="card-content">
+                <div class="metric-value">{{ total_bookings or 0 }}</div>
+                <div class="metric-label">Total Bookings</div>
+            </div>
+            <div class="card-footer">
+                <div class="revenue">₹{{ "{:,}".format(total_price or 0) }}</div>
+                <div class="revenue-label">Total Revenue</div>
+            </div>
+        </div>
+
+        
+        <div class="summary-card fancy">
+            <div class="card-header">
+                <div class="card-icon">🎭</div>
+                <div class="card-title">Fancy Dress Bookings</div>
+            </div>
+            <div class="card-content">
+                <div class="metric-value">{{ total_fancy_bookings or 0 }}</div>
+                <div class="metric-label">Total Bookings</div>
+            </div>
+            <div class="card-footer">
+                <div class="revenue">₹{{ "{:,}".format(total_fancy_price or 0) }}</div>
+                <div class="revenue-label">Total Revenue</div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="total-summary">
+        <div class="total-card">
+            <div class="total-header">
+                <h3>📈 Overall Performance</h3>
+            </div>
+            <div class="total-content">
+                <div class="total-metric">
+                    <div class="total-value">{{ (total_bookings or 0) + (total_fancy_bookings or 0) }}</div>
+                    <div class="total-label">Total Bookings</div>
+                </div>
+                <div class="total-divider"></div>
+                <div class="total-metric">
+                    <div class="total-value">₹{{ "{:,}".format((total_price or 0) + (total_fancy_price or 0)) }}</div>
+                    <div class="total-label">Total Revenue</div>
+                </div>
+                <div class="total-divider"></div>
+                <div class="total-metric">
+                    {% set total_bookings_count = (total_bookings or 0) + (total_fancy_bookings or 0) %}
+                    {% set total_revenue = (total_price or 0) + (total_fancy_price or 0) %}
+                    <div class="total-value">
+                        {% if total_bookings_count > 0 %}
+                            ₹{{ "{:,}".format((total_revenue / total_bookings_count)|round|int) }}
+                        {% else %}
+                            ₹0
+                        {% endif %}
+                    </div>
+                    <div class="total-label">Average per Booking</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="action-section">
+       
+        <button class="btn btn-secondary" onclick="window.print()">
+            <i class="btn-icon">🖨️</i>
+            Print Summary
+        </button>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2a53a5;
+    margin-bottom: 0.5rem;
+}
+
+.icon {
+    font-size: 2rem;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: #718096;
+    margin: 0;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1), 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.summary-card.traditional {
+    border-top: 4px solid #3182ce;
+}
+
+.summary-card.fancy {
+    border-top: 4px solid #e53e3e;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.card-icon {
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.traditional .card-icon {
+    background: linear-gradient(135deg, #3182ce 0%, #63b3ed 100%);
+}
+
+.fancy .card-icon {
+    background: linear-gradient(135deg, #e53e3e 0%, #fc8181 100%);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.card-content {
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-top: 0.25rem;
+}
+
+.card-footer {
+    background: #f7fafc;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.revenue {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #38a169;
+}
+
+.revenue-label {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 0.25rem;
+}
+
+.total-summary {
+    margin-bottom: 2rem;
+}
+
+.total-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.total-header {
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.total-content {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.total-metric {
+    text-align: center;
+}
+
+.total-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.total-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.total-divider {
+    width: 1px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.action-section {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #3182ce;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2c5282;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .total-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .total-divider {
+        display: none;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .metric-value {
+        font-size: 2.5rem;
+    }
+    
+    .total-value {
+        font-size: 2rem;
+    }
+}
+
+@media print {
+    .action-section {
+        display: none;
+    }
+    
+    .summary-card,
+    .total-card {
+        box-shadow: none;
+        border: 1px solid #e2e8f0;
+    }
+}
+</style>
+{% endblock %}

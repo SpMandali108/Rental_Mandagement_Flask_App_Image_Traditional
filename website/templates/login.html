@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Image Traditional{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0);">
+    <h2 style="text-align: center; color: #16213e; margin-bottom: 25px;">Login to Image Traditional</h2>
+    <form method="POST" action="/login">
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="display: block; font-weight: 500; margin-bottom: 5px; color:#010e29" >Username</label>
+            <input type="text" id="text" name="id" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #cccccc;" />
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="password" style="display: block; font-weight: 500; margin-bottom: 5px; color:#010e29">Password</label>
+            <input type="password" id="password" name="password" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;" />
+        </div>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="/forgot-password" style="color: #16213e; text-decoration: none; font-size: 14px;">Forgot Password?</a>
+        </div>
+        <button type="submit" style="width: 100%; background-color: #16213e; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: 600; cursor: pointer;">
+            Login
+        </button>
+    </form>
+</div>
+{% endblock %}

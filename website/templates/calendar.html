@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Calendar{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-dark bg-white dark-mode-text-light dark-mode-bg-dark">
+    <h2 class="mb-4 text-center">
+        <i class="bi bi-calendar3"></i>🗓Booking Calendar
+    </h2>
+
+    <form method="POST" class="mb-4">
+        <div class="input-group">
+            <input type="date" name="date" class="form-control bg-light text-dark dark-mode-input" required>
+            <button type="submit" class="btn btn-primary dark-mode-btn">Search</button>
+        </div>
+    </form>
+
+    {% if date %}
+        <h4 class="mt-3 text-success dark-mode-text-success">Bookings for <strong>{{ date }}</strong></h4>
+
+        {% if bookings %}
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-striped mt-3 dark-mode-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Address</th>
+                            <th>Deposit</th>
+                            <th>Group</th>
+                            <th>Reference</th>
+                            <th>Products</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                            <td>{{ b.Name }}</td>
+                            <td>{{ b.mobile }}</td>
+                            <td>{{ b.address }}</td>
+                            <td>{{ b.deposit }}</td>
+                            <td>{{ b.group }}</td>
+                            <td>{{ b.reference }}</td>
+                            <td>{{ b.products | join(', ') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-danger">No bookings found for {{ date }}.</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+<style>
+
+body.dark-mode,
+.dark-mode-bg-dark {
+    background-color: #121212 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode-text-light {
+    color: #ffffff !important;
+}
+
+.dark-mode-text-success {
+    color: #66ff99 !important;
+}
+
+.dark-mode-input {
+    background-color: #1f1f1f !important;
+    color: #ffffff !important;
+    border: 1px solid #444 !important;
+}
+
+.dark-mode-btn {
+    background-color: #007bff !important;
+    border: none !important;
+    color: white !important;
+}
+
+.dark-mode-btn:hover {
+    background-color: #0056b3 !important;
+}
+
+.dark-mode-table {
+    background-color: #1e1e1e !important;
+    color: #fff !important;
+}
+
+.dark-mode-table thead {
+    background-color: #2c2c2c !important;
+}
+</style>

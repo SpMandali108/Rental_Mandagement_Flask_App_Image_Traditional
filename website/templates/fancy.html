@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}Fancy Dress Booking | Image Traditional{% endblock %}
+
+{% block head %}
+<style>
+    
+    .booking-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .booking-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .booking-card {
+        background: rgba(30, 30, 30, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .booking-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .booking-header .emoji {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .booking-header h2 {
+        color: #c62828;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    body.dark-mode .booking-header h2 {
+        color: #ff6b6b;
+    }
+
+    .booking-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    body.dark-mode .booking-header p {
+        color: #ccc;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    body.dark-mode .form-label {
+        color: #e0e0e0;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        color: #333;
+    }
+
+    body.dark-mode .form-control {
+        background: #2a2a2a;
+        border-color: #444;
+        color: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #c62828;
+        box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+    }
+
+    body.dark-mode .form-control:focus {
+        border-color: #ff6b6b;
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #999;
+    }
+
+    body.dark-mode .form-control::placeholder {
+        color: #666;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .form-col {
+        flex: 1;
+    }
+
+    .submit-btn {
+        background: #16213e;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 2rem auto 0;
+        box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+        background: #16213e;
+    }
+
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+
+    body.dark-mode .submit-btn {
+        background: linear-gradient(135deg, #ff6b6b, #ff5252);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    body.dark-mode .submit-btn:hover {
+        background: linear-gradient(135deg, #ff5252, #ff4444);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    
+    @media (max-width: 768px) {
+        .booking-card {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .booking-header .emoji {
+            font-size: 2.5rem;
+        }
+
+        .booking-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    
+    .booking-card {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    
+    input[type="date"] {
+        position: relative;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23c62828" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
+        background-size: 16px;
+        cursor: pointer;
+    }
+
+    body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23ff6b6b" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
+        background-size: 16px;
+    }
+
+    
+    .alert {
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    body.dark-mode .alert-success {
+        background-color: rgba(76, 175, 80, 0.2);
+        border-color: #4caf50;
+        color: #81c784;
+    }
+
+    body.dark-mode .alert-danger {
+        background-color: rgba(244, 67, 54, 0.2);
+        border-color: #f44336;
+        color: #e57373;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+    <div class="booking-card">
+        <div class="booking-header">
+            <span class="emoji">🎭</span>
+            <h2 style="color: #16213e;">Fancy Dress Booking</h2>
+            <p>Book your perfect costume for any occasion</p>
+        </div>
+
+        <form method="POST" id="fancyBookingForm">
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="name" class="form-label" style="color: #16213e;">Full Name</label>
+                        <input type="text" class="form-control" name="name" id="name" required placeholder="Enter your full name">
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="mobile" class="form-label" style="color: #16213e;">Mobile Number</label>
+                        <input type="tel" class="form-control" name="mobile" id="mobile" pattern="[0-9]{10}" required placeholder="10-digit mobile number">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address" class="form-label" style="color: #16213e;">Address</label>
+                <textarea class="form-control" name="address" id="address" rows="3" placeholder="Enter your complete address"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="start_date" class="form-label" style="color: #16213e;">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" id="start_date" required>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="end_date" class="form-label" style="color: #16213e;">End Date</label>
+                        <input type="date" class="form-control" name="end_date" id="end_date" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="price" class="form-label" style="color: #16213e;">Price (₹)</label>
+                        <input type="number" class="form-control" name="price" id="price" min="0" step="1" required placeholder="Enter price">
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="costume" class="form-label" style="color: #16213e;">Costume Type</label>
+                        <input type="text" class="form-control" name="costume" id="costume" required placeholder="e.g., Superhero, Historical, Character">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="details" class="form-label" style="color: #16213e;">Additional Details / Special Requirements</label>
+                <textarea class="form-control" name="details" id="details" rows="4" placeholder="Any specific requirements, size details, or additional information..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Submit Booking
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('fancyBookingForm');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const mobileInput = document.getElementById('mobile');
+
+   
+
+    // Ensure end date is not before start date
+    startDateInput.addEventListener('change', function () {
+        endDateInput.setAttribute('min', this.value);
+        if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value;
+        }
+    });
+
+    
+    mobileInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+        }
+    });
+
+    
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        const mobile = mobileInput.value;
+
+        // Date and mobile validation
+        if (startDate > endDate) {
+            alert('End date must be on or after the start date!');
+            return;
+        }
+
+        if (mobile.length !== 10) {
+            alert('Please enter a valid 10-digit mobile number!');
+            return;
+        }
+
+        
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        try {
+            const response = await fetch("/fancy", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                showSuccess();
+                form.reset();
+            } else {
+                alert('Failed to submit booking. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('An error occurred. Please try again.');
+        }
+    });
+
+    function showSuccess() {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <strong>Success!</strong> Your fancy dress booking has been submitted successfully.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        `;
+
+        const main = document.querySelector('main');
+        main.insertBefore(alertDiv, main.firstChild);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        setTimeout(() => {
+            if (alertDiv.parentNode) alertDiv.remove();
+        }, 5000);
+    }
+
+   
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+        control.addEventListener('focus', function () {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.2s ease';
+        });
+
+        control.addEventListener('blur', function () {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+
+{% endblock %}

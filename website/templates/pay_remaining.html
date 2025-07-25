@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Pay Remaining Amount | Image Traditional{% endblock %}
+
+{% block content %}
+<style>
+  .pay-container {
+    max-width: 360px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+  }
+  .pay-container h2 {
+    text-align: center;
+    color: #c62828;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+  .form-group {
+    margin-bottom: 12px;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+  }
+  input[type="tel"],
+  input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+  }
+  button {
+    width: 100%;
+    background-color: #16213e;;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+</style>
+
+<div class="pay-container" >
+  <h2 style="color: #16213e;">Pay Remaining Amount</h2>
+  <form method="POST" action="/pay_remaining">
+    <div class="form-group">
+      <label for="mobile" style="color: #16213e;">Mobile Number</label>
+      <input type="tel" id="mobile" name="mobile" required pattern="[0-9]{10}" placeholder="Enter your 10-digit mobile number" />
+    </div>
+    <div class="form-group">
+      <label for="pay_amount" style="color: #16213e;">Amount to Pay</label>
+      <input type="number" id="pay_amount" name="pay_amount" min="1" required placeholder="Enter amount" />
+    </div>
+    <button type="submit" style="color: #ffffff;">Pay Now</button>
+  </form>
+</div>
+{% endblock %}

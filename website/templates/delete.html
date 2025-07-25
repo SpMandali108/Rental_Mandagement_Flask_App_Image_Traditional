@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Booking | Image Traditional{% endblock %}
+
+{% block content %}
+<style>
+  
+  .delete-container {
+    min-height: 80vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  
+  .form-box {
+    width: 360px;
+    background: rgb(255, 255, 255);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 24px 20px;
+    box-sizing: border-box;
+    color: #000;
+  }
+
+  
+  form input[type="text"],
+  form input[type="date"],
+  form input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  
+  form input[type="submit"] {
+    background: #16213e;
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+  }
+
+  
+</style>
+
+<div class="delete-container">
+  <div class="form-box">
+    <h2 style="text-align:center; margin-bottom: 20px; color: #16213e;">Delete Booking Product & Update Payment</h2>
+    <form method="POST" action="{{ url_for('auth.delete') }}">
+      <label for="mobile">Mobile Number</label>
+      <input type="text" id="mobile" name="mobile" placeholder="Enter mobile number" required pattern="\d{10}" title="10 digit mobile number">
+
+      <label for="date" style="color: #16213e;">Booking Date</label>
+      <input type="date" id="date" name="date" required>
+
+      <label for="product" style="color: #16213e;">Product Name</label>
+      <input type="text" id="product" name="product" placeholder="Enter product name" required>
+
+      <label for="price_diff" style="color: #16213e;">Price Difference (Amount Paid)</label>
+      <input type="number" id="price_diff" name="price_diff" placeholder="Enter price difference" min="1" required>
+
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+</div>
+{% endblock %}

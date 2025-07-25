@@ -1,0 +1,644 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Profile{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+  <div class="profile-header">
+    <h1 class="page-title">📋 Customer Profile</h1>
+    <p class="page-subtitle">Search and view customer details</p>
+  </div>
+
+  
+  <div class="search-card">
+    <form method="POST" class="search-form">
+      <div class="search-input-group">
+        <div class="input-wrapper">
+          <i class="search-icon">📱</i>
+          <input type="text" name="mobile" placeholder="Enter mobile number to search"
+                 class="search-input" required>
+        </div>
+        <button type="submit" class="search-btn">
+          <i class="btn-icon">🔍</i>
+          Search Profile
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {% if customer %}
+  
+  <div class="customer-card">
+    <div class="customer-header">
+      <h3 class="customer-title">
+        <span class="customer-icon">👤</span>
+        Customer Information
+      </h3>
+    </div>
+
+    <div class="customer-details">
+      <div class="details-grid">
+        <div class="detail-item">
+          <div class="detail-label">Full Name</div>
+          <div class="detail-value">{{ customer.Name }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Mobile Number</div>
+          <div class="detail-value">{{ customer.mobile }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Address</div>
+          <div class="detail-value">{{ customer.address or 'Not provided' }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Reference</div>
+          <div class="detail-value">{{ customer.reference or 'Not provided' }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Group</div>
+          <div class="detail-value">{{ customer.group or 'Not specified' }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Deposit</div>
+          <div class="detail-value">{{ customer.deposit or 'Not provided' }}</div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="payment-summary">
+      <h4 class="summary-title">
+        <span class="summary-icon">💰</span>
+        Payment Summary
+      </h4>
+      
+      <div class="payment-grid">
+        <div class="payment-item total">
+          <div class="payment-label">Total Amount</div>
+          <div class="payment-value">₹{{ customer.total_price }}</div>
+        </div>
+        
+        <div class="payment-item paid">
+          <div class="payment-label">Amount Paid</div>
+          <div class="payment-value">₹{{ customer.given_price }}</div>
+        </div>
+        
+        <div class="payment-item remaining">
+          <div class="payment-label">Remaining Balance</div>
+          <div class="payment-value">₹{{ customer.remaining }}</div>
+        </div>
+      </div>
+      
+      {% if customer.remaining > 0 %}
+      <div class="payment-status pending">
+        <i class="status-icon">⏳</i>
+        Payment Pending: ₹{{ customer.remaining }}
+      </div>
+      {% else %}
+      <div class="payment-status complete">
+        <i class="status-icon">✅</i>
+        Payment Complete
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if customer.bookings %}
+  
+  <div class="bookings-card">
+    <div class="bookings-header">
+      <h3 class="bookings-title">
+        <span class="bookings-icon">📅</span>
+        Booking History
+      </h3>
+      <div class="bookings-count">{{ customer.bookings|length }} booking(s)</div>
+    </div>
+
+    <div class="bookings-list">
+      {% for date, items in customer.bookings.items() %}
+      <div class="booking-entry">
+        <div class="booking-date">
+          <i class="date-icon">📆</i>
+          <span class="date-text">{{ date }}</span>
+        </div>
+        
+        <div class="booking-items">
+          {% for item in items %}
+          <div class="booking-item">
+            <i class="item-icon">📦</i>
+            <span class="item-text">{{ item }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% elif request.method == 'POST' %}
+  
+  <div class="no-results-card">
+    <div class="no-results-content">
+      <i class="no-results-icon">❌</i>
+      <h3 class="no-results-title">Customer Not Found</h3>
+      <p class="no-results-message">No customer found with the provided mobile number. Please check the number and try again.</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .profile-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+  }
+
+  .page-subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin: 0;
+  }
+
+  
+  .search-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8ecef;
+    margin-bottom: 25px;
+  }
+
+  .search-form {
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-input-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .input-wrapper {
+    position: relative;
+    flex: 1;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #7f8c8d;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 16px 12px 45px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+  }
+
+  .search-input:focus {
+    border-color: #3498db;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .search-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  }
+
+  .btn-icon {
+    font-size: 0.9rem;
+  }
+
+  
+  .customer-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8ecef;
+    margin-bottom: 25px;
+  }
+
+  .customer-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+  }
+
+  .customer-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+  }
+
+  .customer-icon {
+    font-size: 1.2rem;
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .detail-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 500;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #3498db;
+  }
+
+  
+  .payment-summary {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #ecf0f1;
+  }
+
+  .summary-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+  }
+
+  .summary-icon {
+    font-size: 1.1rem;
+  }
+
+  .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .payment-item {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .payment-item.total {
+    background: #e8f4f8;
+    border-left: 4px solid #3498db;
+  }
+
+  .payment-item.paid {
+    background: #e8f5e8;
+    border-left: 4px solid #27ae60;
+  }
+
+  .payment-item.remaining {
+    background: #fef2e8;
+    border-left: 4px solid #f39c12;
+  }
+
+  .payment-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+  }
+
+  .payment-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+
+  .payment-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 15px;
+  }
+
+  .payment-status.pending {
+    background: #fef9e7;
+    color: #b7950b;
+    border: 1px solid #f4d03f;
+  }
+
+  .payment-status.complete {
+    background: #eafaf1;
+    color: #196f3d;
+    border: 1px solid #58d68d;
+  }
+
+  .status-icon {
+    font-size: 1rem;
+  }
+
+  
+  .bookings-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8ecef;
+    margin-bottom: 25px;
+  }
+
+  .bookings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+  }
+
+  .bookings-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+  }
+
+  .bookings-icon {
+    font-size: 1.2rem;
+  }
+
+  .bookings-count {
+    background: #3498db;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .bookings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .booking-entry {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #3498db;
+  }
+
+  .booking-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+
+  .date-icon {
+    font-size: 0.9rem;
+  }
+
+  .booking-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-left: 24px;
+  }
+
+  .booking-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #34495e;
+  }
+
+  .item-icon {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+  }
+
+  /* No Results Card */
+  .no-results-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8ecef;
+    text-align: center;
+  }
+
+  .no-results-content {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+  }
+
+  .no-results-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #e74c3c;
+    margin: 0 0 10px 0;
+  }
+
+  .no-results-message {
+    color: #7f8c8d;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  
+  body.dark-mode .search-card,
+  body.dark-mode .customer-card,
+  body.dark-mode .bookings-card,
+  body.dark-mode .no-results-card {
+    background-color: #1e1e1e !important;
+    border-color: #555 !important;
+  }
+
+  body.dark-mode .page-title,
+  body.dark-mode .customer-title,
+  body.dark-mode .summary-title,
+  body.dark-mode .bookings-title,
+  body.dark-mode .booking-date {
+    color: #f0f0f0 !important;
+  }
+
+  body.dark-mode .page-subtitle,
+  body.dark-mode .detail-label,
+  body.dark-mode .payment-label {
+    color: #bbb !important;
+  }
+
+  body.dark-mode .detail-value,
+  body.dark-mode .payment-value {
+    background-color: #2c2c2c !important;
+    color: #f0f0f0 !important;
+  }
+
+  body.dark-mode .search-input {
+    background-color: #2c2c2c !important;
+    color: #f0f0f0 !important;
+    border-color: #555 !important;
+  }
+
+  body.dark-mode .search-input:focus {
+    background-color: #333 !important;
+    border-color: #64b5f6 !important;
+  }
+
+  body.dark-mode .search-btn {
+    background-color: #64b5f6 !important;
+    color: #000 !important;
+  }
+
+  body.dark-mode .booking-entry {
+    background-color: #2c2c2c !important;
+  }
+
+  body.dark-mode .booking-item,
+  body.dark-mode .item-text {
+    color: #ddd !important;
+  }
+
+  
+  @media (max-width: 768px) {
+    .profile-wrapper {
+      padding: 15px;
+    }
+    
+    .search-card,
+    .customer-card,
+    .bookings-card {
+      padding: 20px;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+    }
+    
+    .search-input-group {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .search-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .details-grid {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    
+    .payment-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .bookings-header {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .profile-wrapper {
+      padding: 10px;
+    }
+    
+    .search-card,
+    .customer-card,
+    .bookings-card {
+      padding: 15px;
+    }
+    
+    .page-title {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+
+{% endblock %}

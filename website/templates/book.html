@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="booking-wrapper">
+  <div class="booking-header">
+    <h1 class="page-title" style="color: #00a2ff;">📝 New Booking</h1>
+    <p class="page-subtitle">Create a new booking entry</p>
+  </div>
+
+  <div class="booking-card">
+    <form method="POST" action="{{ url_for('auth.book') }}" id="booking-form">
+      
+      
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">👤</span>
+          Personal Information
+        </h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="name" required placeholder="Enter your full name" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number *</label>
+            <input type="tel" name="mobile" required placeholder="Enter mobile number" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <textarea name="address" placeholder="Enter your complete address" class="form-textarea"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Group Name</label>
+            <input type="text" name="group" placeholder="Group or organization name" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reference</label>
+            <input type="text" name="reference" placeholder="Reference person name" class="form-input">
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">📅</span>
+          Booking Details
+        </h3>
+        
+        <div class="booking-items-container">
+          <div id="booking-container">
+            <div class="booking-row">
+              <div class="booking-input-group">
+                <label class="booking-label">Date</label>
+                <input type="date" name="date" required class="form-input">
+              </div>
+              <div class="booking-input-group">
+                <label class="booking-label">Products</label>
+                <input type="text" name="product" required placeholder="Product names (comma separated)" class="form-input">
+              </div>
+              <button type="button" onclick="removeBookingRow(this)" class="remove-btn" title="Remove this booking"
+              >
+                <i class="remove-icon">🗑️</i>
+              </button>
+            </div>
+          </div>
+          
+          <button type="button" onclick="addBookingRow()" class="add-btn">
+            <i class="add-icon">➕</i>
+            Add Another Date & Products
+          </button>
+        </div>
+      </div>
+
+      
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">💰</span>
+          Payment Information
+        </h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Total Price *</label>
+            <input type="number" name="price" min="0" value="0" required class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount Paid *</label>
+            <input type="number" name="given_price" min="0" value="0" required class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Deposit Details</label>
+          <input type="text" name="deposit" placeholder="Deposit amount and payment method" class="form-input">
+        </div>
+      </div>
+
+      
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">
+          <i class="submit-icon">✅</i>
+          Submit Booking
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function addBookingRow() {
+    const container = document.getElementById('booking-container');
+    const row = document.createElement('div');
+    row.className = 'booking-row';
+    row.innerHTML = `
+      <div class="booking-input-group">
+        <label class="booking-label">Date</label>
+        <input type="date" name="date" required class="form-input">
+      </div>
+      <div class="booking-input-group">
+        <label class="booking-label">Products</label>
+        <input type="text" name="product" required placeholder="Product names (comma separated)" class="form-input">
+      </div>
+      <button type="button" onclick="removeBookingRow(this)" class="remove-btn" title="Remove this booking">
+        <i class="remove-icon">🗑️</i>
+      </button>
+    `;
+    container.appendChild(row);
+    
+    
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      row.style.transition = 'all 0.3s ease';
+      row.style.opacity = '1';
+      row.style.transform = 'translateY(0)';
+    }, 10);
+  }
+
+  function removeBookingRow(button) {
+    const container = document.getElementById('booking-container');
+    if (container.children.length > 1) {
+      const row = button.parentElement;
+      row.style.transition = 'all 0.3s ease';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(50px)';
+      setTimeout(() => {
+        row.remove();
+      }, 300);
+    } else {
+      alert("At least one booking row is required!");
+    }
+  }
+
+  
+  document.getElementById('booking-form').addEventListener('submit', function(e) {
+    const totalPrice = parseFloat(document.querySelector('input[name="price"]').value);
+    const givenPrice = parseFloat(document.querySelector('input[name="given_price"]').value);
+    
+    if (givenPrice > totalPrice) {
+      alert('Amount paid cannot be greater than total price!');
+      e.preventDefault();
+    }
+  });
+</script>
+
+<style>
+  .booking-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .booking-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+  }
+
+  .page-subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin: 0;
+  }
+
+  .booking-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e8ecef;
+  }
+
+  .form-section {
+    margin-bottom: 35px;
+  }
+
+  .form-section:last-of-type {
+    margin-bottom: 25px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ecf0f1;
+  }
+
+  .section-icon {
+    font-size: 1.2rem;
+    display: inline-block;
+    width: 28px;
+    text-align: center;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #34495e;
+    font-size: 0.95rem;
+  }
+
+  .form-input,
+  .form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+  }
+
+  .form-input:focus,
+  .form-textarea:focus {
+    border-color: #3498db;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 70px;
+    font-family: inherit;
+  }
+
+  .booking-items-container {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+  }
+
+  .booking-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    gap: 15px;
+    align-items: end;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+
+  .booking-row:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+  }
+
+  .booking-input-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .booking-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 5px;
+  }
+
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #16213e;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+
+  .add-btn:hover {
+    background-color: #16213e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 28, 121, 0.3);
+  }
+
+  .remove-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .remove-btn:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+  }
+
+  .remove-icon,
+  .add-icon,
+  .submit-icon {
+    font-size: 0.9rem;
+  }
+
+  .form-actions {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ecf0f1;
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #16213e;
+    color: white;
+    border: none;
+    padding: 15px 35px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+  }
+
+  .submit-btn:hover {
+    background-color: #16213e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.3);
+  }
+
+  
+  @media (max-width: 768px) {
+    .booking-wrapper {
+      padding: 15px;
+    }
+    
+    .booking-card {
+      padding: 20px;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+    }
+    
+    .booking-row {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    
+    .section-title {
+      font-size: 1.2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .booking-wrapper {
+      padding: 10px;
+    }
+    
+    .booking-card {
+      padding: 15px;
+    }
+    
+    .page-title {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+
+{% endblock %}

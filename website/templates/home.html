@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Image Traditional{% endblock %}
+
+{% block content %}
+<div style="background: #ccdbec; padding: 40px 20px; min-height: 90vh; text-align: center;">
+    <div style="max-width: 1000px; margin: auto;">
+
+        <img src="{{ url_for('static', filename='navratri_logo.jpg') }}" alt="Image Traditional Logo" style="height: 90px; margin-bottom: 20px;">
+
+        <h1 style="font-size: 40px; color: #16213e; font-weight: bold;">Celebrate Navaratri with Image Traditional</h1>
+
+        <p style="font-size: 18px; color: #5d4037; margin-top: 15px;">
+            Discover the elegance of tradition with our exclusive rental collection of <strong>Kediya</strong>, <strong>Chaniya Choli</strong>, and <strong>Fancy Dresses</strong>. Crafted with vibrant colors, cultural charm, and festive flair.
+        </p>
+
+       
+
+        <div style="margin-top: 50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+            <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
+                <img src="{{ url_for('static', filename='kediya.jpg') }}" alt="Kediya" style="width: 100%; border-radius: 10px;">
+                <h3 style="color: #bf360c; margin-top: 15px;">Traditional Kediya</h3>
+                <p style="font-size: 14px; color: #616161;">Available in multiple sizes and designs for men & boys.</p>
+            </div>
+
+            <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
+                <img src="{{ url_for('static', filename='choli.jpg') }}" alt="Chaniya Choli" style="width: 100%; border-radius: 10px;">
+                <h3 style="color: #6a1b9a; margin-top: 15px;">Chaniya Choli</h3>
+                <p style="font-size: 14px; color: #616161;">Colorful, festive wear for girls and women.</p>
+            </div>
+
+            <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
+                <img src="{{ url_for('static', filename='costume.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
+                <h3 style="color: #1565c0; margin-top: 15px;">Fancy Dresses</h3>
+                <p style="font-size: 14px; color: #616161;">Perfect for school events, plays, and cultural days.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 50px;">
+            <a href="https://www.instagram.com/image_traditional" target="_blank"
+                style="background-color: #16213e; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
+                📸 Visit Us on Instagram
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
