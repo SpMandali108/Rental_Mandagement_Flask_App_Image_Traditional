@@ -10,7 +10,7 @@ auth = Blueprint('auth', __name__)
 load_dotenv()
 
 mongoUrl = os.environ.get("client")
-client = MongoClient(mongoUrl,tls = True )
+client = MongoClient(mongoUrl, tls=True, tlsAllowInvalidCertificates=True)
 db = client['Image_Traditional']
 collection = db['Form']
 fancy_collection = db['Fancy']
