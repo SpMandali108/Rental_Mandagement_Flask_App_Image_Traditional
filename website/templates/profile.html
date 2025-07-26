@@ -76,6 +76,9 @@
         <span class="summary-icon">💰</span>
         Payment Summary
       </h4>
+
+      
+
       
       <div class="payment-grid">
         <div class="payment-item total">
@@ -139,6 +142,15 @@
       {% endfor %}
     </div>
   </div>
+  <div class="download-section" style="text-align: center; margin-top: 20px;">
+        <form method="POST" action="{{ url_for('auth.download_customer') }}">
+         <input type="hidden" name="mobile" value="{{ customer.mobile }}">
+          <button type="submit" class="download-btn">
+            <i class="btn-icon">⬇️</i>
+              Download Profile
+          </button>
+        </form>
+      </div>
   {% endif %}
 
   {% elif request.method == 'POST' %}
@@ -581,6 +593,24 @@
   body.dark-mode .item-text {
     color: #ddd !important;
   }
+
+  .download-btn {
+  background-color: #2ecc71;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #27ae60;
+  box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+  transform: translateY(-1px);
+}
+
 
   
   @media (max-width: 768px) {

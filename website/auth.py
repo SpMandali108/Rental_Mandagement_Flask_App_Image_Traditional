@@ -3,7 +3,9 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
-
+from fpdf import FPDF
+import io
+from flask import send_file
 
 auth = Blueprint('auth', __name__)
 
@@ -338,8 +340,7 @@ def delete():
 
 @auth.route('/profile', methods=['GET', 'POST'])
 def profile():
-    if not session.get('logged_in'):
-        return redirect(url_for('auth.login'))
+    
 
     if request.method == 'POST':
         mobile = request.form.get('mobile')
@@ -479,6 +480,59 @@ def total():
                            total_fancy_bookings=total_fancy_bookings,
                            total_price=total_price,
                            total_fancy_price=total_fancy_price)
+
+@auth.route('/download-customer', methods=['POST'])
+def download_customer():
+    
+
+    mobile = request.form.get('mobile')
+    if not mobile:
+        return "No mobile number provided", 400
+
+    customer = collection.find_one({"mobile": mobile})
+    if not customer:
+        return "Customer not found", 404
+
+    customer['remaining'] = customer.get('total_price', 0) - customer.get('given_price', 0)
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    pdf.cell(200, 10, txt="Customer Profile", ln=True, align='C')
+    pdf.ln(10)
+
+    fields = [
+        ("Full Name", customer.get('Name', 'N/A')),
+        ("Mobile", customer.get('mobile', 'N/A')),
+        ("Address", customer.get('address', 'N/A')),
+        ("Reference", customer.get('reference', 'N/A')),
+        ("Group", customer.get('group', 'N/A')),
+        ("Deposit", customer.get('deposit', 'N/A')),
+        ("Total Amount", customer.get('total_price', 0)),
+        ("Paid", customer.get('given_price', 0)),
+        ("Remaining", customer.get('remaining', 0)),
+    ]
+
+    for label, value in fields:
+        pdf.cell(200, 10, txt=f"{label}: {value}", ln=True)
+
+    if 'bookings' in customer:
+        pdf.ln(5)
+        pdf.set_font("Arial", size=11)
+        pdf.cell(200, 10, txt="Booking History", ln=True)
+        for date, items in customer['bookings'].items():
+            pdf.cell(200, 10, txt=f"{date}: {', '.join(items)}", ln=True)
+
+    output = io.BytesIO()
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    output.write(pdf_bytes)
+    output.seek(0)
+
+
+    filename = f"{customer.get('Name', 'customer')}_Profile.pdf"
+    return send_file(output, as_attachment=True, download_name=filename)
+
 
 
 
