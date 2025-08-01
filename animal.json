@@ -1,0 +1,20 @@
+[
+    {"name":"Lion","image":"Lion.jpg"},
+    {"name":"Elephant","image":"Elephant.jpg"},
+    {"name":"Tiger","image":"TIger.jpg"},
+    {"name":"Monkey","image":"Monkey.jpg"},
+    {"name":"Panda","image":"Panda.jpg"},
+    {"name":"Rabbit","image":"Rabbit.jpg"},
+    {"name":"Rat","image":"Rat.jpg"},
+    {"name":"Dog","image":"Dog.jpg"},
+    {"name":"Zebra","image":"Zebra.jpg"},
+    {"name":"Tortoise","image":"Tortoise.jpg"},
+    {"name":"Black Dog","image":"Black Dog.jpg"},
+    {"name":"Octopus","image":"Octopus.jpg"},
+    {"name":"Crocodile","image":"Crocodile.jpg"},
+    {"name":"Frog","image":"Frog.jpg"},
+    {"name":"Giraffe","image":"Giraffe.jpg"}
+    
+
+    
+]

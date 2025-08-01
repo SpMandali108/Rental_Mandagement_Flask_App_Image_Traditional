@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="card-container">
+    <div class="card">
+        <h2>Bhagwan</h2>
+        <p>Explore our divine Bhagwan costumes.</p>
+        <a href="bhagwan">View Collection</a>
+    </div>
+
+    <div class="card">
+        <h2>Mataji</h2>
+        <p>Beautiful Mataji dresses in vibrant colors and styles.</p>
+        <a href="mataji">View Collection</a>
+    </div>
+    <div class="card">
+        <h2>Super Hero</h2>
+        <p>Imagine Your Child As An Super Hero.</p>
+        <a href="superhero">View Collection</a>
+    </div>
+    <div class="card">
+        <h2>Birds</h2>
+        <p>Explore The Flying World with Your Child.</p>
+        <a href="bird">View Collection</a>
+    </div>
+    <div class="card">
+        <h2>Nature</h2>
+        <p>Elegant, sustainable design – now available on rent.</p>.</p>
+        <a href="nature">View Collection</a>
+    </div>
+    <div class="card">
+        <h2>Animal</h2>
+        <p>Adorable animal-themed costumes for rent.</p>.</p>
+        <a href="animal">View Collection</a>
+    </div>
+</div> 
+<style>
+    body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.site-title {
+    text-align: center;
+    padding: 1rem;
+    background-color: #222;
+    color: white;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    width: 250px;
+    text-align: center;
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.card a {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #0066cc;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+</style>
+{% endblock %}

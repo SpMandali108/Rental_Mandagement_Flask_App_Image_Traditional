@@ -6,7 +6,7 @@ import os
 from fpdf import FPDF
 import io
 from flask import send_file
-
+import json
 auth = Blueprint('auth', __name__)
 
 load_dotenv()
@@ -534,9 +534,55 @@ def download_customer():
     return send_file(output, as_attachment=True, download_name=filename)
 
 
+@auth.route("/catalogue",methods=["GET","POST"])
+def catalogue():
+    return render_template("catalogue.html")
+
+
+
+@auth.route("/bhagwan")
+def bhagwan():
+    with open('bhagwan.json') as f:
+        products = json.load(f)
+    return render_template("bhagwan.html", products=products)
+
+@auth.route("/mataji")
+def mataji():
+    with open('mataji.json') as f:
+        products = json.load(f)
+    return render_template("mataji.html", products=products)
+
+
+@auth.route("/superhero")
+def superhero():
+    with open('superhero.json') as f:
+        products = json.load(f)
+    return render_template("superhero.html", products=products)
+
+@auth.route("/bird")
+def bird():
+    with open('birds.json') as f:
+        products = json.load(f)
+    return render_template("bird.html", products=products)
+
+@auth.route("/nature")
+def nature():
+    with open('nature.json') as f:
+        products = json.load(f)
+    return render_template("nature.html", products=products)
+
+@auth.route("/animal")
+def animal():
+    with open('animal.json') as f:
+        products = json.load(f)
+    return render_template("animal.html", products=products)
 
 
 
 
-    return render_template("total.html", total_bookings=total_bookings, total_fancy_bookings=total_fancy_bookings)
+
+
+
+
+
 
