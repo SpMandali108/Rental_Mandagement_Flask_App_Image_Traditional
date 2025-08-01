@@ -15,27 +15,33 @@
         </p>
 
        
+<div style="margin-top: 50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
 
-        <div style="margin-top: 50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
-            <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-                <img src="{{ url_for('static', filename='kediya.jpg') }}" alt="Kediya" style="width: 100%; border-radius: 10px;">
-                <h3 style="color: #bf360c; margin-top: 15px;">Traditional Kediya</h3>
-                <p style="font-size: 14px; color: #616161;">Available in multiple sizes and designs for men & boys.</p>
-            </div>
+    <!-- 🟦 Fancy Dresses (moved to top) -->
+    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
+        <a href="{{ url_for('auth.catalogue') }}" style="text-decoration: none; color: inherit;">
+            <img src="{{ url_for('static', filename='costume.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
+            <h3 style="color: #1565c0; margin-top: 15px;">Fancy Dresses</h3>
+            <p style="font-size: 14px; color: #616161;">Perfect for school events, plays, and cultural days.</p>
+        </a>
+    </div>
 
-            <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-                <img src="{{ url_for('static', filename='choli.jpg') }}" alt="Chaniya Choli" style="width: 100%; border-radius: 10px;">
-                <h3 style="color: #6a1b9a; margin-top: 15px;">Chaniya Choli</h3>
-                <p style="font-size: 14px; color: #616161;">Colorful, festive wear for girls and women.</p>
-            </div>
+    <!-- 🔴 Traditional Kediya -->
+    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
+        <img src="{{ url_for('static', filename='kediya.jpg') }}" alt="Kediya" style="width: 100%; border-radius: 10px;">
+        <h3 style="color: #bf360c; margin-top: 15px;">Traditional Kediya</h3>
+        <p style="font-size: 14px; color: #616161;">Available in multiple sizes and designs for men & boys.</p>
+    </div>
 
-            <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-                <a href="{{ url_for('auth.catalogue') }}" style="text-decoration: none; color: inherit;">
-                <img src="{{ url_for('static', filename='costume.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-                <h3 style="color: #1565c0; margin-top: 15px;">Fancy Dresses</h3>
-                <p style="font-size: 14px; color: #616161;">Perfect for school events, plays, and cultural days.</p>
-            </div>
-        </div>
+    <!-- 🟣 Chaniya Choli -->
+    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
+        <img src="{{ url_for('static', filename='choli.jpg') }}" alt="Chaniya Choli" style="width: 100%; border-radius: 10px;">
+        <h3 style="color: #6a1b9a; margin-top: 15px;">Chaniya Choli</h3>
+        <p style="font-size: 14px; color: #616161;">Colorful, festive wear for girls and women.</p>
+    </div>
+
+</div>
+
 
         <div style="margin-top: 50px;">
             <a href="https://www.instagram.com/image_traditional" target="_blank"

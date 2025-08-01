@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Other - Image traditional{% endblock %}
+
+{% block content %}
+<div class="catalogue">
+    {% for product in products %}
+    <div class="product-card">
+        <a href = "{{ url_for('static', filename='Others/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Others/' ~ product.image) }}" alt="{{ product.name }}">
+        </a>
+        <h2>{{ product.name }}</h2>
+    </div>
+    {% endfor %}
+</div>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.catalogue {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+    gap: 30px;
+}
+
+.product-card {
+    background: rgb(255, 255, 255);
+    border: 1px solid #ddd;
+    padding: 10px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    
+}
+
+.product-card:hover {
+    box-shadow: 2px 2px 15px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.product-card h2 {
+    font-size: 16px;
+    margin: 10px 0 0 0;
+}
+.product-card h2 {
+    color: #333;
+}
+</style>
+{% endblock %}

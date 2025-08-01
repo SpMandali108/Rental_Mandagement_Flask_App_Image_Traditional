@@ -577,6 +577,66 @@ def animal():
         products = json.load(f)
     return render_template("animal.html", products=products)
 
+@auth.route("/freedomfighter")
+def freedomfighter():
+    with open('freedomfighter.json') as f:
+        products = json.load(f)
+    return render_template("freedomfighter.html", products=products)
+
+@auth.route("/fruit_vegetable")
+def fruit_vegetable():
+    with open('fruit_vegetable.json') as f:
+        products = json.load(f)
+    return render_template("fruit_vegetable.html", products=products)
+
+@auth.route("/insect")
+def insect():
+    with open('insect.json') as f:
+        products = json.load(f)
+    return render_template("insect.html", products=products)
+
+@auth.route("/cartoon")
+def cartoon():
+    with open('cartoon.json') as f:
+        products = json.load(f)
+    return render_template("cartoon.html", products=products)
+
+@auth.route("/profession")
+def profession():
+    with open('profession.json') as f:
+        products = json.load(f)
+    return render_template("profession.html", products=products)
+
+@auth.route("/regional")
+def regional():
+    with open('regional.json') as f:
+        products = json.load(f)
+    return render_template("regional.html", products=products)
+
+@auth.route("/tiranga")
+def tiranga():
+    with open('tiranga.json') as f:
+        products = json.load(f)
+    return render_template("tiranga.html", products=products)
+
+@auth.route("/international")
+def international():
+    with open('international.json') as f:
+        products = json.load(f)
+    return render_template("international.html", products=products)
+
+@auth.route("/flex")
+def flex():
+    with open('flex.json') as f:
+        products = json.load(f)
+    return render_template("flex.html", products=products)
+
+@auth.route("/other")
+def other():
+    with open('other.json') as f:
+        products = json.load(f)
+    return render_template("other.html", products=products)
+
 
 
 
