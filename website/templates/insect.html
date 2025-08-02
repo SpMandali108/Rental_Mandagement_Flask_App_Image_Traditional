@@ -7,7 +7,7 @@
     {% for product in products %}
     <div class="product-card">
         <a href = "{{ url_for('static', filename='Insects/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Fruit_and_Vegetable/' ~ product.image) }}" alt="{{ product.name }}">
+        <img src="{{ url_for('static', filename='Insects/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

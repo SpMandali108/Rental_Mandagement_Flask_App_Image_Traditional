@@ -1,3 +1,6 @@
 [
-    {}
+    {"name":"Ant","image":"Ant.jpg"},
+    {"name":"Caterpillar","image":"Caterpillar.jpg"},
+    {"name":"Honey Bee","image":"Honey Bee.jpg"},
+    {"name":"Lady Bug","image":"Lady Bug.jpg"}
 ]

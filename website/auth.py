@@ -627,7 +627,7 @@ def international():
 
 @auth.route("/flex")
 def flex():
-    with open('flex.json') as f:
+    with open('flexi.json') as f:
         products = json.load(f)
     return render_template("flex.html", products=products)
 
