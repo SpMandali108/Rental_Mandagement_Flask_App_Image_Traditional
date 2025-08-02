@@ -1,3 +1,19 @@
 [
-    {"name":"Jhanshi Ki Rani","image":"Jhanshi Ki Rani.jpg"}
+    {"name":"Jhanshi Ki Rani","image":"Jhansi ki Rani_01.jpg"},
+    {"name":"Bhagat Singh","image":"Bhagat Singh_02.jpg"},
+    {"name":"Abdul Kalam","image":"Abdul Kalam.jpg"},
+    {"name":"Chandra Shekhar Azad","image":"Chandrashekhar Azad_02.jpg"},
+    {"name":"Dr Radhakrishnan","image":"Dr Radhakrishnan.jpg"},
+    {"name":"Gandhiji","image":"Gandhiji_01.jpg"},
+    {"name":"Gopal Krishna Gokhle","image":"Gopal Krishna Gokhle.jpg"},
+    {"name":"Lokmanya Tilak","image":"Lokmanya Tilak_01.jpg"},
+    {"name":"Maharana Pratap","image":"Maharana Pratap.jpg"},
+    {"name":"Mangal Panday","image":"Mangal Panday_02.jpg"},
+    {"name":"Ravindranath Tagor","image":"Ravindranath Tagor.jpg"},
+    {"name":"Sardar Patel","image":"Sardar Patel.jpg"},
+    {"name":"Shivaji Maharaj","image":"Shivaji Maharaj_02.jpg"},
+    {"name":"Subhashchandra Bose","image":"Subhashchandra Bose.jpg"},
+    {"name":"Swami Vivekanand","image":"Swami Vivekanand_01.jpg"},
+    {"name":"Tantiya Bhil","image":"Tantiya Bhil.jpg"}
+
 ]
