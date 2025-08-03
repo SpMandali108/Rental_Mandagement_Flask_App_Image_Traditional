@@ -1,3 +1,25 @@
 [
-    {}
+    {"name":"Apple","image":"Apple.jpeg"},
+    {"name":"Banana","image":"Banana.jpeg"},
+    {"name":"Bhindi","image":"Bhindi.jpeg"},
+    {"name":"Brinjal","image":"Brinjal.jpeg"},
+    {"name":"Cabbage","image":"Cabbage.jpeg"},
+    {"name":"Cherry","image":"Cherry.jpeg"},
+    {"name":"Grapes","image":"Grapes.jpeg"},
+    {"name":"Laal Mirchi","image":"Laal Mirch.jpeg"},
+    {"name":"Lemon","image":"Lemon.jpeg"},
+    {"name":"Mango","image":"Mango.jpeg"},
+    {"name":"Lauki","image":"Mirchi.jpeg"},
+    {"name":"Muskmelon","image":"Muskmelon.jpeg"},
+    {"name":"Onion","image":"Onion.jpeg"},
+    {"name":"Orange","image":"Orange.jpeg"},
+    {"name":"Peas","image":"Peas.jpeg"},
+    {"name":"Pineapple","image":"Pineapple.jpeg"},
+    {"name":"Pomegrante","image":"Pomegranate.jpeg"},
+    {"name":"Potato","image":"Potato.jpeg"},
+    {"name":"Pumpkin","image":"Pumkeen.jfif"},
+    {"name":"Shimla Mirch","image":"Shimla Mirch.jpeg"},
+    {"name":"Sitafal","image":"Sitafal.jpeg"},
+    {"name":"Strawberry / Lychee","image":"Strawberry-Lychee.jpeg"},
+    {"name":"Watermelon","image":"Water Melon.jpeg"}
 ]

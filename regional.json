@@ -1,3 +1,20 @@
 [
-    {}
+    {"name":"Aadivasi","image":"Aadivasi.jpg"},
+    {"name":"Bengali","image":"Bengali_01.jpg"},
+    {"name":"Kashmiri Girl","image":"Kashmiri Girl_01.jpg"},
+    {"name":"Kashmiri Girl","image":"Kashmiri Girl_02.jpg"},
+    {"name":"Madrasi","image":"Madrasi_01.jpg"},
+    {"name":"Marathi Boy","image":"Marathi Boy_01.jpg"},
+    {"name":"Marathi Boy","image":"Marathi Boy_02.jfif"},
+    {"name":"Marathi Boy","image":"Marathi Boy_03.jpg"},
+    {"name":"Marathi Girl","image":"Marathi Girl_02.jpg"},
+    {"name":"Mizoram Boy","image":"Mizoram Boy_02.jpg"},
+    {"name":"Mizoram Girl","image":"Mizoram Girl_01.jpg"},
+    {"name":"Punjabi Boy","image":"Punjabi_Boy_01.jpg"},
+    {"name":"Punjabi Girl","image":"Punjabi_Girl_01.jpg"},
+    {"name":"Sikh Boy","image":"Sikh Boy_01.jpg"},
+    {"name":"South Boy","image":"South Boy_01.jpg"},
+    {"name":"South Girl","image":"South Girl_01.jpg"},
+    {"name":"Varkari","image":"Varkari_02.jpg"}
+
 ]
