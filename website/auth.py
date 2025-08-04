@@ -7,6 +7,7 @@ from fpdf import FPDF
 import io
 from flask import send_file
 import json
+from flask import send_from_directory
 auth = Blueprint('auth', __name__)
 
 load_dotenv()
@@ -637,7 +638,14 @@ def other():
         products = json.load(f)
     return render_template("other.html", products=products)
 
+@auth.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory('static', 'sitemap.xml')
 
+
+@auth.route('/robots.txt')
+def robots():
+    return "Sitemap: https://image-traditional.onrender.com/sitemap.xml", 200, {'Content-Type': 'text/plain'}
 
 
 
