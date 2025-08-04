@@ -640,7 +640,7 @@ def other():
 
 @auth.route("/sitemap.xml")
 def sitemap():
-    return send_from_directory('static', 'sitemap.xml')
+    return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
 
 
 @auth.route('/robots.txt')
