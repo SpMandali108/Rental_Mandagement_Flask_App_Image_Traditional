@@ -11,8 +11,8 @@ Discover high-quality regional fancy dress costumes for school events and partie
 <div class="catalogue">
     {% for product in products %}
     <div class="product-card">
-        <a href = "{{ url_for('static', filename='Regional/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Regional/' ~ product.image) }}" alt="{{ product.name }}">
+        <a href = "{{ url_for('static', filename='Regional_Webp/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Regional_Webp/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

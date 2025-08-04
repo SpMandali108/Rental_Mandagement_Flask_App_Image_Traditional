@@ -10,8 +10,8 @@ Discover high-quality flex fancy dress costumes for school events and parties at
 <div class="catalogue">
     {% for product in products %}
     <div class="product-card">
-        <a href = "{{ url_for('static', filename='Flexi/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Flexi/' ~ product.image) }}" alt="{{ product.name }}">
+        <a href = "{{ url_for('static', filename='Flexi_Webp/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Flexi_Webp/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

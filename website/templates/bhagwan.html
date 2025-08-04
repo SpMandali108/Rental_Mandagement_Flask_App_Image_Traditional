@@ -11,8 +11,8 @@ Discover high-quality divine fancy dress costumes for school events and parties 
 <div class="catalogue">
     {% for product in products %}
     <div class="product-card">
-        <a href = "{{ url_for('static', filename='Bhagwan/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Bhagwan/' ~ product.image) }}" alt="{{ product.name }}">
+        <a href = "{{ url_for('static', filename='Bhagwan_Webp/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Bhagwan_Webp/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

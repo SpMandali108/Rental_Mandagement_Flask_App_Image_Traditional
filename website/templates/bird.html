@@ -10,8 +10,8 @@ Discover high-quality birds fancy dress costumes for school events and parties a
 <div class="catalogue">
     {% for product in products %}
     <div class="product-card">
-        <a href = "{{ url_for('static', filename='Birds/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Birds/' ~ product.image) }}" alt="{{ product.name }}">
+        <a href = "{{ url_for('static', filename='Birds_Webp/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Birds_Webp/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

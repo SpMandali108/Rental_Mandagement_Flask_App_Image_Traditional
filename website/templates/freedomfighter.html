@@ -8,8 +8,8 @@
 <div class="catalogue">
     {% for product in products %}
     <div class="product-card">
-        <a href = "{{ url_for('static', filename='Freedom Fighter/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Freedom Fighter/' ~ product.image) }}" alt="{{ product.name }}">
+        <a href = "{{ url_for('static', filename='Freedom Fighter_Webp/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Freedom Fighter_Webp/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

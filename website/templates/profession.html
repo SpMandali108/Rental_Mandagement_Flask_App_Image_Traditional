@@ -10,8 +10,8 @@ Discover high-quality profession fancy dress costumes for school events and part
 <div class="catalogue">
     {% for product in products %}
     <div class="product-card">
-        <a href = "{{ url_for('static', filename='Profession/' ~ product.image) }}" target="_blank">
-        <img src="{{ url_for('static', filename='Profession/' ~ product.image) }}" alt="{{ product.name }}">
+        <a href = "{{ url_for('static', filename='Profession_Webp/' ~ product.image) }}" target="_blank">
+        <img src="{{ url_for('static', filename='Profession_Webp/' ~ product.image) }}" alt="{{ product.name }}">
         </a>
         <h2>{{ product.name }}</h2>
     </div>

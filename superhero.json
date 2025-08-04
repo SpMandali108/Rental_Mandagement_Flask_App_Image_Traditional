@@ -1,8 +1,8 @@
 [
-    {"name":"Superman","image":"Super Man.jpg"},
-    {"name":"Batman","image":"Bat Man.jpg"},
-    {"name":"Spiderman","image":"Spider Man.jpeg"},
-    {"name":"Bahubali","image":"Bahubali.jpg"},
-    {"name":"Shaktiman","image":"Shaktiman.jpg"},
-    {"name":"Captain America","image":"Captain America.jpg"}
+    {"name":"Superman","image":"Super Man.webp"},
+    {"name":"Batman","image":"Bat Man.webp"},
+    {"name":"Spiderman","image":"Spider Man.webp"},
+    {"name":"Bahubali","image":"Bahubali.webp"},
+    {"name":"Shaktiman","image":"Shaktiman.webp"},
+    {"name":"Captain America","image":"Captain America.webp"}
 ]
