@@ -392,18 +392,87 @@ def calendar():
     if request.method == 'POST':
         date = request.form.get('date')
         if date:
-            customers = collection.find({f"bookings.{date}": {"$exists": True}})
-            for c in customers:
-                products = c['bookings'].get(date, [])
-                bookings_on_date.append({
-                    "Name": c.get("Name", "Unknown"),
-                    "mobile": c.get("mobile", "Unknown"),
-                    "address": c.get("address", "Not provided"),
-                    "deposit": c.get("deposit", "Not provided"),
-                    "group": c.get("group", "Not specified"),
-                    "reference": c.get("reference", ""),
-                    "products": products
-                })
+            try:
+                # Regular bookings from main collection
+                customers = collection.find({f"bookings.{date}": {"$exists": True}})
+                
+                # Fancy bookings from fancy collection (check both start and end dates)
+                fcustomers_start = fancy_collection.find({"start_date": date})
+                fcustomers_end = fancy_collection.find({"end_date": date})
+
+                # Process regular bookings
+                for c in customers:
+                    products = c['bookings'].get(date, [])
+                    bookings_on_date.append({
+                        "Name": c.get("Name", "Unknown"),
+                        "mobile": c.get("mobile", "Unknown"),
+                        "address": c.get("address", "Not provided"),
+                        "deposit": c.get("deposit", "Not provided"),
+                        "group": c.get("group", "Not specified"),
+                        "reference": c.get("reference", ""),
+                        "products": products,
+                        "booking_type": "regular"  # Add type identifier
+                    })
+
+                # Process fancy bookings - combine start and end date matches
+                processed_ids = set()  # To avoid duplicates
+                
+                # Process bookings that start on this date
+                for fc in fcustomers_start:
+                    fc_id = str(fc.get("_id", ""))
+                    if fc_id not in processed_ids:
+                        processed_ids.add(fc_id)
+                        start_date = fc.get("start_date", "")
+                        end_date = fc.get("end_date", "")
+                        
+                        # Determine date match type
+                        date_match_type = ""
+                        if start_date == date and end_date == date:
+                            date_match_type = "both"  # Same day booking
+                        elif start_date == date:
+                            date_match_type = "start"  # Booking starts today
+                        
+                        bookings_on_date.append({
+                            "Name": fc.get("name", "Unknown"),
+                            "mobile": fc.get("mobile", "Unknown"),
+                            "address": fc.get("Address", "Not provided"),
+                            "start_date": start_date,
+                            "end_date": end_date,
+                            "price": fc.get("price", 0),
+                            "costume": fc.get("costume", ""),
+                            "details": fc.get("details", ""),
+                            "booking_type": "fancy",
+                            "date_match_type": date_match_type
+                        })
+                
+                # Process bookings that end on this date (avoid duplicates)
+                for fc in fcustomers_end:
+                    fc_id = str(fc.get("_id", ""))
+                    if fc_id not in processed_ids:
+                        processed_ids.add(fc_id)
+                        start_date = fc.get("start_date", "")
+                        end_date = fc.get("end_date", "")
+                        
+                        bookings_on_date.append({
+                            "Name": fc.get("name", "Unknown"),
+                            "mobile": fc.get("mobile", "Unknown"),
+                            "address": fc.get("Address", "Not provided"),
+                            "start_date": start_date,
+                            "end_date": end_date,
+                            "price": fc.get("price", 0),
+                            "costume": fc.get("costume", ""),
+                            "details": fc.get("details", ""),
+                            "booking_type": "fancy",
+                            "date_match_type": "end"  # Booking ends today
+                        })
+
+                # Sort bookings by name for better organization
+                bookings_on_date.sort(key=lambda x: x.get('Name', '').lower())
+                
+            except Exception as e:
+                # Log the error and show user-friendly message
+                print(f"Error fetching bookings for {date}: {str(e)}")
+                flash(f"Error retrieving bookings: {str(e)}", "error")
 
     return render_template("calendar.html", date=date, bookings=bookings_on_date)
 

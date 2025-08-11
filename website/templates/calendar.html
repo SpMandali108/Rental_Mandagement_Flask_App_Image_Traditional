@@ -3,99 +3,224 @@
 {% block title %}Booking Calendar | Image Traditional{% endblock %}
 
 {% block robots %}
-  <meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="container py-5 text-dark bg-white dark-mode-text-light dark-mode-bg-dark">
+
+<style>
+    /* ===== Default Table Cell Styling ===== */
+ .price-label {
+            background-color: rgba(33, 150, 243, 0.15);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+.costume-label {
+            background-color: rgba(230, 189, 55, 0.226);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #7e6d0c;
+        }
+
+
+    
+</style>
+<div class="container py-5">
     <h2 class="mb-4 text-center">
-        <i class="bi bi-calendar3"></i>🗓Booking Calendar
+        <i class="bi bi-calendar3"></i> 🗓️ Booking Calendar
     </h2>
 
     <form method="POST" class="mb-4">
         <div class="input-group">
-            <input type="date" name="date" class="form-control bg-light text-dark dark-mode-input" required>
-            <button type="submit" class="btn btn-primary dark-mode-btn">Search</button>
+            <input type="date" name="date" class="form-control dark-mode-input" required>
+            <button type="submit" class="btn btn-primary dark-mode-btn">Search Bookings</button>
         </div>
     </form>
 
     {% if date %}
-        <h4 class="mt-3 text-success dark-mode-text-success">Bookings for <strong>{{ date }}</strong></h4>
+        <h4 class="heading" style="color: rgb(77, 161, 46);">Bookings for <strong>{{ date }}</strong></h4>
 
         {% if bookings %}
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered table-striped mt-3 dark-mode-table">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Address</th>
-                            <th>Deposit</th>
-                            <th>Group</th>
-                            <th>Reference</th>
-                            <th>Products</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for b in bookings %}
-                        <tr>
-                            <td>{{ b.Name }}</td>
-                            <td>{{ b.mobile }}</td>
-                            <td>{{ b.address }}</td>
-                            <td>{{ b.deposit }}</td>
-                            <td>{{ b.group }}</td>
-                            <td>{{ b.reference }}</td>
-                            <td>{{ b.products | join(', ') }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="row">
+                <!-- Regular Bookings -->
+                {% set regular_bookings = bookings | selectattr('products', 'defined') | list %}
+                {% if regular_bookings %}
+                <div class="col-12 mb-4">
+                    <h5 class="text-primary">
+                        <i class="bi bi-bag"></i> Traditional Bookings ({{ regular_bookings | length }})
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped dark-mode-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Mobile</th>
+                                    <th>Address</th>
+                                    <th>Deposit</th>
+                                    <th>Group</th>
+                                    <th>Reference</th>
+                                    <th>Products</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for b in regular_bookings %}
+                                <tr>
+                                    <td><strong>{{ b.Name }}</strong></td>
+                                    <td>
+                                        <a href="tel:{{ b.mobile }}" class="text-decoration-none">
+                                            <i class="bi bi-telephone"></i> {{ b.mobile }}
+                                        </a>
+                                    </td>
+                                    <td>{{ b.address }}</td>
+                                    <td>
+                                        {% if b.deposit != "Not provided" %}
+                                            <span class="badge bg-success">{{ b.deposit }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ b.deposit }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ b.group }}</td>
+                                    <td>{{ b.reference }}</td>
+                                    <td>
+                                        {% if b.products %}
+                                            <ul class="list-unstyled mb-0">
+                                                {% for product in b.products %}
+                                                    <li><i class="bi bi-box"></i> {{ product }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <em class="text-muted">No products</em>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Fancy Bookings -->
+                {% set fancy_bookings = bookings | rejectattr('products', 'defined') | list %}
+                {% if fancy_bookings %}
+                <div class="col-12 mb-4">
+                    <h5 class="text-info">
+                        <i class="bi bi-star"></i> Fancy Dress Bookings ({{ fancy_bookings | length }})
+                    </h5>
+                    
+                    <!-- Legend -->
+                    <div class="alert alert-info mb-3" role="alert">
+                        <small>
+                            <strong>Color Guide:</strong>
+                            <span class="badge bg-success ms-2">START</span> Booking starts today
+                            <span class="badge bg-danger ms-2">END</span> Booking ends today
+                        </small>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped dark-mode-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Mobile</th>
+                                    <th>Address</th>
+                                    <th>Date Range</th>
+                                    <th>Price</th>
+                                    <th>Costume</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for b in fancy_bookings %}
+                                <tr class="{% if b.date_match_type == 'start' %}booking-start-date{% elif b.date_match_type == 'end' %}booking-end-date{% elif b.date_match_type == 'both' %}booking-same-date{% endif %}">
+                                    <td><strong>{{ b.Name }}</strong></td>
+                                    <td>
+                                        <a href="tel:{{ b.mobile }}" class="text-decoration-none">
+                                            <i class="bi bi-telephone"></i> {{ b.mobile }}
+                                        </a>
+                                    </td>
+                                    <td>{{ b.address }}</td>
+                                    <td>
+                                        <small>
+                                            <strong>Start:</strong> {{ b.start_date }}
+                                            {% if b.date_match_type == 'start' or b.date_match_type == 'both' %}
+                                                <span class="badge bg-success ms-1">START</span>
+                                            {% endif %}
+                                            <br>
+                                            <strong>End:</strong> {{ b.end_date }}
+                                            {% if b.date_match_type == 'end' or b.date_match_type == 'both' %}
+                                                <span class="badge bg-danger ms-1">END</span>
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if b.price and b.price != 0 %}
+                                            <span class="price-label" >₹{{ b.price }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if b.costume %}
+                                            <span class="costume-label">{{ b.costume }}</span>
+                                        {% else %}
+                                            <em class="text-muted">No costume</em>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if b.details %}
+                                            <small>{{ b.details }}</small>
+                                        {% else %}
+                                            <em class="text-muted">No details</em>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
             </div>
+
+            <!-- Summary Card -->
+            <div class="card mt-4 dark-mode-card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-graph-up"></i> Booking Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h4 class="text-primary">{{ bookings | length }}</h4>
+                            <small>Total Bookings</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="text-success">{{ regular_bookings | length }}</h4>
+                            <small>Traditional Bookings</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="text-info">{{ fancy_bookings | length }}</h4>
+                            <small>Fancy Dress Bookings</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         {% else %}
-            <p class="text-danger">No bookings found for {{ date }}.</p>
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> No bookings found for {{ date }}.
+            </div>
         {% endif %}
+    {% else %}
+        <div class="text-center mt-5">
+            <i class="bi bi-calendar-check" style="font-size: 3rem; color: var(--muted);"></i>
+            <p class="mt-3 text-muted">Select a date above to view bookings</p>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
-
-<style>
-
-body.dark-mode,
-.dark-mode-bg-dark {
-    background-color: #121212 !important;
-    color: #ffffff !important;
-}
-
-.dark-mode-text-light {
-    color: #ffffff !important;
-}
-
-.dark-mode-text-success {
-    color: #66ff99 !important;
-}
-
-.dark-mode-input {
-    background-color: #1f1f1f !important;
-    color: #ffffff !important;
-    border: 1px solid #444 !important;
-}
-
-.dark-mode-btn {
-    background-color: #007bff !important;
-    border: none !important;
-    color: white !important;
-}
-
-.dark-mode-btn:hover {
-    background-color: #0056b3 !important;
-}
-
-.dark-mode-table {
-    background-color: #1e1e1e !important;
-    color: #fff !important;
-}
-
-.dark-mode-table thead {
-    background-color: #2c2c2c !important;
-}
-</style>
