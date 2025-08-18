@@ -716,10 +716,84 @@ def sitemap():
 def robots():
     return "Sitemap: https://image-traditional.onrender.com/sitemap.xml", 200, {'Content-Type': 'text/plain'}
 
+@auth.route('/search', methods=['GET', 'POST'])
+def search():
+    query = None
+    normal_results = []
+    fancy_results = []
 
+    if request.method == 'POST':
+        query = request.form.get('search')
 
+        # --------------------------
+        # Normal Collection Search
+        # --------------------------
+        normal_matches = collection.find({
+            "$or": [
+                {"Name": {"$regex": query, "$options": "i"}},
+                {"mobile": {"$regex": query, "$options": "i"}},
+                {"address": {"$regex": query, "$options": "i"}},
+                {"group": {"$regex": query, "$options": "i"}},
+                {"reference": {"$regex": query, "$options": "i"}},
+                {"bookings": {"$exists": True}}
+            ]
+        })
 
+        for c in normal_matches:
+            bookings = c.get("bookings", {})
+            total_price = bookings.get("total_price", c.get("total_price", ""))
+            given_price = bookings.get("given_price", c.get("given_price", ""))
 
+            for date_key, products in bookings.items():
+                if date_key in ["total_price", "given_price"]:
+                    continue
+                if isinstance(products, list):
+                    for product in products:
+                        if query.lower() in str(product).lower() \
+                           or query.lower() in c.get("Name", "").lower() \
+                           or query.lower() in c.get("mobile", "").lower() \
+                           or query.lower() in c.get("address", "").lower() \
+                           or query.lower() in c.get("group", "").lower() \
+                           or query.lower() in c.get("reference", "").lower():
+                            normal_results.append({
+                                "name": c.get("Name", "N/A"),
+                                "mobile": c.get("mobile", "N/A"),
+                                "address": c.get("address", "N/A"),
+                                "group": c.get("group", "N/A"),
+                                "reference": c.get("reference", "N/A"),
+                                "product_code": product,
+                                "date": date_key,
+                                "total_price": total_price,
+                                "given_price": given_price
+                            })
 
+        # --------------------------
+        # Fancy Collection Search
+        # --------------------------
+        fancy_matches = fancy_collection.find({
+            "$or": [
+                {"name": {"$regex": query, "$options": "i"}},
+                {"mobile": {"$regex": query, "$options": "i"}},
+                {"address": {"$regex": query, "$options": "i"}},
+                {"Address": {"$regex": query, "$options": "i"}},  # handle capital A
+                {"costume": {"$regex": query, "$options": "i"}},
+                {"details": {"$regex": query, "$options": "i"}},
+            ]
+        })
 
+        for f in fancy_matches:
+            fancy_results.append({
+                "name": f.get("name", "N/A"),
+                "mobile": f.get("mobile", "N/A"),
+                "address": f.get("address") or f.get("Address", "N/A"),
+                "costume": f.get("costume", "N/A"),
+                "details": f.get("details", "N/A"),
+                "start_date": f.get("start_date", "N/A"),
+                "end_date": f.get("end_date", "N/A"),
+                "price": f.get("price", "N/A"),
+            })
+
+    return render_template("search.html", query=query,
+                           normal_results=normal_results,
+                           fancy_results=fancy_results)
 
