@@ -722,6 +722,9 @@ def search():
     normal_results = []
     fancy_results = []
 
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
     if request.method == 'POST':
         query = request.form.get('search')
 
