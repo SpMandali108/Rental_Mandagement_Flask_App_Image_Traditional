@@ -707,6 +707,18 @@ def other():
         products = json.load(f)
     return render_template("other.html", products=products)
 
+@auth.route("/choli")
+def choli():
+    with open('choli.json') as f:
+        products = json.load(f)
+    return render_template("choli.html", products=products)
+
+@auth.route("/kediya")
+def kediya():
+    with open('kediya.json') as f:
+        products = json.load(f)
+    return render_template("kediya.html", products=products)
+
 @auth.route("/sitemap.xml")
 def sitemap():
     return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
