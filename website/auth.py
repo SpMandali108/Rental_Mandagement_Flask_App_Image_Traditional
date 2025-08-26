@@ -553,8 +553,6 @@ def total():
 
 @auth.route('/download-customer', methods=['POST'])
 def download_customer():
-    
-
     mobile = request.form.get('mobile')
     if not mobile:
         return "No mobile number provided", 400
@@ -563,45 +561,117 @@ def download_customer():
     if not customer:
         return "Customer not found", 404
 
+    # Remaining price
     customer['remaining'] = customer.get('total_price', 0) - customer.get('given_price', 0)
 
-    pdf = FPDF()
+    class PDF(FPDF):
+        def header(self):
+            logo_path = os.path.join(os.path.dirname(__file__), "static", "favicon.png")
+            if os.path.exists(logo_path):
+                self.image(logo_path, 13, 5, 15)
+
+            self.set_font('times', 'B', 20)
+            self.set_x(30)
+            self.cell(0, 10, 'Image Traditional', ln=1)
+
+            self.set_x(15)
+            self.set_font('helvetica', '', 10)
+            self.multi_cell(
+                0, 5,
+                "Nr. Laxminarayan Bus-stand, Opp Prarabdh Soc.\n"
+                "Maninagar(E), A'bad-08",
+                align='L'
+            )
+
+            self.set_font('helvetica', 'B', 10)
+            self.set_y(12)
+            self.cell(0, 5, "Prakash Mandali: 9428610384", align='R')
+
+            self.ln(20)
+            y = self.get_y()
+            self.line(15, y, 200, y)
+            self.ln(5)
+
+        def footer(self):
+            self.set_y(-15)
+            self.set_font('helvetica', 'I', 10)
+            self.cell(0, 10, f'Page {self.page_no()}/{{nb}}', align='C')
+
+    pdf = PDF('P', 'mm', 'A4')
+    pdf.alias_nb_pages()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.set_font('times', 'B', 11)
 
-    pdf.cell(200, 10, txt="Customer Profile", ln=True, align='C')
-    pdf.ln(10)
+    # ------- Customer Details -------
+    def add_field(label, value):
+        pdf.set_x(15)
+        text = f"{label}: {value}"
+        pdf.cell(pdf.get_string_width(text)+4, 8, text, border=1)
+        pdf.ln(10)
 
-    fields = [
-        ("Full Name", customer.get('Name', 'N/A')),
-        ("Mobile", customer.get('mobile', 'N/A')),
-        ("Address", customer.get('address', 'N/A')),
-        ("Reference", customer.get('reference', 'N/A')),
-        ("Group", customer.get('group', 'N/A')),
-        ("Deposit", customer.get('deposit', 'N/A')),
-        ("Total Amount", customer.get('total_price', 0)),
-        ("Paid", customer.get('given_price', 0)),
-        ("Remaining", customer.get('remaining', 0)),
-    ]
+    add_field("Name", customer.get("Name", "N/A"))
+    add_field("Mobile", customer.get("mobile", "N/A"))
+    add_field("Address", customer.get("address", "N/A"))
+    add_field("Group", customer.get("group", "N/A"))
+    add_field("Reference", customer.get("reference", "N/A"))
+    add_field("Deposit", customer.get("deposit", "N/A"))
 
-    for label, value in fields:
-        pdf.cell(200, 10, txt=f"{label}: {value}", ln=True)
+    pdf.ln(3)
 
-    if 'bookings' in customer:
-        pdf.ln(5)
-        pdf.set_font("Arial", size=11)
-        pdf.cell(200, 10, txt="Booking History", ln=True)
-        for date, items in customer['bookings'].items():
-            pdf.cell(200, 10, txt=f"{date}: {', '.join(items)}", ln=True)
+    # ------- Table Header -------
+    pdf.set_font("helvetica", "B", 10)
+    pdf.set_x(15)
+    pdf.cell(10, 10, "Sr", border=1, align="C")
+    pdf.cell(40, 10, "Product Code", border=1, align="C")
+    pdf.cell(40, 10, "Image", border=1, align="C")
+    pdf.cell(40, 10, "Date", border=1, align="C")
+    pdf.ln()
 
-    output = io.BytesIO()
-    pdf_bytes = pdf.output(dest='S').encode('latin1')
-    output.write(pdf_bytes)
-    output.seek(0)
+    pdf.set_font("helvetica", "", 10)
 
+    # ------- Fill Table with Bookings -------
+    sr = 1
+    bookings = customer.get("bookings", {})
+
+    for date, codes in bookings.items():
+        for code in codes:
+            pdf.set_x(15)
+            pdf.cell(10, 25, str(sr), border=1, align="C")
+            pdf.cell(40, 25, code, border=1, align="C")
+
+            # Reserve image cell
+            x = pdf.get_x()
+            y = pdf.get_y()
+            pdf.cell(40, 25, "", border=1)
+
+            # Find correct static image
+            img_path = None
+            if code.startswith("K"):
+                img_path = os.path.join(os.path.dirname(__file__), "static", "kediya", f"{code}.webp")
+            elif code.startswith("C"):
+                img_path = os.path.join(os.path.dirname(__file__), "static", "choli", f"{code}.webp")
+
+            if img_path and os.path.exists(img_path):
+                pdf.image(img_path, x+2, y+2, 36, 21)  # fit in cell
+
+            pdf.cell(40, 25, date, border=1, align="C")
+            pdf.ln()
+
+            sr += 1
+
+    # ------- Prices -------
+    pdf.ln(5)
+    add_field("Total Price", customer.get("total_price", 0))
+    add_field("Given Price", customer.get("given_price", 0))
+    add_field("Remaining", customer["remaining"])
+
+    # Output PDF
+    pdf_buffer = io.BytesIO()
+    pdf.output(pdf_buffer)
+    pdf_buffer.seek(0)
 
     filename = f"{customer.get('Name', 'customer')}_Profile.pdf"
-    return send_file(output, as_attachment=True, download_name=filename)
+    return send_file(pdf_buffer, as_attachment=True, download_name=filename, mimetype="application/pdf")
 
 
 @auth.route("/catalogue",methods=["GET","POST"])
