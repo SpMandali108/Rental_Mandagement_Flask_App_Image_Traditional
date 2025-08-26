@@ -666,11 +666,15 @@ def download_customer():
     add_field("Remaining", customer["remaining"])
 
     # Output PDF
-    pdf_buffer = io.BytesIO()
-    pdf.output(pdf_buffer)
+    # Replace the PDF output section at the end of your function with this:
+
+    # Output PDF - CORRECTED VERSION
+    pdf_bytes = pdf.output()  # Get PDF as bytes (no argument)
+    pdf_buffer = io.BytesIO(pdf_bytes)  # Create BytesIO from the bytes
     pdf_buffer.seek(0)
 
     filename = f"{customer.get('Name', 'customer')}_Profile.pdf"
+
     return send_file(pdf_buffer, as_attachment=True, download_name=filename, mimetype="application/pdf")
 
 
