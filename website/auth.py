@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash, Response
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-import os
+import os,csv
 from fpdf import FPDF
 import io
 from flask import send_file
@@ -903,3 +903,59 @@ def search():
                            normal_results=normal_results,
                            fancy_results=fancy_results)
 
+@auth.route("/export_bookings")
+def export_bookings():
+    docs = list(collection.find())
+
+    # Collect all unique booking dates (keys in bookings except prices)
+    date_keys = set()
+    for doc in docs:
+        bookings = doc.get("bookings", {})
+        for key in bookings.keys():
+            if key not in ("given_price", "total_price"):
+                date_keys.add(key)
+    date_keys = sorted(date_keys)
+
+    # Collect all other top-level keys except '_id' and 'bookings'
+    other_keys = set()
+    for doc in docs:
+        for key in doc.keys():
+            if key not in ("_id", "bookings"):
+                other_keys.add(key)
+    other_keys = sorted(other_keys)
+
+    # Prepare CSV fieldnames (other keys + booking dates)
+    fieldnames = other_keys + date_keys
+
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for doc in docs:
+        row = {}
+
+        # Add other top-level fields
+        for key in other_keys:
+            value = doc.get(key, "")
+            # Convert complex types to string
+            if isinstance(value, (dict, list)):
+                value = str(value)
+            row[key] = value
+
+        # Add booking dates with product lists
+        bookings = doc.get("bookings", {})
+        for date in date_keys:
+            products = bookings.get(date, [])
+            if isinstance(products, list):
+                row[date] = ", ".join(str(p) for p in products)
+            else:
+                row[date] = ""
+
+        writer.writerow(row)
+
+    output.seek(0)
+    return Response(
+        output,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=bookings_export.csv"}
+    )

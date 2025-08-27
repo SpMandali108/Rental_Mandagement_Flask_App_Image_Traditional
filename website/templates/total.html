@@ -92,6 +92,10 @@
             <i class="btn-icon">🖨️</i>
             Print Summary
         </button>
+        <a href="/export_bookings" class="btn btn-primary" role="button" download>
+            <i class="btn-icon">⬇️</i>
+            Download Bookings CSV
+        </a>
     </div>
 </div>
 
@@ -284,6 +288,7 @@
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 2rem;
 }
 
 .btn {
@@ -298,6 +303,7 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
+    user-select: none;
 }
 
 .btn-primary {
@@ -307,7 +313,8 @@
 
 .btn-primary:hover {
     background: #2c5282;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .btn-secondary {
