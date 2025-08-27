@@ -670,15 +670,25 @@ def download_customer():
 
     # Output PDF - CORRECTED VERSION
     # Output PDF as bytes
-    pdf_bytes = pdf.output(dest="S").encode("latin1")
+    pdf_output = pdf.output(dest="S")
+
+# If it's str, encode; if it's already bytes/bytearray, just wrap
+    if isinstance(pdf_output, str):
+        pdf_bytes = pdf_output.encode("latin1")
+    else:
+        pdf_bytes = bytes(pdf_output)   # handles bytearray or bytes
+
     pdf_buffer = io.BytesIO(pdf_bytes)
     pdf_buffer.seek(0)
 
     filename = f"{customer.get('Name', 'customer')}_Profile.pdf"
 
-    return send_file(pdf_buffer, as_attachment=True,
-                    download_name=filename,
-                    mimetype="application/pdf")
+    return send_file(
+        pdf_buffer,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/pdf"
+    )
 
 
 
