@@ -669,13 +669,17 @@ def download_customer():
     # Replace the PDF output section at the end of your function with this:
 
     # Output PDF - CORRECTED VERSION
-    pdf_bytes = pdf.output()  # Get PDF as bytes (no argument)
-    pdf_buffer = io.BytesIO(pdf_bytes)  # Create BytesIO from the bytes
+    # Output PDF as bytes
+    pdf_bytes = pdf.output(dest="S").encode("latin1")
+    pdf_buffer = io.BytesIO(pdf_bytes)
     pdf_buffer.seek(0)
 
     filename = f"{customer.get('Name', 'customer')}_Profile.pdf"
 
-    return send_file(pdf_buffer, as_attachment=True, download_name=filename, mimetype="application/pdf")
+    return send_file(pdf_buffer, as_attachment=True,
+                    download_name=filename,
+                    mimetype="application/pdf")
+
 
 
 @auth.route("/catalogue",methods=["GET","POST"])
