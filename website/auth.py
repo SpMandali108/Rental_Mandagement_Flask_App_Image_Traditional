@@ -8,6 +8,8 @@ import io
 from flask import send_file
 import json
 from flask import send_from_directory
+ # Find correct static image
+from flask import current_app
 auth = Blueprint('auth', __name__)
 
 load_dotenv()
@@ -644,12 +646,13 @@ def download_customer():
             y = pdf.get_y()
             pdf.cell(40, 25, "", border=1)
 
-            # Find correct static image
-            img_path = None
+           
+
             if code.startswith("K"):
-                img_path = os.path.join(os.path.dirname(__file__), "static", "kediya", f"{code}.webp")
+                img_path = os.path.join(current_app.static_folder, "kediya", f"{code}.webp")
             elif code.startswith("C"):
-                img_path = os.path.join(os.path.dirname(__file__), "static", "choli", f"{code}.webp")
+                img_path = os.path.join(current_app.static_folder, "choli", f"{code}.webp")
+
 
             if img_path and os.path.exists(img_path):
                 pdf.image(img_path, x+2, y+2, 36, 21)  # fit in cell
