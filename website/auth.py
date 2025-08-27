@@ -649,9 +649,9 @@ def download_customer():
            
 
             if code.startswith("K"):
-                img_path = os.path.join(current_app.static_folder, "Kediya", f"{code}.webp")
+                img_path = os.path.join(current_app.static_folder, "KediyaJpg", f"{code}.jpg")
             elif code.startswith("C"):
-                img_path = os.path.join(current_app.static_folder, "Choli", f"{code}.webp")
+                img_path = os.path.join(current_app.static_folder, "CholiJpg", f"{code}.jpg")
 
 
             if img_path and os.path.exists(img_path):
