@@ -175,6 +175,8 @@ def book():
 
     return render_template("book.html")
 
+from datetime import datetime
+
 @auth.route('/modify', methods=['GET', 'POST'])
 def modify():
     if not session.get('logged_in'):
@@ -182,10 +184,17 @@ def modify():
 
     if request.method == 'POST':
         mobile = request.form.get('mobile')
-        date = request.form.get('date')
+        date_input = request.form.get('date')  # from <input type="date"> (YYYY-MM-DD)
         old_products_str = request.form.get('old_products')
         new_products_str = request.form.get('new_products')
         price_diff_str = request.form.get('price_diff')
+
+        # Convert date → DD-MM-YY
+        try:
+            date_obj = datetime.strptime(date_input, "%Y-%m-%d")
+            date = date_obj.strftime("%d-%m-%y")
+        except ValueError:
+            date = date_input  # fallback (in case already stored in correct format)
 
         customer = collection.find_one({"mobile": mobile})
         if not customer:
@@ -222,6 +231,7 @@ def modify():
                 flash(conflict_msg, "error")
                 return redirect(url_for('auth.modify'))
 
+        # Update booking
         updated = [p for p in bookings[date] if p not in old_products]
         updated.extend(new_products)
         bookings[date] = updated
@@ -242,8 +252,6 @@ def modify():
             }}
         )
 
-        customer = collection.find_one({"mobile": mobile})
-       
         flash(f"✅ Booking updated for {mobile} on {date}!", "success")
         return redirect(url_for('auth.modify'))
 
@@ -295,16 +303,39 @@ def delete():
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
-        mobile = request.form.get('mobile')
-        date = request.form.get('date')
-        product = request.form.get('product').strip()
+        mobile = request.form.get('mobile', "").strip()
+        date_input = request.form.get('date', "").strip()
+        product = request.form.get('product', "").strip()
+        price_diff_str = request.form.get('price_diff', "").strip()
 
-        try:
-            price_diff = float(request.form.get('price_diff'))
-        except ValueError:
-            flash("❌ Invalid price difference value.", "error")
+        # ✅ Validate Mobile
+        if not mobile.isdigit() or len(mobile) != 10:
+            flash("❌ Invalid mobile number. Please enter a 10-digit number.", "error")
             return redirect(url_for('auth.delete'))
 
+        # ✅ Convert Date Format (YYYY-MM-DD → DD-MM-YY)
+        try:
+            date_obj = datetime.strptime(date_input, "%Y-%m-%d")
+            date = date_obj.strftime("%d-%m-%y")
+        except ValueError:
+            flash("❌ Invalid date format.", "error")
+            return redirect(url_for('auth.delete'))
+
+        # ✅ Validate Price Difference
+        try:
+            price_diff = int(price_diff_str)
+            if price_diff <= 0:
+                raise ValueError
+        except ValueError:
+            flash("❌ Price difference must be a positive number.", "error")
+            return redirect(url_for('auth.delete'))
+
+        # ✅ Validate Product
+        if not product:
+            flash("❌ Product name cannot be empty.", "error")
+            return redirect(url_for('auth.delete'))
+
+        # 🔎 Fetch Customer
         customer = collection.find_one({"mobile": mobile})
         if not customer:
             flash(f"❌ No customer found with mobile number {mobile}.", "error")
@@ -312,10 +343,12 @@ def delete():
 
         bookings = customer.get('bookings', {})
         products_for_date = bookings.get(date)
+
         if not products_for_date:
-            flash(f"❌ No bookings found for date {date}.", "error")
+            flash(f"❌ No bookings found for {date}.", "error")
             return redirect(url_for('auth.delete'))
 
+        # Normalize stored product list
         if isinstance(products_for_date, str):
             products_for_date = [p.strip() for p in products_for_date.split(',')]
 
@@ -323,14 +356,15 @@ def delete():
             flash(f"❌ Product '{product}' not found in bookings on {date}.", "error")
             return redirect(url_for('auth.delete'))
 
+        # 🔄 Remove product
         products_for_date.remove(product)
         if products_for_date:
             bookings[date] = products_for_date
         else:
             bookings.pop(date)
 
+        # 💰 Update Prices
         existing_price = customer.get('total_price', 0)
-        existing_given = customer.get('given_price', 0)
         new_price = max(0, existing_price - price_diff)
 
         collection.update_one(
@@ -341,12 +375,11 @@ def delete():
             }}
         )
 
-     
-
         flash(f"✅ Product '{product}' removed from booking on {date}. Price reduced by ₹{price_diff}.", "success")
         return redirect(url_for('auth.delete'))
 
     return render_template("delete.html")
+
 
 @auth.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -370,14 +403,25 @@ def check():
         return redirect(url_for('auth.login'))
     
     if request.method == 'POST':
-        date = request.form.get('date')
+        date = request.form.get('date')  # Example: "2025-08-29"
         product = request.form.get('product').strip().replace('k', 'K').replace('c', 'C')
         
         if not date or not product:
             flash("❌ Please provide both date and product name.", "error")
             return redirect(url_for('auth.check'))
         
-        has_conflict, conflicts = check_booking_conflict(date, [product])
+        # ✅ Convert YYYY-MM-DD → DD-MM-YY
+        try:
+            date_obj = datetime.strptime(date, "%Y-%m-%d")
+            formatted_date = date_obj.strftime("%d-%m-%y")
+        except ValueError:
+            # If already in DD-MM-YY
+            formatted_date = date
+
+        print("DEBUG check: input =", date, " formatted =", formatted_date)
+
+        # ✅ Pass converted date to your conflict checker
+        has_conflict, conflicts = check_booking_conflict(formatted_date, [product])
         
         if has_conflict:
             conflict = conflicts[0]
@@ -390,6 +434,9 @@ def check():
     
     return render_template("check.html")
 
+
+from datetime import datetime
+
 @auth.route('/calendar', methods=['GET', 'POST'])
 def calendar():
     if not session.get('logged_in'):
@@ -399,93 +446,40 @@ def calendar():
     bookings_on_date = []
 
     if request.method == 'POST':
-        date = request.form.get('date')
+        date = request.form.get('date')  # Example: "2025-08-29"
         if date:
             try:
-                # Regular bookings from main collection
-                customers = collection.find({f"bookings.{date}": {"$exists": True}})
-                
-                # Fancy bookings from fancy collection (check both start and end dates)
-                fcustomers_start = fancy_collection.find({"start_date": date})
-                fcustomers_end = fancy_collection.find({"end_date": date})
+                # Convert YYYY-MM-DD → DD-MM-YY
+                date_obj = datetime.strptime(date, "%Y-%m-%d")
+                formatted_date = date_obj.strftime("%d-%m-%y")
+            except ValueError:
+                # If already DD-MM-YY
+                formatted_date = date  
 
-                # Process regular bookings
-                for c in customers:
-                    products = c['bookings'].get(date, [])
-                    bookings_on_date.append({
-                        "Name": c.get("Name", "Unknown"),
-                        "mobile": c.get("mobile", "Unknown"),
-                        "address": c.get("address", "Not provided"),
-                        "deposit": c.get("deposit", "Not provided"),
-                        "group": c.get("group", "Not specified"),
-                        "reference": c.get("reference", ""),
-                        "products": products,
-                        "booking_type": "regular"  # Add type identifier
-                    })
+            print("DEBUG: input =", date)
+            print("DEBUG: formatted =", formatted_date)
 
-                # Process fancy bookings - combine start and end date matches
-                processed_ids = set()  # To avoid duplicates
-                
-                # Process bookings that start on this date
-                for fc in fcustomers_start:
-                    fc_id = str(fc.get("_id", ""))
-                    if fc_id not in processed_ids:
-                        processed_ids.add(fc_id)
-                        start_date = fc.get("start_date", "")
-                        end_date = fc.get("end_date", "")
-                        
-                        # Determine date match type
-                        date_match_type = ""
-                        if start_date == date and end_date == date:
-                            date_match_type = "both"  # Same day booking
-                        elif start_date == date:
-                            date_match_type = "start"  # Booking starts today
-                        
-                        bookings_on_date.append({
-                            "Name": fc.get("name", "Unknown"),
-                            "mobile": fc.get("mobile", "Unknown"),
-                            "address": fc.get("Address", "Not provided"),
-                            "start_date": start_date,
-                            "end_date": end_date,
-                            "price": fc.get("price", 0),
-                            "costume": fc.get("costume", ""),
-                            "details": fc.get("details", ""),
-                            "booking_type": "fancy",
-                            "date_match_type": date_match_type
-                        })
-                
-                # Process bookings that end on this date (avoid duplicates)
-                for fc in fcustomers_end:
-                    fc_id = str(fc.get("_id", ""))
-                    if fc_id not in processed_ids:
-                        processed_ids.add(fc_id)
-                        start_date = fc.get("start_date", "")
-                        end_date = fc.get("end_date", "")
-                        
-                        bookings_on_date.append({
-                            "Name": fc.get("name", "Unknown"),
-                            "mobile": fc.get("mobile", "Unknown"),
-                            "address": fc.get("Address", "Not provided"),
-                            "start_date": start_date,
-                            "end_date": end_date,
-                            "price": fc.get("price", 0),
-                            "costume": fc.get("costume", ""),
-                            "details": fc.get("details", ""),
-                            "booking_type": "fancy",
-                            "date_match_type": "end"  # Booking ends today
-                        })
+            # ✅ Use formatted_date for querying Mongo
+            customers = collection.find({f"bookings.{formatted_date}": {"$exists": True}})
+            
+            bookings_on_date = []
+            for c in customers:
+                entry = {
+                    "Name": c.get("Name"),
+                    "mobile": c.get("mobile"),
+                    "address": c.get("address", ""),
+                    "deposit": c.get("deposit", "Not provided"),
+                    "group": c.get("group", ""),
+                    "reference": c.get("reference", ""),
+                    "products": c["bookings"].get(formatted_date, [])
+                }
+                bookings_on_date.append(entry)
 
-                # Sort bookings by name for better organization
-                bookings_on_date.sort(key=lambda x: x.get('Name', '').lower())
-                
-            except Exception as e:
-                # Log the error and show user-friendly message
-                print(f"Error fetching bookings for {date}: {str(e)}")
-                flash(f"Error retrieving bookings: {str(e)}", "error")
-
-    return render_template("calendar.html", date=date, bookings=bookings_on_date)
-
-
+    return render_template(
+        "calendar.html",
+        date=date,  # Keep original input date for display
+        bookings=bookings_on_date
+    )
 
 
 
