@@ -6,8 +6,6 @@
 
 {% block title %}Book Now | Image Traditional{% endblock %}
 
-
-
 {% block content %}
 
 <div class="booking-wrapper">
@@ -18,7 +16,6 @@
 
   <div class="booking-card">
     <form method="POST" action="{{ url_for('auth.book') }}" id="booking-form">
-      
       
       <div class="form-section">
         <h3 class="section-title">
@@ -33,7 +30,14 @@
           </div>
           <div class="form-group">
             <label class="form-label">Mobile Number *</label>
-            <input type="tel" name="mobile" required placeholder="Enter mobile number" class="form-input">
+            <input type="tel" name="mobile" id="mobile" 
+                   required placeholder="Enter mobile number" 
+                   class="form-input" 
+                   maxlength="10" 
+                   pattern="[0-9]{10}">
+            <small id="mobile-error" style="color:red; display:none;">
+              Mobile number must be exactly 10 digits.
+            </small>
           </div>
         </div>
 
@@ -54,7 +58,6 @@
         </div>
       </div>
 
-      
       <div class="form-section">
         <h3 class="section-title">
           <span class="section-icon">📅</span>
@@ -72,8 +75,7 @@
                 <label class="booking-label">Products</label>
                 <input type="text" name="product" required placeholder="Product names (comma separated)" class="form-input">
               </div>
-              <button type="button" onclick="removeBookingRow(this)" class="remove-btn" title="Remove this booking"
-              >
+              <button type="button" onclick="removeBookingRow(this)" class="remove-btn" title="Remove this booking">
                 <i class="remove-icon">🗑️</i>
               </button>
             </div>
@@ -86,7 +88,6 @@
         </div>
       </div>
 
-      
       <div class="form-section">
         <h3 class="section-title">
           <span class="section-icon">💰</span>
@@ -110,7 +111,6 @@
         </div>
       </div>
 
-      
       <div class="form-actions">
         <button type="submit" class="submit-btn">
           <i class="submit-icon">✅</i>
@@ -141,7 +141,6 @@
     `;
     container.appendChild(row);
     
-    
     row.style.opacity = '0';
     row.style.transform = 'translateY(-10px)';
     setTimeout(() => {
@@ -166,13 +165,32 @@
     }
   }
 
-  
+  // ✅ Mobile number validation
+  const mobileInput = document.getElementById("mobile");
+  const mobileError = document.getElementById("mobile-error");
+
+  mobileInput.addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, ""); // only digits
+    if (this.value.length > 10) {
+      this.value = this.value.slice(0, 10);
+    }
+    if (this.value.length === 10) {
+      mobileError.style.display = "none";
+    }
+  });
+
   document.getElementById('booking-form').addEventListener('submit', function(e) {
     const totalPrice = parseFloat(document.querySelector('input[name="price"]').value);
     const givenPrice = parseFloat(document.querySelector('input[name="given_price"]').value);
-    
+
     if (givenPrice > totalPrice) {
       alert('Amount paid cannot be greater than total price!');
+      e.preventDefault();
+      return;
+    }
+
+    if (mobileInput.value.length !== 10) {
+      mobileError.style.display = "block";
       e.preventDefault();
     }
   });
@@ -395,7 +413,6 @@
     box-shadow: 0 6px 16px rgba(52, 152, 219, 0.3);
   }
 
-  
   @media (max-width: 768px) {
     .booking-wrapper {
       padding: 15px;

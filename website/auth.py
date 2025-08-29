@@ -147,7 +147,13 @@ def book():
                 }}
             )
         else:
-            bookings = {b['date']: b['products'] for b in bookings_data}
+            from datetime import datetime
+
+            bookings = {
+                datetime.strptime(b['date'], "%Y-%m-%d").strftime("%d-%m-%y"): b['products']
+                for b in bookings_data
+            }
+
             new_customer = {
                 "Name": Name,
                 "mobile": mobile,
@@ -159,6 +165,7 @@ def book():
                 "given_price": given_price_val,
                 "total_price": total_price
             }
+
             collection.insert_one(new_customer)
 
        
