@@ -79,6 +79,8 @@ def book():
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
+        from datetime import datetime
+
         Name = request.form.get('name')
         mobile = request.form.get('mobile')
         given_price = request.form.get('given_price')
@@ -91,26 +93,32 @@ def book():
         dates = request.form.getlist('date')
         products_inputs = request.form.getlist('product')
 
+        # Convert given & total price safely
         try:
             given_price_val = int(given_price) if given_price else 0
         except:
             given_price_val = 0
 
         try:
-            total_price = int(price)
+            total_price = int(price) if price else 0
         except:
             total_price = 0
 
+        # ✅ Normalize all dates to DD-MM-YY
         bookings_data = []
         for date, prod_str in zip(dates, products_inputs):
             prod_list = [p.strip() for p in prod_str.split(',') if p.strip()]
-            bookings_data.append({"date": date, "products": prod_list})
+            try:
+                formatted_date = datetime.strptime(date, "%Y-%m-%d").strftime("%d-%m-%y")
+            except:
+                formatted_date = date  # fallback if date is invalid
+            bookings_data.append({"date": formatted_date, "products": prod_list})
 
-        
+        # ✅ Conflict check with normalized dates
         for booking in bookings_data:
             date = booking['date']
             has_conflict, conflicts = check_booking_conflict(date, booking['products'])
-            
+
             if has_conflict:
                 conflict_msg = f"❌ Booking Failed! These products are already booked on {date}:\n"
                 for conflict in conflicts:
@@ -118,9 +126,11 @@ def book():
                 flash(conflict_msg, "error")
                 return redirect(url_for('auth.book'))
 
+        # ✅ Insert / Update customer in DB
         customer = collection.find_one({"mobile": mobile})
 
         if customer:
+            # Existing customer → merge bookings
             bookings = customer.get('bookings', {})
             for booking in bookings_data:
                 date = booking['date']
@@ -139,20 +149,11 @@ def book():
                     "bookings": bookings,
                     "total_price": updated_total,
                     "given_price": updated_given,
-                    "address": address,
-                    "deposit": deposit,
-                    "group": group,
-                    "reference": reference,
-                    "Name": Name
                 }}
             )
         else:
-            from datetime import datetime
-
-            bookings = {
-                datetime.strptime(b['date'], "%Y-%m-%d").strftime("%d-%m-%y"): b['products']
-                for b in bookings_data
-            }
+            # New customer
+            bookings = {b['date']: b['products'] for b in bookings_data}
 
             new_customer = {
                 "Name": Name,
@@ -168,12 +169,11 @@ def book():
 
             collection.insert_one(new_customer)
 
-       
-
         flash("✅ Booking successful!", "success")
         return redirect(url_for('auth.book'))
 
     return render_template("book.html")
+
 
 from datetime import datetime
 
