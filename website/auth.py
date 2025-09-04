@@ -285,14 +285,14 @@ def pay_remaining():
         remaining = total_price - given_price
 
         if pay_amount_val > remaining:
-            flash(f"❌ Payment amount exceeds remaining balance of ₹{remaining}", "error")
+            flash(f"❌ Payment amount exceeds remaining balance of {remaining}", "error")
             return redirect(url_for('auth.pay_remaining'))
 
         new_given_price = given_price + pay_amount_val
         collection.update_one({"_id": customer['_id']}, {"$set": {"given_price": new_given_price}})
 
        
-        flash(f"✅ Payment of ₹{pay_amount_val} accepted! Remaining: ₹{total_price - new_given_price}", "success")
+        flash(f"✅ Payment of {pay_amount_val} accepted! Remaining: {total_price - new_given_price}", "success")
         return redirect(url_for('auth.pay_remaining'))
 
     return render_template("pay_remaining.html")
@@ -375,7 +375,7 @@ def delete():
             }}
         )
 
-        flash(f"✅ Product '{product}' removed from booking on {date}. Price reduced by ₹{price_diff}.", "success")
+        flash(f"✅ Product '{product}' removed from booking on {date}. Price reduced by {price_diff}.", "success")
         return redirect(url_for('auth.delete'))
 
     return render_template("delete.html")
@@ -535,24 +535,162 @@ def fancy():
 
     return render_template('fancy.html')
 @auth.route('/dashboard')
-def total():
+def dashboard_summary():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
 
+    try:
+        try:
+            collection.find_one()
+            fancy_collection.find_one()
+        except NameError as e:
+            return f"Error: Database collections not properly defined - {e}"
+        except Exception as e:
+            return f"Error: Database connection failed - {e}"
 
-    total_bookings = collection.count_documents({})
-    total_fancy_bookings = fancy_collection.count_documents({})
+        traditional_data = list(collection.find())
+
+        if not traditional_data:
+            total_customers_trad = 0
+            total_collection_trad = 0
+            total_given_trad = 0
+            total_rem_trad = 0
+            best_c = "N/A"
+            best_c_count = 0
+            best_k = "N/A"
+            best_k_count = 0
+            highest_booking_person = "N/A"
+            highest_booking_value = 0
+            avg_trad = 0
+        else:
+            def safe_int(val):
+                try:
+                    return int(val)
+                except (ValueError, TypeError):
+                    return 0
+
+            total_customers_trad = len(traditional_data)
+            total_collection_trad = sum(safe_int(b.get('total_price')) for b in traditional_data)
+            total_given_trad = sum(safe_int(b.get('given_price')) for b in traditional_data)
+            total_rem_trad = total_collection_trad - total_given_trad
+
+            best_c, best_c_count, best_k, best_k_count = find_best_products_by_letter(traditional_data)
+            highest_booking_person, highest_booking_value = find_highest_booking_customer(traditional_data)
+            avg_trad = total_collection_trad / total_customers_trad if total_customers_trad > 0 else 0
+
+        fancy_data = list(fancy_collection.find())
+
+        if not fancy_data:
+            total_customers_fancy = 0
+            total_collection_fancy = 0
+            avg_fancy = 0
+        else:
+            total_customers_fancy = len(fancy_data)
+            total_collection_fancy = sum(
+                int(b.get('price') or 0) for b in fancy_data if isinstance(b.get('price'), (int, float, str))
+            )
+            avg_fancy = total_collection_fancy / total_customers_fancy if total_customers_fancy > 0 else 0
+
+        combined_collection = total_collection_trad + total_collection_fancy
+
+        return render_template(
+            'total.html',
+            total_customers_trad=total_customers_trad,
+            total_collection_trad=total_collection_trad,
+            total_given_trad=total_given_trad,
+            total_rem_trad=total_rem_trad,
+            best_c=best_c,
+            best_c_count=best_c_count,
+            best_k=best_k,
+            best_k_count=best_k_count,
+            highest_booking_person=highest_booking_person,
+            highest_booking_value=highest_booking_value,
+            avg_trad=avg_trad,
+            total_customers_fancy=total_customers_fancy,
+            total_collection_fancy=total_collection_fancy,
+            avg_fancy=avg_fancy,
+            combined_collection=combined_collection
+        )
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+
+        return render_template(
+            'total.html',
+            total_customers_trad=0,
+            total_collection_trad=0,
+            total_given_trad=0,
+            total_rem_trad=0,
+            best_c="Error",
+            best_c_count=0,
+            best_k="Error",
+            best_k_count=0,
+            highest_booking_person="Error",
+            highest_booking_value=0,
+            avg_trad=0,
+            total_customers_fancy=0,
+            total_collection_fancy=0,
+            avg_fancy=0,
+            combined_collection=0,
+            has_error=True,
+            error_message=str(e)
+        )
 
 
-    total_price = sum(booking.get('total_price', 0) for booking in collection.find())
-    total_fancy_price = sum(booking.get('price', 0) for booking in fancy_collection.find())
+def find_best_products_by_letter(traditional_data):
+    product_c_counts = {}
+    product_k_counts = {}
+
+    for booking in traditional_data:
+        bookings_dict = booking.get('bookings', {})
+        if not isinstance(bookings_dict, dict):
+            continue
+
+        for _, products in bookings_dict.items():
+            if isinstance(products, list):
+                for product in products:
+                    if isinstance(product, str) and product.strip():
+                        product_upper = product.upper().strip()
+                        if product_upper.startswith('C'):
+                            product_c_counts[product_upper] = product_c_counts.get(product_upper, 0) + 1
+                        elif product_upper.startswith('K'):
+                            product_k_counts[product_upper] = product_k_counts.get(product_upper, 0) + 1
+
+    if product_c_counts:
+        best_c = max(product_c_counts, key=product_c_counts.get)
+        best_c_count = product_c_counts[best_c]
+    else:
+        best_c, best_c_count = "N/A", 0
+
+    if product_k_counts:
+        best_k = max(product_k_counts, key=product_k_counts.get)
+        best_k_count = product_k_counts[best_k]
+    else:
+        best_k, best_k_count = "N/A", 0
+
+    return best_c, best_c_count, best_k, best_k_count
 
 
-    return render_template('total.html', 
-                           total_bookings=total_bookings,
-                           total_fancy_bookings=total_fancy_bookings,
-                           total_price=total_price,
-                           total_fancy_price=total_fancy_price)
+def find_highest_booking_customer(traditional_data):
+    customer_totals = {}
+
+    for booking in traditional_data:
+        customer_name = booking.get('Name') or booking.get('name', 'Unknown')
+        if not customer_name or customer_name.strip() in ['Unknown', '']:
+            continue
+        try:
+            total_price = int(booking.get('total_price') or 0)
+        except (ValueError, TypeError):
+            total_price = 0
+        customer_totals[customer_name] = customer_totals.get(customer_name, 0) + total_price
+
+    if not customer_totals:
+        return "N/A", 0
+
+    highest_customer = max(customer_totals, key=customer_totals.get)
+    highest_value = customer_totals[highest_customer]
+    return highest_customer, highest_value
 
 @auth.route('/download-customer', methods=['POST'])
 def download_customer():
