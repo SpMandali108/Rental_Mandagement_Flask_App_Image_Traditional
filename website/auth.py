@@ -791,6 +791,8 @@ def download_customer():
                 img_path = os.path.join(current_app.static_folder, "KediyaJpg", f"{code}.jpg")
             elif code.startswith("C"):
                 img_path = os.path.join(current_app.static_folder, "CholiJpg", f"{code}.jpg")
+            elif code.startswith("G"):
+                img_path = os.path.join(current_app.static_folder, "GroupJpg", f"{code}.jpg")
 
 
             if img_path and os.path.exists(img_path):
