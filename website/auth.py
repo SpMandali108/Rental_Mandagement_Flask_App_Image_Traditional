@@ -383,19 +383,24 @@ def delete():
 
 @auth.route('/profile', methods=['GET', 'POST'])
 def profile():
-    
+    customer = None
+    error = None
 
+    # Case 1: from clickable card → GET ?mobile=xxxx
+    mobile = request.args.get('mobile')
+
+    # Case 2: from search form → POST
     if request.method == 'POST':
         mobile = request.form.get('mobile')
-        if mobile:
-            customer = collection.find_one({"mobile": mobile})
-            if customer:
-                customer['remaining'] = customer.get('total_price', 0) - customer.get('given_price', 0)
-                return render_template("profile.html", customer=customer)
-            else:
-                return render_template("profile.html", error="Customer not found")
-    
-    return render_template("profile.html")
+
+    if mobile:
+        customer = collection.find_one({"mobile": mobile})
+        if customer:
+            customer['remaining'] = customer.get('total_price', 0) - customer.get('given_price', 0)
+        else:
+            error = "Customer not found"
+
+    return render_template("profile.html", customer=customer, error=error)
 
 @auth.route('/check', methods=['GET', 'POST'])
 def check():
@@ -1100,3 +1105,13 @@ def export_bookings():
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=bookings_export.csv"}
     )
+@auth.route("/listing",methods=['GET', 'POST'])
+def listing():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    bookings = list(collection.find())
+    for b in bookings:
+        b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
+
+    return render_template("listing.html", bookings=bookings)

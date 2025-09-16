@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Profile | Image Traditional{% endblock %}
+
+{% block content %}
+<div class="admin-profile-container">
+  <h1>Admin Customer Profile</h1>
+
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
+  {% if success %}
+  <p style="color:green;">{{ success }}</p>
+  {% endif %}
+
+  {% if customer %}
+  <form method="POST" action="{{ url_for('auth.profile_admin') }}?mobile={{ customer.mobile }}">
+    <input type="hidden" name="id" value="{{ customer._id }}">
+
+    <div class="info-card">
+      <h2>Customer Info</h2>
+      <label>Name:</label>
+      <input type="text" name="Name" value="{{ customer.Name }}" required>
+      <label>Mobile:</label>
+      <input type="text" name="mobile" value="{{ customer.mobile }}" required>
+      <label>Address:</label>
+      <input type="text" name="address" value="{{ customer.address }}">
+      <label>Reference:</label>
+      <input type="text" name="reference" value="{{ customer.reference }}">
+      <label>Group:</label>
+      <input type="text" name="group" value="{{ customer.group }}">
+      <label>Deposit:</label>
+      <input type="number" name="deposit" value="{{ customer.deposit or 0 }}" min="0">
+    </div>
+
+    <div class="payment-card">
+      <h2>Payment Summary</h2>
+      <label>Total:</label>
+      <input type="number" name="total_price" value="{{ customer.total_price }}" min="0">
+      <label>Paid:</label>
+      <input type="number" name="given_price" value="{{ customer.given_price }}" min="0">
+      <label>Remaining:</label>
+      <input type="number" value="{{ customer.total_price - customer.given_price }}" readonly>
+    </div>
+
+    {% if customer.bookings %}
+    <div class="bookings-card">
+      <h2>Bookings</h2>
+      {% for date, items in customer.bookings.items() %}
+      <div class="booking-entry">
+        <h3>{{ date }}</h3>
+        {% for item in items %}
+        <input type="text" name="bookings[{{ date }}][]" value="{{ item }}" class="booking-item-input" data-date="{{ date }}">
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="submit" name="save">Save Changes</button>
+  </form>
+  {% else %}
+  <p>Customer not found.</p>
+  {% endif %}
+</div>
+
+<script>
+const customerMobile = "{{ customer.mobile if customer else '' }}";
+
+document.querySelectorAll('.booking-item-input').forEach(input => {
+  input.addEventListener('input', function() {
+    const product = this.value.trim();
+    const date = this.dataset.date;
+    const elem = this;
+
+    if (!product) { elem.style.backgroundColor = ''; return; }
+
+    fetch("{{ url_for('auth.check') }}", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product: product, date: date, exclude_mobile: customerMobile })
+    })
+    .then(res => res.json())
+    .then(data => {
+      elem.style.backgroundColor = data.available ? '#b6fcb6' : '#fcb6b6';
+    })
+    .catch(err => { console.error(err); elem.style.backgroundColor = ''; });
+  });
+});
+</script>
+
+<style>
+.admin-profile-container { max-width:800px; margin:auto; padding:2rem; font-family:sans-serif; }
+.info-card, .payment-card, .bookings-card { border:1px solid #ccc; padding:1rem; margin-bottom:1rem; border-radius:8px; }
+.booking-item-input { padding:0.5rem; margin:0.25rem 0; border:1px solid #ccc; border-radius:4px; width:100%; }
+button[name="save"] { padding:0.75rem 1.5rem; background:#10b981; color:white; border:none; border-radius:6px; cursor:pointer; }
+button[name="save"]:hover { background:#059669; }
+</style>
+{% endblock %}

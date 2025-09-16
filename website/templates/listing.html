@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings List{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Bookings List</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Group</th>
+            <th>Reference</th>
+            <th>Deposit</th>
+            <th>Bookings (by date)</th>
+            <th>Given Price</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr style="cursor: pointer;" 
+            onclick="window.location.href='{{ url_for('auth.profile', mobile=booking['mobile']) }}'">
+            <td>{{ booking["Name"] }}</td>
+            <td>{{ booking["mobile"] }}</td>
+            <td>{{ booking["group"] }}</td>
+            <td>{{ booking["reference"] }}</td>
+            <td>{{ booking["deposit"] }}</td>
+            <td>
+                {% for date, items in booking["bookings"].items() %}
+                    <strong>{{ date }}</strong>: {{ items|join(", ") }} <br>
+                {% endfor %}
+            </td>
+            <td>{{ booking["given_price"] }}</td>
+            <td>{{ booking["total_price"] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
