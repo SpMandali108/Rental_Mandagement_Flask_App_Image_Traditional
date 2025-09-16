@@ -168,7 +168,7 @@ def book():
             {"$set": {"qr_url": qr_url}}
         )
 
-        return redirect(url_for('auth.booking_success', mobile=mobile))
+        return redirect(url_for('auth.QR', mobile=mobile))
 
     return render_template("book.html")
 
@@ -260,18 +260,22 @@ def pay_remaining():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
 
-    if request.method == 'POST':
+    customer = None
+    mobile = request.args.get('mobile')  # case 1: GET ?mobile=xxxx
+
+    if request.method == 'POST':  # case 2: POST form
         mobile = request.form.get('mobile')
         pay_amount = request.form.get('pay_amount')
 
+        # Validate payment
         try:
             pay_amount_val = int(pay_amount)
             if pay_amount_val <= 0:
                 flash("⚠️ Payment amount must be positive.", "error")
-                return redirect(url_for('auth.pay_remaining'))
+                return redirect(url_for('auth.pay_remaining', mobile=mobile))
         except:
             flash("⚠️ Invalid payment amount.", "error")
-            return redirect(url_for('auth.pay_remaining'))
+            return redirect(url_for('auth.pay_remaining', mobile=mobile))
 
         customer = collection.find_one({"mobile": mobile})
         if not customer:
@@ -283,17 +287,44 @@ def pay_remaining():
         remaining = total_price - given_price
 
         if pay_amount_val > remaining:
-            flash(f"❌ Payment amount exceeds remaining balance of {remaining}", "error")
-            return redirect(url_for('auth.pay_remaining'))
+            flash(f"❌ Payment exceeds remaining balance of {remaining}", "error")
+            return redirect(url_for('auth.pay_remaining', mobile=mobile))
 
+        # Update DB
         new_given_price = given_price + pay_amount_val
-        collection.update_one({"_id": customer['_id']}, {"$set": {"given_price": new_given_price}})
+        collection.update_one(
+            {"_id": customer['_id']},
+            {"$set": {"given_price": new_given_price}}
+        )
 
-       
-        flash(f"✅ Payment of {pay_amount_val} accepted! Remaining: {total_price - new_given_price}", "success")
-        return redirect(url_for('auth.pay_remaining'))
+        # -------------------- Generate QR URL --------------------
+        qr_url = url_for('auth.download_customer', mobile=mobile, _external=True)
+        collection.update_one(
+            {"mobile": mobile},
+            {"$set": {"qr_url": qr_url}}
+        )
 
-    return render_template("pay_remaining.html")
+         # Your live website store URL
+        store_base_url = "https://image-traditional.onrender.com/download-bill"
+
+        # Append mobile number as query parameter
+        qr_url = f"{store_base_url}?mobile={mobile}"
+
+        collection.update_one(
+            {"mobile": mobile},
+            {"$set": {"qr_url": qr_url}}
+        )
+
+        return redirect(url_for('auth.booking_success', mobile=mobile))
+
+    # If GET or error → fetch customer for prefilled form
+    if mobile:
+        customer = collection.find_one({"mobile": mobile})
+
+    return render_template("pay_remaining.html", customer=customer)
+
+
+
 
 @auth.route('/delete', methods=['GET', 'POST'])
 def delete():
@@ -400,7 +431,11 @@ def profile():
         else:
             error = "Customer not found"
 
-    return render_template("profile.html", customer=customer, error=error)
+    bookings = list(collection.find())
+    for b in bookings:
+        b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
+
+    return render_template("profile.html", customer=customer, error=error,bookings=bookings)
 
 @auth.route('/check', methods=['GET', 'POST'])
 def check():
@@ -1137,7 +1172,7 @@ def generate_qr(mobile):
 
     return send_file(buf, mimetype="image/png")
 
-@auth.route("/booking-success/<mobile>")
+@auth.route("/QR/<mobile>")
 def booking_success(mobile):
     customer = collection.find_one({"mobile": mobile})
     if not customer:
@@ -1145,7 +1180,22 @@ def booking_success(mobile):
         return redirect(url_for("auth.book"))
 
     qr_url = customer.get("qr_url")
-    return render_template("booking_success.html", customer=customer, qr_url=qr_url)
+    return render_template("QR.html", customer=customer, qr_url=qr_url)
+
+@auth.route('/payment_success')
+def payment_success():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    mobile = request.args.get('mobile')
+    customer = collection.find_one({"mobile": mobile}) if mobile else None
+
+    if not customer:
+        flash("⚠️ Customer not found.", "error")
+        return redirect(url_for('auth.profile'))
+
+    return render_template("payment_success.html", customer=customer)
+
 
 
 

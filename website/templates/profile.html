@@ -90,10 +90,12 @@
           <div class="payment-value">₹{{ customer.total_price }}</div>
         </div>
         
-        <div class="payment-item paid">
-          <div class="payment-label">Amount Paid</div>
-          <div class="payment-value">₹{{ customer.given_price }}</div>
-        </div>
+        <div class="payment-item paid" style="cursor: pointer;"
+     onclick="window.location.href='{{ url_for('auth.pay_remaining', mobile=customer.mobile) }}'">
+  <div class="payment-label">Amount Paid</div>
+  <div class="payment-value">₹{{ customer.given_price }}</div>
+</div>
+
         
         <div class="payment-item remaining">
           <div class="payment-label">Remaining Balance</div>

@@ -19,7 +19,7 @@
   }
   .pay-container h2 {
     text-align: center;
-    color: #c62828;
+    color: #16213e;
     margin-bottom: 20px;
     font-size: 1.5rem;
   }
@@ -32,7 +32,6 @@
     margin-bottom: 4px;
     font-size: 0.9rem;
   }
-  input[type="tel"],
   input[type="number"] {
     width: 100%;
     padding: 8px 10px;
@@ -42,7 +41,7 @@
   }
   button {
     width: 100%;
-    background-color: #16213e;;
+    background-color: #16213e;
     color: white;
     border: none;
     padding: 10px;
@@ -54,18 +53,18 @@
   }
 </style>
 
-<div class="pay-container" >
-  <h2 style="color: #16213e;">Pay Remaining Amount</h2>
-  <form method="POST" action="/pay_remaining">
-    <div class="form-group">
-      <label for="mobile" style="color: #16213e;">Mobile Number</label>
-      <input type="tel" id="mobile" name="mobile" required pattern="[0-9]{10}" placeholder="Enter your 10-digit mobile number" />
-    </div>
+<div class="pay-container">
+  <h2>Pay Remaining Amount</h2>
+  <form method="POST" action="{{ url_for('auth.pay_remaining', mobile=customer.mobile) }}">
+    
+    <!-- Hidden input (no longer visible to user) -->
+    <input type="hidden" id="mobile" name="mobile" value="{{ customer.mobile }}">
+
     <div class="form-group">
       <label for="pay_amount" style="color: #16213e;">Amount to Pay</label>
       <input type="number" id="pay_amount" name="pay_amount" min="1" required placeholder="Enter amount" />
     </div>
-    <button type="submit" style="color: #ffffff;">Pay Now</button>
+    <button type="submit">Pay Now</button>
   </form>
 </div>
 {% endblock %}
