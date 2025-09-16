@@ -3,15 +3,11 @@
 {% block title %}Download Customer Bill{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width:500px; margin:2rem auto;">
+<div class="container" style="max-width:500px; margin:2rem auto; text-align:center;">
     <h2>Download Customer Bill</h2>
     <form action="{{ url_for('auth.download_customer') }}" method="post">
-        <div class="form-group" style="margin-bottom:1rem;">
-            <label for="mobile">Mobile Number:</label>
-            <input type="text" name="mobile" id="mobile" class="form-control" 
-       placeholder="Enter mobile number" value="{{ mobile }}" required>
-
-        </div>
+        <!-- Hidden input to pass the mobile number -->
+        <input type="hidden" name="mobile" value="{{ mobile }}">
         <button type="submit" class="btn btn-primary">Download Bill</button>
     </form>
 </div>
