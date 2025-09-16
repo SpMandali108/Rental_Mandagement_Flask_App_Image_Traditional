@@ -16,24 +16,33 @@
             <th>Bookings (by date)</th>
             <th>Given Price</th>
             <th>Total Price</th>
+            <th>Remaining</th>
         </tr>
     </thead>
     <tbody>
         {% for booking in bookings %}
         <tr style="cursor: pointer;" 
-            onclick="window.location.href='{{ url_for('auth.profile', mobile=booking['mobile']) }}'">
-            <td>{{ booking["Name"] }}</td>
-            <td>{{ booking["mobile"] }}</td>
-            <td>{{ booking["group"] }}</td>
-            <td>{{ booking["reference"] }}</td>
-            <td>{{ booking["deposit"] }}</td>
+            onclick="window.location.href='{{ url_for('auth.profile', mobile=booking.get('mobile', '')) }}'">
+            
+            <td>{{ booking.get("Name", "N/A") }}</td>
+            <td>{{ booking.get("mobile", "N/A") }}</td>
+            <td>{{ booking.get("group", "N/A") }}</td>
+            <td>{{ booking.get("reference", "N/A") }}</td>
+            <td>{{ booking.get("deposit", 0) }}</td>
+            
             <td>
-                {% for date, items in booking["bookings"].items() %}
-                    <strong>{{ date }}</strong>: {{ items|join(", ") }} <br>
-                {% endfor %}
+                {% if booking.get("bookings") %}
+                    {% for date, items in booking["bookings"].items() %}
+                        <strong>{{ date }}</strong>: {{ items|join(", ") }} <br>
+                    {% endfor %}
+                {% else %}
+                    No bookings
+                {% endif %}
             </td>
-            <td>{{ booking["given_price"] }}</td>
-            <td>{{ booking["total_price"] }}</td>
+            
+            <td>{{ booking.get("given_price", 0) }}</td>
+            <td>{{ booking.get("total_price", 0) }}</td>
+            <td>{{ booking.get("remaining", 0) }}</td>
         </tr>
         {% endfor %}
     </tbody>
