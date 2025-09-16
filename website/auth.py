@@ -381,6 +381,8 @@ def delete():
 
 @auth.route('/profile', methods=['GET', 'POST'])
 def profile():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     customer = None
     error = None
 
