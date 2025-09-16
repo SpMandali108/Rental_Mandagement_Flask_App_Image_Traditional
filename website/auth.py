@@ -570,7 +570,7 @@ def dashboard_summary():
                     return 0
 
             total_customers_trad = len(traditional_data)
-            total_collection_trad = sum(safe_int(b.get('total_price')) for b in traditional_data)
+            total_collection_trad = sum(safe_int(b.get('total_price')) for b in traditional_data) + 18500
             total_given_trad = sum(safe_int(b.get('given_price')) for b in traditional_data)
             total_rem_trad = total_collection_trad - total_given_trad
 
