@@ -49,7 +49,9 @@
                         </thead>
                         <tbody>
                             {% for r in normal_results %}
-                            <tr class="table-row"  >
+                            <tr class="table-row" <tr class="table-row" style="cursor: pointer;"
+    onclick="window.location.href='{{ url_for('auth.profile', mobile=r.mobile) }}'">
+  >
                                 <td class="name-cell">{{ r.name }}</td>
                                 <td>{{ r.mobile }}</td>
                                 <td>{{ r.address }}</td>

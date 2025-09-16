@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Success{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:500px; margin:2rem auto; text-align:center; font-family:sans-serif;">
+    <h2 style="color:green; margin-bottom:1rem;">✅ Booking Successful!</h2>
+
+    <p><strong>Customer Name:</strong> {{ customer.Name }}</p>
+    <p><strong>Mobile:</strong> {{ customer.mobile }}</p>
+    <p><strong>Group:</strong> {{ customer.group or 'N/A' }}</p>
+
+    {% if qr_url %}
+        <div style="margin-top:2rem;">
+            <p>Scan the QR below to download the bill:</p>
+            <img src="{{ url_for('auth.generate_qr', mobile=customer.mobile) }}" 
+                 alt="QR Code" style="width:200px; height:200px; border:1px solid #ccc; padding:10px; border-radius:8px;">
+            <p style="margin-top:1rem;">
+                Or click <a href="{{ qr_url }}" target="_blank">here</a> to open the download page.
+            </p>
+        </div>
+    {% else %}
+        <p style="color:red; margin-top:2rem;">QR code not available for this booking.</p>
+    {% endif %}
+
+    <div style="margin-top:2rem;">
+        <a href="{{ url_for('auth.book') }}" class="btn btn-secondary">Back to Booking Page</a>
+    </div>
+</div>
+{% endblock %}

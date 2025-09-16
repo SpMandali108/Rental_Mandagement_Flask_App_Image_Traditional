@@ -5,9 +5,13 @@ from dotenv import load_dotenv
 import os,csv
 from fpdf import FPDF
 import io
+import qrcode
+from flask import send_file
+import io
 from flask import send_file
 import json
 from flask import send_from_directory
+
  # Find correct static image
 from flask import current_app
 auth = Blueprint('auth', __name__)
@@ -79,8 +83,6 @@ def book():
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
-        from datetime import datetime
-
         Name = request.form.get('name')
         mobile = request.form.get('mobile')
         given_price = request.form.get('given_price')
@@ -93,48 +95,35 @@ def book():
         dates = request.form.getlist('date')
         products_inputs = request.form.getlist('product')
 
-        # Convert given & total price safely
+        # Convert prices safely
         try:
             given_price_val = int(given_price) if given_price else 0
         except:
             given_price_val = 0
-
         try:
             total_price = int(price) if price else 0
         except:
             total_price = 0
 
-        # ✅ Normalize all dates to DD-MM-YY
+        # Normalize dates and create bookings data
         bookings_data = []
         for date, prod_str in zip(dates, products_inputs):
             prod_list = [p.strip() for p in prod_str.split(',') if p.strip()]
             try:
                 formatted_date = datetime.strptime(date, "%Y-%m-%d").strftime("%d-%m-%y")
             except:
-                formatted_date = date  # fallback if date is invalid
+                formatted_date = date
             bookings_data.append({"date": formatted_date, "products": prod_list})
 
-        # ✅ Conflict check with normalized dates
-        for booking in bookings_data:
-            date = booking['date']
-            has_conflict, conflicts = check_booking_conflict(date, booking['products'])
-
-            if has_conflict:
-                conflict_msg = f"❌ Booking Failed! These products are already booked on {date}:\n"
-                for conflict in conflicts:
-                    conflict_msg += f"• '{conflict['product']}' by {conflict['customer_name']} ({conflict['customer_mobile']})\n"
-                flash(conflict_msg, "error")
-                return redirect(url_for('auth.book'))
-
-        # ✅ Insert / Update customer in DB
+        # Insert / Update customer in DB
         customer = collection.find_one({"mobile": mobile})
 
         if customer:
             # Existing customer → merge bookings
             bookings = customer.get('bookings', {})
-            for booking in bookings_data:
-                date = booking['date']
-                new_prods = booking['products']
+            for booking_item in bookings_data:
+                date = booking_item['date']
+                new_prods = booking_item['products']
                 if date in bookings:
                     bookings[date] = list(set(bookings[date] + new_prods))
                 else:
@@ -154,7 +143,6 @@ def book():
         else:
             # New customer
             bookings = {b['date']: b['products'] for b in bookings_data}
-
             new_customer = {
                 "Name": Name,
                 "mobile": mobile,
@@ -166,11 +154,21 @@ def book():
                 "given_price": given_price_val,
                 "total_price": total_price
             }
-
             collection.insert_one(new_customer)
 
-        flash("✅ Booking successful!", "success")
-        return redirect(url_for('auth.book'))
+        # -------------------- Generate QR URL --------------------
+        # Your live website store URL
+        store_base_url = "https://image-traditional.onrender.com/download-bill"
+
+        # Append mobile number as query parameter
+        qr_url = f"{store_base_url}?mobile={mobile}"
+
+        collection.update_one(
+            {"mobile": mobile},
+            {"$set": {"qr_url": qr_url}}
+        )
+
+        return redirect(url_for('auth.booking_success', mobile=mobile))
 
     return render_template("book.html")
 
@@ -1115,3 +1113,37 @@ def listing():
         b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
 
     return render_template("listing.html", bookings=bookings)
+@auth.route("/download-bill", methods=["GET", "POST"])
+def download_bill_page():
+    mobile = request.args.get("mobile", "")
+    return render_template("download_bill.html", mobile=mobile)
+
+@auth.route("/generate-qr/<mobile>")
+def generate_qr(mobile):
+    customer = collection.find_one({"mobile": mobile})
+    if not customer:
+        return "Customer not found", 404
+
+    qr_url = customer.get("qr_url")
+    if not qr_url:
+        return "QR URL not found", 404
+
+    qr_img = qrcode.make(qr_url)
+    buf = io.BytesIO()
+    qr_img.save(buf, format="PNG")
+    buf.seek(0)
+
+    return send_file(buf, mimetype="image/png")
+
+@auth.route("/booking-success/<mobile>")
+def booking_success(mobile):
+    customer = collection.find_one({"mobile": mobile})
+    if not customer:
+        flash("Customer not found", "warning")
+        return redirect(url_for("auth.book"))
+
+    qr_url = customer.get("qr_url")
+    return render_template("booking_success.html", customer=customer, qr_url=qr_url)
+
+
+
