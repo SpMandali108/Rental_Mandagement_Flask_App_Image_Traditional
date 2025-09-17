@@ -315,7 +315,7 @@ def pay_remaining():
             {"$set": {"qr_url": qr_url}}
         )
 
-        return redirect(url_for('auth.booking_success', mobile=mobile))
+        return redirect(url_for('auth.QR', mobile=mobile))
 
     # If GET or error → fetch customer for prefilled form
     if mobile:
