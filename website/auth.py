@@ -115,7 +115,19 @@ def book():
                 formatted_date = date
             bookings_data.append({"date": formatted_date, "products": prod_list})
 
-        # Insert / Update customer in DB
+        # -------------------- Conflict check --------------------
+        for booking in bookings_data:
+            date = booking['date']
+            has_conflict, conflicts = check_booking_conflict(date, booking['products'])
+
+            if has_conflict:
+                conflict_msg = f"❌ Booking Failed! These products are already booked on {date}:\n"
+                for conflict in conflicts:
+                    conflict_msg += f"• '{conflict['product']}' by {conflict['customer_name']} ({conflict['customer_mobile']})\n"
+                flash(conflict_msg, "error")
+                return redirect(url_for('auth.book'))
+
+        # -------------------- Insert / Update customer --------------------
         customer = collection.find_one({"mobile": mobile})
 
         if customer:
@@ -157,10 +169,7 @@ def book():
             collection.insert_one(new_customer)
 
         # -------------------- Generate QR URL --------------------
-        # Your live website store URL
         store_base_url = "https://image-traditional.onrender.com/download-bill"
-
-        # Append mobile number as query parameter
         qr_url = f"{store_base_url}?mobile={mobile}"
 
         collection.update_one(
@@ -168,9 +177,11 @@ def book():
             {"$set": {"qr_url": qr_url}}
         )
 
+        flash("✅ Booking successful!", "success")
         return redirect(url_for('auth.QR', mobile=mobile))
 
     return render_template("book.html")
+
 
 
 from datetime import datetime
