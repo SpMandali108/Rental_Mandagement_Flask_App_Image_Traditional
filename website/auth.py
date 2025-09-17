@@ -1173,7 +1173,7 @@ def generate_qr(mobile):
     return send_file(buf, mimetype="image/png")
 
 @auth.route("/QR/<mobile>")
-def booking_success(mobile):
+def QR(mobile):
     customer = collection.find_one({"mobile": mobile})
     if not customer:
         flash("Customer not found", "warning")
