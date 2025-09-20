@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Management{% endblock %}
+
+{% block content %}
+<style>
+    /* Use base.html theme variables for consistency */
+    .inventory-container {
+        background: var(--secondary-bg);
+        min-height: calc(100vh - 200px);
+        padding: 2rem 0;
+    }
+
+    .header-section {
+        max-width: 1400px;
+        margin: 0 auto 2rem;
+        text-align: center;
+        padding: 0 1rem;
+    }
+
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.125rem;
+        margin: 0;
+    }
+
+    .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        background: var(--primary-bg);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        text-align: center;
+        min-width: 120px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0.25rem 0 0;
+        font-weight: 500;
+    }
+
+    /* Status colors that work with your theme system */
+    .stat-inside { color: #22c55e; }
+    .stat-outside { color: #ef4444; }
+    .stat-ambiguity { color: #f59e0b; }
+
+    .filter-section {
+        max-width: 1400px;
+        margin: 0 auto 2rem;
+        padding: 0 1rem;
+    }
+
+    .filter-container {
+        background: var(--primary-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+    }
+
+    .filter-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 1rem;
+    }
+
+    .filter-options {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-radio {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .filter-radio input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent-color);
+        cursor: pointer;
+    }
+
+    .filter-radio label {
+        font-weight: 500;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .filter-count {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-left: 0.5rem;
+    }
+
+    .products-grid {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .product-card {
+        position: relative;
+        background: var(--primary-bg);
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: visible;
+        box-shadow: var(--shadow);
+        border: 2px solid var(--border-color);
+        z-index: 1;
+    }
+
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        z-index: 10;
+    }
+
+    .product-card.dropdown-open {
+        z-index: 100;
+    }
+
+    .product-header {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .product-code {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Status styles using consistent colors */
+    .status-inside {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: #22c55e;
+    }
+    .status-inside .product-code {
+        color: #16a34a;
+        font-weight: 700;
+    }
+
+    .status-outside {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: #ef4444;
+    }
+    .status-outside .product-code {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .status-ambiguity {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: #f59e0b;
+    }
+    .status-ambiguity .product-code {
+        color: #d97706;
+        font-weight: 700;
+    }
+
+    /* Dark theme overrides */
+    .dark-theme .status-inside {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: #22c55e;
+    }
+    .dark-theme .status-inside .product-code {
+        color: #4ade80;
+    }
+
+    .dark-theme .status-outside {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: #ef4444;
+    }
+    .dark-theme .status-outside .product-code {
+        color: #f87171;
+    }
+
+    .dark-theme .status-ambiguity {
+        background: rgba(245, 158, 11, 0.2);
+        border-color: #f59e0b;
+    }
+    .dark-theme .status-ambiguity .product-code {
+        color: #fbbf24;
+    }
+
+    /* Dropdown styles */
+    .status-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary-bg);
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem;
+        display: none;
+        z-index: 1000;
+        min-width: 160px;
+        margin-top: 0.5rem;
+    }
+
+    .status-dropdown::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 12px;
+        background: var(--primary-bg);
+        border: 1px solid var(--border-color);
+        border-bottom: none;
+        border-right: none;
+        transform: translateX(-50%) rotate(45deg);
+        z-index: 1001;
+    }
+
+    .status-dropdown.show {
+        display: block;
+    }
+
+    .dropdown-option {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        background: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-align: left;
+        color: var(--text-primary);
+    }
+
+    .dropdown-option:hover {
+        background: var(--secondary-bg);
+    }
+
+    .option-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .option-inside .option-dot { background: #22c55e; }
+    .option-outside .option-dot { background: #ef4444; }
+    .option-ambiguity .option-dot { background: #f59e0b; }
+
+    .clear-btn {
+        margin-left: 2rem;
+        padding: 0.625rem 1.25rem;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .clear-btn:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .page-title { font-size: 2rem; }
+        .products-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+        .stats-bar {
+            gap: 1rem;
+        }
+        .stat-card {
+            min-width: 100px;
+            padding: 1rem;
+        }
+        .filter-options {
+            gap: 1rem;
+        }
+        .clear-btn {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
+</style>
+
+<div class="inventory-container">
+    <div class="header-section">
+        <h1 class="page-title">Inventory Management</h1>
+        <p class="page-subtitle">Track and manage your product locations</p>
+        
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number stat-inside" id="insideCount">0</div>
+                <div class="stat-label">Inside</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-outside" id="outsideCount">0</div>
+                <div class="stat-label">Outside</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-ambiguity" id="ambiguityCount">0</div>
+                <div class="stat-label">Ambiguity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">{{ products|length if products else 0 }}</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-container">
+            <h3 class="filter-title">Filter Products</h3>
+            <div class="filter-options">
+                <div class="filter-radio">
+                    <input type="radio" id="filterAll" name="productFilter" value="all" checked onchange="applyFilters()">
+                    <label for="filterAll">All Codes <span class="filter-count" id="allCount">(0)</span></label>
+                </div>
+                <div class="filter-radio">
+                    <input type="radio" id="filterC" name="productFilter" value="c" onchange="applyFilters()">
+                    <label for="filterC">C Codes Only <span class="filter-count" id="cCount">(0)</span></label>
+                </div>
+                <div class="filter-radio">
+                    <input type="radio" id="filterK" name="productFilter" value="k" onchange="applyFilters()">
+                    <label for="filterK">K Codes Only <span class="filter-count" id="kCount">(0)</span></label>
+                </div>
+                <div class="filter-radio">
+                    <input type="radio" id="filterOther" name="productFilter" value="other" onchange="applyFilters()">
+                    <label for="filterOther">Other Codes Only <span class="filter-count" id="otherCount">(0)</span></label>
+                </div>
+                <button class="clear-btn" onclick="clearAllData()">
+                    <i class="fas fa-trash-alt"></i> Clear All Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card status-inside" id="prod{{ loop.index }}" onclick="toggleDropdown(event, 'dropdown{{ loop.index }}')">
+            <div class="product-header">
+                <h3 class="product-code">{{ product.code }}</h3>
+            </div>
+            
+            <div class="status-dropdown" id="dropdown{{ loop.index }}">
+                <button class="dropdown-option option-inside" onclick="setStatus(event, 'prod{{ loop.index }}', 'inside', 'dropdown{{ loop.index }}')">
+                    <div class="option-dot"></div>
+                    Inside
+                </button>
+                <button class="dropdown-option option-outside" onclick="setStatus(event, 'prod{{ loop.index }}', 'outside', 'dropdown{{ loop.index }}')">
+                    <div class="option-dot"></div>
+                    Outside
+                </button>
+                <button class="dropdown-option option-ambiguity" onclick="setStatus(event, 'prod{{ loop.index }}', 'ambiguity', 'dropdown{{ loop.index }}')">
+                    <div class="option-dot"></div>
+                    Ambiguity
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize stats and load saved data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSavedData();
+        updateStats();
+        updateFilterCounts();
+    });
+
+    // Save data to localStorage
+    function saveData() {
+        const data = {
+            productStates: {},
+            selectedFilter: document.querySelector('input[name="productFilter"]:checked').value
+        };
+        
+        // Save product statuses
+        document.querySelectorAll('.product-card').forEach(card => {
+            const productCode = card.querySelector('.product-code').textContent.trim();
+            let status = 'inside'; // default
+            if (card.classList.contains('status-outside')) status = 'outside';
+            else if (card.classList.contains('status-ambiguity')) status = 'ambiguity';
+            
+            data.productStates[productCode] = status;
+        });
+        
+        localStorage.setItem('inventoryData', JSON.stringify(data));
+    }
+
+    // Load saved data from localStorage
+    function loadSavedData() {
+        const savedData = localStorage.getItem('inventoryData');
+        if (!savedData) return;
+        
+        try {
+            const data = JSON.parse(savedData);
+            
+            // Restore product statuses
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productCode = card.querySelector('.product-code').textContent.trim();
+                const savedStatus = data.productStates[productCode];
+                
+                if (savedStatus) {
+                    // Remove all status classes
+                    card.classList.remove('status-inside', 'status-outside', 'status-ambiguity');
+                    // Add saved status
+                    card.classList.add(`status-${savedStatus}`);
+                }
+            });
+            
+            // Restore filter selection
+            if (data.selectedFilter) {
+                const filterRadio = document.querySelector(`input[name="productFilter"][value="${data.selectedFilter}"]`);
+                if (filterRadio) {
+                    filterRadio.checked = true;
+                    applyFilters();
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error loading saved data:', error);
+        }
+    }
+
+    function toggleDropdown(event, dropdownId) {
+        event.stopPropagation();
+        
+        // Remove dropdown-open class from all cards
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.classList.remove('dropdown-open');
+        });
+        
+        // Hide all other dropdowns first
+        document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+            if (dropdown.id !== dropdownId) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Toggle current dropdown
+        const dropdown = document.getElementById(dropdownId);
+        const productCard = dropdown.closest('.product-card');
+        
+        if (dropdown.classList.contains('show')) {
+            dropdown.classList.remove('show');
+            productCard.classList.remove('dropdown-open');
+        } else {
+            dropdown.classList.add('show');
+            productCard.classList.add('dropdown-open');
+        }
+    }
+
+    function setStatus(event, productId, status, dropdownId) {
+        event.stopPropagation();
+        
+        const productCard = document.getElementById(productId);
+        const dropdown = document.getElementById(dropdownId);
+        
+        // Remove all status classes
+        productCard.classList.remove('status-inside', 'status-outside', 'status-ambiguity');
+        
+        // Add new status class
+        productCard.classList.add(`status-${status}`);
+        
+        // Hide dropdown immediately after selection
+        dropdown.classList.remove('show');
+        productCard.classList.remove('dropdown-open');
+        
+        // Update statistics
+        updateStats();
+        updateFilterCounts();
+        
+        // Save data permanently
+        saveData();
+    }
+
+    function updateStats() {
+        const visibleCards = document.querySelectorAll('.product-card:not([style*="display: none"])');
+        let insideCount = 0, outsideCount = 0, ambiguityCount = 0;
+        
+        visibleCards.forEach(card => {
+            if (card.classList.contains('status-inside')) insideCount++;
+            else if (card.classList.contains('status-outside')) outsideCount++;
+            else if (card.classList.contains('status-ambiguity')) ambiguityCount++;
+        });
+        
+        document.getElementById('insideCount').textContent = insideCount;
+        document.getElementById('outsideCount').textContent = outsideCount;
+        document.getElementById('ambiguityCount').textContent = ambiguityCount;
+        document.getElementById('totalCount').textContent = visibleCards.length;
+    }
+
+    function updateFilterCounts() {
+        const allCards = document.querySelectorAll('.product-card');
+        let cCount = 0, kCount = 0, otherCount = 0;
+        
+        allCards.forEach(card => {
+            const code = card.querySelector('.product-code').textContent.trim().toUpperCase();
+            if (code.startsWith('C')) cCount++;
+            else if (code.startsWith('K')) kCount++;
+            else otherCount++;
+        });
+        
+        document.getElementById('allCount').textContent = `(${allCards.length})`;
+        document.getElementById('cCount').textContent = `(${cCount})`;
+        document.getElementById('kCount').textContent = `(${kCount})`;
+        document.getElementById('otherCount').textContent = `(${otherCount})`;
+    }
+
+    function applyFilters() {
+        const selectedFilter = document.querySelector('input[name="productFilter"]:checked').value;
+        
+        document.querySelectorAll('.product-card').forEach(card => {
+            const code = card.querySelector('.product-code').textContent.trim().toUpperCase();
+            let shouldShow = false;
+            
+            switch(selectedFilter) {
+                case 'all':
+                    shouldShow = true;
+                    break;
+                case 'c':
+                    shouldShow = code.startsWith('C');
+                    break;
+                case 'k':
+                    shouldShow = code.startsWith('K');
+                    break;
+                case 'other':
+                    shouldShow = !code.startsWith('C') && !code.startsWith('K');
+                    break;
+            }
+            
+            card.style.display = shouldShow ? 'block' : 'none';
+        });
+        
+        // Update stats after filtering
+        updateStats();
+        
+        // Close any open dropdowns
+        document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.classList.remove('dropdown-open');
+        });
+        
+        // Save filter selection
+        saveData();
+    }
+
+    // Close all dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.product-card')) {
+            document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('dropdown-open');
+            });
+        }
+    });
+
+    // Close dropdowns with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('dropdown-open');
+            });
+        }
+    });
+
+    // Clear all saved data
+    function clearAllData() {
+        if (confirm('Are you sure you want to clear all saved data? This will reset all product statuses and filters.')) {
+            localStorage.removeItem('inventoryData');
+            
+            // Reset all products to default (inside)
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('status-outside', 'status-ambiguity');
+                card.classList.add('status-inside');
+            });
+            
+            // Reset filter to "All"
+            document.getElementById('filterAll').checked = true;
+            applyFilters();
+            
+            updateStats();
+            updateFilterCounts();
+        }
+    }
+</script>
+{% endblock %}

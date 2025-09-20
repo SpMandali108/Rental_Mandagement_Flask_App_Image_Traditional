@@ -1210,6 +1210,20 @@ def payment_success():
 
     return render_template("payment_success.html", customer=customer)
 
+from flask import Flask, render_template
 
+app = Flask(__name__)
 
+@auth.route("/inventory")
+def inventory():
+    products = []
 
+    # Generate C1 - C150
+    for i in range(1, 151):
+        products.append({"code": f"C{i}"})
+
+    # Generate K1 - K173
+    for i in range(1, 174):
+        products.append({"code": f"K{i}"})
+
+    return render_template("inventory.html", products=products)
