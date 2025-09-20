@@ -417,235 +417,188 @@
 
 {% block scripts %}
 <script>
-    // Initialize stats and load saved data on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        loadSavedData();
-        updateStats();
-        updateFilterCounts();
-    });
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedData();
+    updateStats();
+    updateFilterCounts();
+});
 
-    // Save data to localStorage
-    function saveData() {
-        const data = {
-            productStates: {},
-            selectedFilter: document.querySelector('input[name="productFilter"]:checked').value
-        };
-        
-        // Save product statuses
-        document.querySelectorAll('.product-card').forEach(card => {
-            const productCode = card.querySelector('.product-code').textContent.trim();
-            let status = 'inside'; // default
-            if (card.classList.contains('status-outside')) status = 'outside';
-            else if (card.classList.contains('status-ambiguity')) status = 'ambiguity';
-            
-            data.productStates[productCode] = status;
-        });
-        
-        localStorage.setItem('inventoryData', JSON.stringify(data));
-    }
-
-    // Load saved data from localStorage
-    function loadSavedData() {
-        const savedData = localStorage.getItem('inventoryData');
-        if (!savedData) return;
-        
-        try {
-            const data = JSON.parse(savedData);
-            
-            // Restore product statuses
+// ==================== LOAD DATA FROM SERVER ====================
+// Load saved statuses from MongoDB
+function loadSavedData() {
+    fetch('/get_statuses')
+        .then(res => res.json())
+        .then(data => {
             document.querySelectorAll('.product-card').forEach(card => {
-                const productCode = card.querySelector('.product-code').textContent.trim();
-                const savedStatus = data.productStates[productCode];
-                
-                if (savedStatus) {
-                    // Remove all status classes
+                const code = card.querySelector('.product-code').textContent.trim();
+                if (data[code]) {
                     card.classList.remove('status-inside', 'status-outside', 'status-ambiguity');
-                    // Add saved status
-                    card.classList.add(`status-${savedStatus}`);
+                    card.classList.add(`status-${data[code]}`);
+                } else {
+                    card.classList.add('status-inside'); // default
                 }
             });
-            
-            // Restore filter selection
-            if (data.selectedFilter) {
-                const filterRadio = document.querySelector(`input[name="productFilter"][value="${data.selectedFilter}"]`);
-                if (filterRadio) {
-                    filterRadio.checked = true;
-                    applyFilters();
-                }
-            }
-            
-        } catch (error) {
-            console.error('Error loading saved data:', error);
-        }
-    }
-
-    function toggleDropdown(event, dropdownId) {
-        event.stopPropagation();
-        
-        // Remove dropdown-open class from all cards
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.classList.remove('dropdown-open');
-        });
-        
-        // Hide all other dropdowns first
-        document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-            if (dropdown.id !== dropdownId) {
-                dropdown.classList.remove('show');
-            }
-        });
-        
-        // Toggle current dropdown
-        const dropdown = document.getElementById(dropdownId);
-        const productCard = dropdown.closest('.product-card');
-        
-        if (dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show');
-            productCard.classList.remove('dropdown-open');
-        } else {
-            dropdown.classList.add('show');
-            productCard.classList.add('dropdown-open');
-        }
-    }
-
-    function setStatus(event, productId, status, dropdownId) {
-        event.stopPropagation();
-        
-        const productCard = document.getElementById(productId);
-        const dropdown = document.getElementById(dropdownId);
-        
-        // Remove all status classes
-        productCard.classList.remove('status-inside', 'status-outside', 'status-ambiguity');
-        
-        // Add new status class
-        productCard.classList.add(`status-${status}`);
-        
-        // Hide dropdown immediately after selection
-        dropdown.classList.remove('show');
-        productCard.classList.remove('dropdown-open');
-        
-        // Update statistics
-        updateStats();
-        updateFilterCounts();
-        
-        // Save data permanently
-        saveData();
-    }
-
-    function updateStats() {
-        const visibleCards = document.querySelectorAll('.product-card:not([style*="display: none"])');
-        let insideCount = 0, outsideCount = 0, ambiguityCount = 0;
-        
-        visibleCards.forEach(card => {
-            if (card.classList.contains('status-inside')) insideCount++;
-            else if (card.classList.contains('status-outside')) outsideCount++;
-            else if (card.classList.contains('status-ambiguity')) ambiguityCount++;
-        });
-        
-        document.getElementById('insideCount').textContent = insideCount;
-        document.getElementById('outsideCount').textContent = outsideCount;
-        document.getElementById('ambiguityCount').textContent = ambiguityCount;
-        document.getElementById('totalCount').textContent = visibleCards.length;
-    }
-
-    function updateFilterCounts() {
-        const allCards = document.querySelectorAll('.product-card');
-        let cCount = 0, kCount = 0, otherCount = 0;
-        
-        allCards.forEach(card => {
-            const code = card.querySelector('.product-code').textContent.trim().toUpperCase();
-            if (code.startsWith('C')) cCount++;
-            else if (code.startsWith('K')) kCount++;
-            else otherCount++;
-        });
-        
-        document.getElementById('allCount').textContent = `(${allCards.length})`;
-        document.getElementById('cCount').textContent = `(${cCount})`;
-        document.getElementById('kCount').textContent = `(${kCount})`;
-        document.getElementById('otherCount').textContent = `(${otherCount})`;
-    }
-
-    function applyFilters() {
-        const selectedFilter = document.querySelector('input[name="productFilter"]:checked').value;
-        
-        document.querySelectorAll('.product-card').forEach(card => {
-            const code = card.querySelector('.product-code').textContent.trim().toUpperCase();
-            let shouldShow = false;
-            
-            switch(selectedFilter) {
-                case 'all':
-                    shouldShow = true;
-                    break;
-                case 'c':
-                    shouldShow = code.startsWith('C');
-                    break;
-                case 'k':
-                    shouldShow = code.startsWith('K');
-                    break;
-                case 'other':
-                    shouldShow = !code.startsWith('C') && !code.startsWith('K');
-                    break;
-            }
-            
-            card.style.display = shouldShow ? 'block' : 'none';
-        });
-        
-        // Update stats after filtering
-        updateStats();
-        
-        // Close any open dropdowns
-        document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-            dropdown.classList.remove('show');
-        });
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.classList.remove('dropdown-open');
-        });
-        
-        // Save filter selection
-        saveData();
-    }
-
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.product-card')) {
-            document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-                dropdown.classList.remove('show');
-            });
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.classList.remove('dropdown-open');
-            });
-        }
-    });
-
-    // Close dropdowns with Escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-                dropdown.classList.remove('show');
-            });
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.classList.remove('dropdown-open');
-            });
-        }
-    });
-
-    // Clear all saved data
-    function clearAllData() {
-        if (confirm('Are you sure you want to clear all saved data? This will reset all product statuses and filters.')) {
-            localStorage.removeItem('inventoryData');
-            
-            // Reset all products to default (inside)
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.classList.remove('status-outside', 'status-ambiguity');
-                card.classList.add('status-inside');
-            });
-            
-            // Reset filter to "All"
-            document.getElementById('filterAll').checked = true;
-            applyFilters();
-            
             updateStats();
             updateFilterCounts();
+        });
+}
+
+// Save product status to MongoDB
+function saveData(productCode, status) {
+    fetch('/update_status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_code: productCode, status: status })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) console.error('Error saving status:', data.message);
+    });
+}
+
+
+
+// ==================== DROPDOWN LOGIC ====================
+function toggleDropdown(event, dropdownId) {
+    event.stopPropagation();
+
+    // Close all other dropdowns
+    document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+        if (dropdown.id !== dropdownId) {
+            dropdown.classList.remove('show');
+            dropdown.closest('.product-card').classList.remove('dropdown-open');
         }
+    });
+
+    const dropdown = document.getElementById(dropdownId);
+    const productCard = dropdown.closest('.product-card');
+
+    const isOpen = dropdown.classList.contains('show');
+    if (isOpen) {
+        dropdown.classList.remove('show');
+        productCard.classList.remove('dropdown-open');
+    } else {
+        dropdown.classList.add('show');
+        productCard.classList.add('dropdown-open');
     }
+}
+
+function setStatus(event, productId, status, dropdownId) {
+    event.stopPropagation();
+
+    const productCard = document.getElementById(productId);
+    const dropdown = document.getElementById(dropdownId);
+    const productCode = productCard.querySelector('.product-code').textContent.trim();
+
+    productCard.classList.remove('status-inside', 'status-outside', 'status-ambiguity');
+    productCard.classList.add(`status-${status}`);
+
+    dropdown.classList.remove('show');
+    productCard.classList.remove('dropdown-open');
+
+    updateStats();
+    updateFilterCounts();
+
+    saveData(productCode, status);  // <-- save to MongoDB
+}
+
+// ==================== STATISTICS ====================
+function updateStats() {
+    const visibleCards = document.querySelectorAll('.product-card:not([style*="display: none"])');
+    let insideCount = 0, outsideCount = 0, ambiguityCount = 0;
+
+    visibleCards.forEach(card => {
+        if (card.classList.contains('status-inside')) insideCount++;
+        else if (card.classList.contains('status-outside')) outsideCount++;
+        else if (card.classList.contains('status-ambiguity')) ambiguityCount++;
+    });
+
+    document.getElementById('insideCount').textContent = insideCount;
+    document.getElementById('outsideCount').textContent = outsideCount;
+    document.getElementById('ambiguityCount').textContent = ambiguityCount;
+    document.getElementById('totalCount').textContent = visibleCards.length;
+}
+
+// ==================== FILTER COUNT ====================
+function updateFilterCounts() {
+    const allCards = document.querySelectorAll('.product-card');
+    let cCount = 0, kCount = 0, otherCount = 0;
+
+    allCards.forEach(card => {
+        const code = card.querySelector('.product-code').textContent.trim().toUpperCase();
+        if (code.startsWith('C')) cCount++;
+        else if (code.startsWith('K')) kCount++;
+        else otherCount++;
+    });
+
+    document.getElementById('allCount').textContent = `(${allCards.length})`;
+    document.getElementById('cCount').textContent = `(${cCount})`;
+    document.getElementById('kCount').textContent = `(${kCount})`;
+    document.getElementById('otherCount').textContent = `(${otherCount})`;
+}
+
+// ==================== APPLY FILTERS ====================
+function applyFilters() {
+    const selectedFilter = document.querySelector('input[name="productFilter"]:checked').value;
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        const code = card.querySelector('.product-code').textContent.trim().toUpperCase();
+        let shouldShow = false;
+
+        switch(selectedFilter) {
+            case 'all': shouldShow = true; break;
+            case 'c': shouldShow = code.startsWith('C'); break;
+            case 'k': shouldShow = code.startsWith('K'); break;
+            case 'other': shouldShow = !code.startsWith('C') && !code.startsWith('K'); break;
+        }
+
+        card.style.display = shouldShow ? 'block' : 'none';
+    });
+
+    updateStats();
+
+    // Close all dropdowns
+    document.querySelectorAll('.status-dropdown').forEach(d => d.classList.remove('show'));
+    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('dropdown-open'));
+}
+
+// ==================== CLOSE DROPDOWNS ON OUTSIDE CLICK ====================
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.product-card')) {
+        document.querySelectorAll('.status-dropdown').forEach(d => d.classList.remove('show'));
+        document.querySelectorAll('.product-card').forEach(c => c.classList.remove('dropdown-open'));
+    }
+});
+
+// ==================== CLOSE DROPDOWNS ON ESC ====================
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.status-dropdown').forEach(d => d.classList.remove('show'));
+        document.querySelectorAll('.product-card').forEach(c => c.classList.remove('dropdown-open'));
+    }
+});
+
+// ==================== CLEAR ALL DATA (OPTIONAL SERVER SIDE) ====================
+function clearAllData() {
+    if (confirm('Are you sure you want to clear all saved data?')) {
+        fetch('/clear_statuses', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll('.product-card').forEach(card => {
+                        card.classList.remove('status-outside', 'status-ambiguity');
+                        card.classList.add('status-inside');
+                    });
+                    document.getElementById('filterAll').checked = true;
+                    applyFilters();
+                    updateStats();
+                    updateFilterCounts();
+                }
+            })
+            .catch(err => console.error(err));
+    }
+}
 </script>
+
 {% endblock %}

@@ -23,6 +23,7 @@ client = MongoClient(mongoUrl, tls=True, tlsAllowInvalidCertificates=True)
 db = client['Image_Traditional']
 collection = db['Form']
 fancy_collection = db['Fancy']
+products_collection = db['products']
 
 ADMIN_ID = os.environ.get("ADMIN_ID")
 ADMIN_PASS = os.environ.get("ADMIN_PASS")
@@ -1210,12 +1211,13 @@ def payment_success():
 
     return render_template("payment_success.html", customer=customer)
 
-from flask import Flask, render_template
-
-app = Flask(__name__)
 
 @auth.route("/inventory")
 def inventory():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+   
     products = []
 
     # Generate C1 - C150
@@ -1227,3 +1229,30 @@ def inventory():
         products.append({"code": f"K{i}"})
 
     return render_template("inventory.html", products=products)
+
+# Save product status to 'products' collection
+@auth.route("/update_status", methods=["POST"])
+def update_status():
+    data = request.json
+    product_code = data.get("product_code")
+    status = data.get("status")
+    if product_code and status:
+        products_collection.update_one(
+            {"product_code": product_code},  # if exists
+            {"$set": {"status": status}},    # update status
+            upsert=True                       # insert if not exists
+        )
+        return jsonify({"success": True})
+    return jsonify({"success": False, "message": "Invalid data"}), 400
+
+# Retrieve all product statuses
+@auth.route("/get_statuses", methods=["GET"])
+def get_statuses():
+    statuses = products_collection.find({}, {"_id": 0})
+    return jsonify({item["product_code"]: item["status"] for item in statuses})
+
+# Clear all product statuses
+@auth.route("/clear_statuses", methods=["POST"])
+def clear_statuses():
+    products_collection.delete_many({})
+    return jsonify({"success": True})
