@@ -51,12 +51,23 @@
         <i class="bi bi-calendar3"></i> 🗓️ Booking Calendar
     </h2>
 
-    <form method="POST" class="mb-4">
-        <div class="input-group">
-            <input type="date" name="date" class="form-control dark-mode-input" required>
-            <button type="submit" class="btn btn-primary dark-mode-btn">Search Bookings</button>
-        </div>
-    </form>
+    <form method="POST" class="mb-4" id="dateForm">
+    <div class="input-group">
+        <input type="date" name="date" class="form-control dark-mode-input" required id="dateInput">
+        <button type="submit" class="btn btn-primary dark-mode-btn">Search Bookings</button>
+    </div>
+</form>
+
+<script>
+    // Auto-submit form on date change
+    const dateInput = document.getElementById('dateInput');
+    const dateForm = document.getElementById('dateForm');
+
+    dateInput.addEventListener('change', function() {
+        dateForm.submit();
+    });
+</script>
+
 
     {% if date %}
         <h4 class="heading" style="color: rgb(77, 161, 46);">Bookings for <strong>{{ date }}</strong></h4>
