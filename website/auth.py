@@ -522,7 +522,10 @@ def calendar():
                     "deposit": c.get("deposit", "Not provided"),
                     "group": c.get("group", ""),
                     "reference": c.get("reference", ""),
-                    "products": c["bookings"].get(formatted_date, [])
+                    "products": c["bookings"].get(formatted_date, []),
+                    "total_price": c.get("total_price", 0),
+                    "given_price": c.get("given_price", 0),
+                    "remaining": c.get("total_price", 0) - c.get("given_price", 0)
                 }
                 bookings_on_date.append(entry)
 

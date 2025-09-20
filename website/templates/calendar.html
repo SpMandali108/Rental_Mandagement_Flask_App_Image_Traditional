@@ -14,12 +14,26 @@
 
 <style>
     /* ===== Default Table Cell Styling ===== */
- .price-label {
+ .tprice-label {
             background-color: rgba(33, 150, 243, 0.15);
             padding: 3px 8px;
             border-radius: 5px;
             font-weight: bold;
-            color: #2196F3;
+            color: #2b3ddb;
+        }
+.gprice-label {
+            background-color: rgba(33, 150, 243, 0.15);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #f08832;
+        }
+.rprice-label {
+            background-color: rgba(33, 150, 243, 0.15);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #e95353;
         }
 .costume-label {
             background-color: rgba(230, 189, 55, 0.226);
@@ -67,11 +81,15 @@
                                     <th>Group</th>
                                     <th>Reference</th>
                                     <th>Products</th>
+                                    <th>Total Price</th>
+                                    <th>Given Price</th>
+                                    <th>Remaining</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for b in regular_bookings %}
-                                <tr>
+                                <tr class="table-row" <tr class="table-row" style="cursor: pointer;"
+    onclick="window.location.href='{{ url_for('auth.profile', mobile=b.mobile) }}'">
                                     <td><strong>{{ b.Name }}</strong></td>
                                     <td>
                                         <a href="tel:{{ b.mobile }}" class="text-decoration-none">
@@ -97,6 +115,19 @@
                                             </ul>
                                         {% else %}
                                             <em class="text-muted">No products</em>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="tprice-label">₹{{ b.total_price }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="gprice-label">₹{{ b.given_price }}</span>
+                                    </td>
+                                    <td>
+                                        {%if b.remaining > 0%}
+                                        <span class="rprice-label">₹{{ b.remaining }}</span>
+                                        {% else %}
+                                        <span class="text-success">₹0</span>
                                         {% endif %}
                                     </td>
                                 </tr>
