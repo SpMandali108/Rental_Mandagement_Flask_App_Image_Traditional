@@ -107,16 +107,22 @@
                                     <td>{{ b.group }}</td>
                                     <td>{{ b.reference }}</td>
                                     <td>
-                                        {% if b.products %}
-                                            <ul class="list-unstyled mb-0">
-                                                {% for product in b.products %}
-                                                    <li><i class="bi bi-box"></i> {{ product }}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% else %}
-                                            <em class="text-muted">No products</em>
-                                        {% endif %}
-                                    </td>
+    {% if b.products %}
+        <ul class="list-unstyled mb-0">
+            {% for product in b.products %}
+                <li>
+                    <i class="bi bi-box"></i> 
+                    <a href="{{ url_for('auth.code_detail', code=product) }}" class="text-decoration-none">
+                        {{ product }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <em class="text-muted">No products</em>
+    {% endif %}
+</td>
+
                                     <td>
                                         <span class="tprice-label">₹{{ b.total_price }}</span>
                                     </td>

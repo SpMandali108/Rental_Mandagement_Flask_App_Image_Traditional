@@ -1256,3 +1256,87 @@ def get_statuses():
 def clear_statuses():
     products_collection.delete_many({})
     return jsonify({"success": True})
+
+
+
+from flask import Blueprint, render_template, current_app, url_for, abort
+from pymongo import ASCENDING
+
+@auth.route("/code/<code>")
+def code_detail(code):
+
+
+    pipeline = [
+    {"$project": {
+        "Name": 1,
+        "mobile": 1,
+        "address": 1,
+        "deposit": 1,
+        "group": 1,
+        "reference": 1,
+        "given_price": 1,
+        "total_price": 1,
+        "bookingsArr": {"$objectToArray": "$bookings"}  # convert object to array
+    }},
+    {"$unwind": "$bookingsArr"},
+    {"$match": {"bookingsArr.v": {"$in": [code]}}}, 
+    {"$project": {
+        "dateStr": "$bookingsArr.k",
+        "day": {"$toInt": {"$substr": ["$bookingsArr.k", 0, 2]}},
+        "month": {"$toInt": {"$substr": ["$bookingsArr.k", 3, 2]}},
+        "year": {"$toInt": {"$concat": ["20", {"$substr": ["$bookingsArr.k", 6, 2]}]}},
+        "user": {
+            "Name": "$Name",
+            "mobile": "$mobile",
+            "address": "$address",
+            "group": "$group",
+            "reference": "$reference",
+            "deposit": "$deposit"
+        },
+        "given_price": "$given_price",
+        "total_price": "$total_price"
+    }},
+    {"$group": {
+        "_id": "$dateStr",
+        "year": {"$first": "$year"},
+        "month": {"$first": "$month"},
+        "day": {"$first": "$day"},
+        "bookings": {"$push": {
+            "user": "$user",
+            "given_price": "$given_price",
+            "total_price": "$total_price"
+        }}
+    }}
+]
+
+
+
+    results = list(collection.aggregate(pipeline))
+
+# Sort in Python by year, month, day
+    results.sort(key=lambda r: (r["year"], r["month"], r["day"]))
+
+# Prepare for template
+    bookings_by_date = [{"date": r["_id"], "bookings": r["bookings"]} for r in results]
+
+
+    if not results:
+        return abort(404, description=f"No bookings found for {code}")
+
+    # simplify for template
+    bookings_by_date = [{"date": r["_id"], "bookings": r["bookings"]} for r in results]
+
+    # build image path (static/images/c1.jpg, k1.jpg etc.)
+    if code.startswith("K"):
+        image_url = url_for("static", filename=f"Kediya/{code}.jpg")
+    elif code.startswith("C"):
+        image_url = url_for("static", filename=f"Choli/{code}.jpg")
+    else:
+        image_url = None
+
+    return render_template(
+        "code.html",
+        code=code,
+        image_url=image_url,
+        bookings_by_date=bookings_by_date
+    )
