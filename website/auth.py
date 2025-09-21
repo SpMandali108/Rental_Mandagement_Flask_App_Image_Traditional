@@ -50,6 +50,12 @@ def check_booking_conflict(date, products, exclude_mobile=None):
     
     return len(conflicts) > 0, conflicts
 
+@auth.route('/admin')
+def admin():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    return render_template("admin.html")
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():

@@ -4,6 +4,13 @@
 
 {% block description %}Explore our massive collection of fancy dress Costumes, Perfect for Parties and School Events.{% endblock %}
 
+{% block logo_link %}
+<a href="/" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
 {% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">

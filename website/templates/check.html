@@ -6,7 +6,12 @@
   <meta name="robots" content="noindex, nofollow">
 {% endblock %}
 
-
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
 
 {% block content %}
 <div style="max-width: 500px; margin: auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">

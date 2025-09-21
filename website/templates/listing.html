@@ -2,6 +2,13 @@
 
 {% block title %}Bookings Management{% endblock %}
 
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
 {% block content %}
 <style>
 /* Custom styles that work with your base.html theme system */
@@ -366,16 +373,6 @@
                 <div class="stats-card">
                     <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Bookings</div>
                     <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;" id="bookingsCount">{{ bookings|length }}</div>
-                </div>
-                <div class="stats-card">
-                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Revenue</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;" id="totalRevenue">
-                        ₹{% set total = 0 %}{% for booking in bookings %}{% set total = total + (booking.get("total_price", 0)|float) %}{% endfor %}{{ total|round(2) }}
-                    </div>
-                </div>
-                <div class="stats-card" id="pendingCard" style="display: none;">
-                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Pending Amount</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;" id="pendingAmount">₹0</div>
                 </div>
             </div>
         </div>
@@ -864,7 +861,7 @@
         updateResultsCount();
     }
 
-    // Update results count and financial summary
+    // Update results count
     function updateResultsCount() {
         const visibleDesktop = document.querySelectorAll('.booking-row:not([style*="display: none"])');
         const visibleMobile = document.querySelectorAll('.booking-card-mobile:not([style*="display: none"])');
@@ -872,49 +869,9 @@
         
         const totalVisible = visibleRows.length;
         
-        // Calculate financial totals for filtered bookings
-        let totalRevenue = 0;
-        let pendingAmount = 0;
-        
-        // Create bookings data safely
-        const bookingsData = [];
-        {% for booking in bookings %}
-        bookingsData.push({
-            name: {{ booking.get('Name', 'N/A')|tojson }},
-            mobile: {{ booking.get('mobile', 'N/A')|tojson }},
-            group: {{ booking.get('group', 'N/A')|tojson }},
-            reference: {{ booking.get('reference', 'N/A')|tojson }},
-            total_price: {{ booking.get('total_price', 0)|float }},
-            remaining: {{ booking.get('remaining', 0)|float }},
-            deposit: {{ booking.get('deposit', 0)|float }},
-            given_price: {{ booking.get('given_price', 0)|float }}
-        });
-        {% endfor %}
-        
-        // Calculate totals based on current filters
-        const searchInput = document.getElementById('searchInput');
-        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-        
-        bookingsData.forEach(function(booking) {
-            const matchesSearch = searchTerm === '' || 
-                booking.name.toLowerCase().indexOf(searchTerm) !== -1 ||
-                booking.mobile.indexOf(searchTerm) !== -1 ||
-                booking.reference.toLowerCase().indexOf(searchTerm) !== -1;
-            
-            const matchesGroup = selectedGroups.length === 0 || selectedGroups.indexOf(booking.group) !== -1;
-            const matchesReference = selectedReferences.length === 0 || selectedReferences.indexOf(booking.reference) !== -1;
-            
-            if (matchesSearch && matchesGroup && matchesReference) {
-                totalRevenue += booking.total_price;
-                pendingAmount += booking.remaining;
-            }
-        });
-        
-        // Update the stats cards
+        // Update the bookings count
         const bookingsCountEl = document.getElementById('bookingsCount');
-        const totalRevenueEl = document.getElementById('totalRevenue');
-        const pendingAmountEl = document.getElementById('pendingAmount');
-        const pendingCard = document.getElementById('pendingCard');
+        const searchInput = document.getElementById('searchInput');
         
         const searchValue = searchInput ? searchInput.value : '';
         const isFiltered = searchValue !== '' || selectedGroups.length > 0 || selectedReferences.length > 0;
@@ -929,29 +886,12 @@
             }
         }
         
-        if (totalRevenueEl) {
-            totalRevenueEl.textContent = '₹' + totalRevenue.toFixed(2);
-            totalRevenueEl.style.color = isFiltered && totalRevenue > 0 ? '#10b981' : (isFiltered ? '#ef4444' : '#10b981');
-        }
-        
-        if (pendingAmountEl && pendingCard) {
-            pendingAmountEl.textContent = '₹' + pendingAmount.toFixed(2);
-            
-            // Show pending card only if there's pending amount or filters are active
-            if (pendingAmount > 0 || isFiltered) {
-                pendingCard.style.display = 'block';
-                pendingAmountEl.style.color = pendingAmount > 0 ? '#f59e0b' : '#10b981';
-            } else {
-                pendingCard.style.display = 'none';
-            }
-        }
-        
         // Update summary text for better UX
-        updateFilterSummary(totalVisible, totalRevenue, pendingAmount, isFiltered);
+        updateFilterSummary(totalVisible, isFiltered);
     }
 
     // Add filter summary for better user feedback
-    function updateFilterSummary(visibleCount, revenue, pending, isFiltered) {
+    function updateFilterSummary(visibleCount, isFiltered) {
         let existingSummary = document.getElementById('filterSummary');
         
         if (isFiltered) {
@@ -984,9 +924,7 @@
             
             existingSummary.innerHTML = 
                 '<svg style="width: 14px; height: 14px; margin-right: 0.5rem; display: inline-block;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"/></svg>' +
-                'Showing <strong>' + visibleCount + ' bookings</strong>' + filterText + searchText + ' • ' + 
-                'Revenue: <strong style="color: #10b981;">₹' + revenue.toFixed(2) + '</strong> • ' + 
-                'Pending: <strong style="color: #f59e0b;">₹' + pending.toFixed(2) + '</strong>';
+                'Showing <strong>' + visibleCount + ' bookings</strong>' + filterText + searchText;
         } else {
             if (existingSummary) {
                 existingSummary.remove();

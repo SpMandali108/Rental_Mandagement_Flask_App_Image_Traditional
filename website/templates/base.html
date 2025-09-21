@@ -202,7 +202,7 @@
       transform: translateX(24px);
     }
 
-    /* Hamburger Menu */
+    /* Hamburger Menu - Admin Protected */
     .hamburger-btn {
       background: var(--accent-color);
       color: var(--primary-bg);
@@ -215,6 +215,15 @@
 
     .hamburger-btn:hover {
       transform: scale(1.05);
+    }
+
+    /* Hide hamburger when not authenticated */
+    .hamburger-btn.admin-only {
+      display: none;
+    }
+
+    .hamburger-btn.admin-authenticated {
+      display: inline-block;
     }
 
     /* Sidebar */
@@ -457,10 +466,14 @@
 
 <header class="main-header">
   <div class="header-content">
-    <a href="/" class="logo">
-      <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
-      <span class="logo-text">Image Traditional</span>
-    </a>
+    {% block logo_link %}
+<!-- Default: no link -->
+<div class="logo">
+  <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+  <span class="logo-text">Image Traditional</span>
+</div>
+{% endblock %}
+
 
     <div class="header-controls">
       <!-- Contact dropdown -->
@@ -496,18 +509,25 @@
         </div>
       </button>
 
-      <!-- Sidebar toggle -->
-      <button class="hamburger-btn" onclick="toggleSidebar()">
+      <!-- Admin Protected Sidebar toggle -->
+      {% if session.logged_in %}
+      <button class="hamburger-btn admin-authenticated" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
       </button>
+      {% else %}
+      <button class="hamburger-btn admin-only" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      {% endif %}
     </div>
   </div>
 </header>
 
-<!-- Sidebar -->
+<!-- Sidebar - Only functional when authenticated -->
+{% if session.logged_in %}
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <h3>Navigation</h3>
+    <h3>Admin Navigation</h3>
     <button class="close-btn" onclick="toggleSidebar()">
       <i class="fas fa-times"></i>
     </button>
@@ -528,8 +548,9 @@
   </nav>
 </div>
 
-<!-- Overlay -->
+<!-- Overlay - Only when authenticated -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+{% endif %}
 
 <!-- Alerts -->
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -575,16 +596,19 @@
     }
   }
 
-  // Sidebar management
+  // Sidebar management - Only works when authenticated
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
-    
-    // Prevent body scroll when sidebar is open
-    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    // Check if elements exist (only when authenticated)
+    if (sidebar && overlay) {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+      
+      // Prevent body scroll when sidebar is open
+      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
   }
 
   // Contact menu management
@@ -619,10 +643,10 @@
       const sidebar = document.getElementById('sidebar');
       const contactMenu = document.getElementById('contactMenu');
       
-      if (sidebar.classList.contains('active')) {
+      if (sidebar && sidebar.classList.contains('active')) {
         toggleSidebar();
       }
-      if (contactMenu.classList.contains('active')) {
+      if (contactMenu && contactMenu.classList.contains('active')) {
         contactMenu.classList.remove('active');
       }
     }
@@ -643,7 +667,7 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         
-        if (sidebar.classList.contains('active')) {
+        if (sidebar && overlay && sidebar.classList.contains('active')) {
           sidebar.classList.remove('active');
           overlay.classList.remove('active');
           document.body.style.overflow = '';

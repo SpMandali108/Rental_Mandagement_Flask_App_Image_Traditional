@@ -124,7 +124,12 @@
     }
 </style>
 {% endblock %}
-
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
 {% block content %}
 <div class="container-fluid py-4 px-3">
     <div class="row justify-content-center">

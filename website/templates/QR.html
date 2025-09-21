@@ -2,6 +2,13 @@
 
 {% block title %}Booking Success{% endblock %}
 
+{% block logo_link %}
+<a href="/" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
 {% block content %}
 <div class="container" style="max-width:500px; margin:2rem auto; text-align:center; font-family:sans-serif;">
     <h2 style="color:green; margin-bottom:1rem;">Scan To Download Bill</h2>

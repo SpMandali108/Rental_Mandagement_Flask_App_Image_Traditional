@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block logo_link %}
+<a href="/" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
 {% block content %}
 <div style="text-align:center; padding:40px;">
     <h2>No bookings found for {{ code }}</h2>
