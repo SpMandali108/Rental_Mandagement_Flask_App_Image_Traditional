@@ -1,0 +1,1087 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings Management{% endblock %}
+
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<style>
+/* Custom styles that work with your base.html theme system */
+.bookings-container {
+    background: var(--secondary-bg);
+    min-height: calc(100vh - 120px);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.bookings-card {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.bookings-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.search-input {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border-radius: 8px;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.filter-select {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.multi-select-container {
+    position: relative;
+    min-width: 200px;
+}
+
+.multi-select-button {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.multi-select-button:hover {
+    border-color: #3b82f6;
+}
+
+.multi-select-button.active {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.multi-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.multi-select-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.multi-select-option {
+    padding: 0.625rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.multi-select-option:hover {
+    background: var(--secondary-bg);
+}
+
+.multi-select-option input[type="checkbox"] {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    accent-color: #3b82f6;
+}
+
+.multi-select-summary {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.multi-select-arrow {
+    transition: transform 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.multi-select-button.active .multi-select-arrow {
+    transform: rotate(180deg);
+}
+
+.selected-count {
+    background: #3b82f6;
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.clear-filters-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s ease;
+}
+
+.clear-filters-btn:hover {
+    background: #dc2626;
+}
+
+.clear-filters-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.bookings-table {
+    background: var(--primary-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.table-header {
+    background: var(--secondary-bg);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.table-row {
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.table-row:hover {
+    background: var(--secondary-bg);
+}
+
+.table-cell {
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    vertical-align: top;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-group {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+
+.dark-theme .badge-group {
+    background: #4c1d95;
+    color: #e9d5ff;
+}
+
+.badge-paid {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.dark-theme .badge-paid {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+.badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.dark-theme .badge-pending {
+    background: #78350f;
+    color: #fde68a;
+}
+
+.stats-card {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    min-width: 120px;
+}
+
+.booking-card {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.booking-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.booking-item {
+    background: var(--secondary-bg);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.booking-item:last-child {
+    margin-bottom: 0;
+}
+
+.empty-state {
+    background: var(--primary-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 1024px) {
+    .bookings-container {
+        padding: 1rem;
+    }
+    
+    .search-filter-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .stats-row {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .bookings-container {
+        padding: 0.75rem;
+    }
+    
+    .header-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .stats-row {
+        width: 100%;
+        justify-content: space-around;
+    }
+    
+    .stats-card {
+        min-width: auto;
+        flex: 1;
+        text-align: center;
+    }
+}
+</style>
+
+<div class="bookings-container">
+    <!-- Header Section -->
+    <div style="margin-bottom: 2rem;">
+        <div class="header-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; margin-top: 0;">Bookings Management</h1>
+                <p style="color: var(--text-secondary); margin: 0;">Manage and track all your customer bookings</p>
+            </div>
+            <div class="stats-row" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div class="stats-card">
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Bookings</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;" id="bookingsCount">{{ bookings|length }}</div>
+                </div>
+                <div class="stats-card">
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Revenue</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;" id="totalRevenue">
+                        ₹{% set total = 0 %}{% for booking in bookings %}{% set total = total + (booking.get("total_price", 0)|float) %}{% endfor %}{{ total|round(2) }}
+                    </div>
+                </div>
+                <div class="stats-card" id="pendingCard" style="display: none;">
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Pending Amount</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;" id="pendingAmount">₹0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div style="margin-bottom: 1.5rem;">
+        <div class="bookings-card" style="padding: 1.5rem;">
+            <div class="search-filter-container" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1; position: relative; min-width: 250px;">
+                    <input 
+                        type="text" 
+                        placeholder="Search by name, mobile, or reference..." 
+                        class="search-input"
+                        id="searchInput"
+                    >
+                    <svg style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path>
+                    </svg>
+                </div>
+                
+                <!-- Multi-select Group Filter -->
+                <div class="multi-select-container">
+                    <div class="multi-select-button" id="groupFilterButton">
+                        <span class="multi-select-summary" id="groupSummary">All Groups</span>
+                        <svg class="multi-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </div>
+                    <div class="multi-select-dropdown" id="groupDropdown">
+                        {% set groups = [] %}
+                        {% for booking in bookings %}
+                            {% set group = booking.get("group", "N/A") %}
+                            {% if group not in groups %}
+                                {% set _ = groups.append(group) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% for group in groups|sort %}
+                        <div class="multi-select-option">
+                            <input type="checkbox" id="group-{{ loop.index }}" value="{{ group }}" class="group-checkbox">
+                            <label for="group-{{ loop.index }}">{{ group }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Multi-select Reference Filter -->
+                <div class="multi-select-container">
+                    <div class="multi-select-button" id="referenceFilterButton">
+                        <span class="multi-select-summary" id="referenceSummary">All References</span>
+                        <svg class="multi-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </div>
+                    <div class="multi-select-dropdown" id="referenceDropdown">
+                        {% set references = [] %}
+                        {% for booking in bookings %}
+                            {% set reference = booking.get("reference", "N/A") %}
+                            {% if reference not in references and reference != "N/A" and reference != "" %}
+                                {% set _ = references.append(reference) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% for reference in references|sort %}
+                        <div class="multi-select-option">
+                            <input type="checkbox" id="reference-{{ loop.index }}" value="{{ reference }}" class="reference-checkbox">
+                            <label for="reference-{{ loop.index }}">{{ reference }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Clear Filters Button -->
+                <button class="clear-filters-btn" id="clearFiltersBtn" disabled>
+                    <svg style="width: 12px; height: 12px; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Grid for Desktop / Cards for Mobile -->
+    <div class="bookings-table">
+        <!-- Desktop Table View -->
+        <div style="display: none;" class="desktop-view">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead class="table-header">
+                        <tr>
+                            <th class="table-cell" style="text-align: left;">Customer</th>
+                            <th class="table-cell" style="text-align: left;">Contact</th>
+                            <th class="table-cell" style="text-align: left;">Group</th>
+                            <th class="table-cell" style="text-align: left;">Bookings</th>
+                            <th class="table-cell" style="text-align: left;">Financial</th>
+                            <th class="table-cell" style="text-align: left;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr class="table-row booking-row" 
+                            data-group="{{ booking.get('group', 'N/A') }}"
+                            data-reference="{{ booking.get('reference', 'N/A') }}"
+                            onclick="window.location.href='{{ url_for('auth.profile', mobile=booking.get('mobile', '')) }}'">
+                            
+                            <!-- Customer Info -->
+                            <td class="table-cell">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="avatar">
+                                        {{ booking.get("Name", "N/A")[:2].upper() }}
+                                    </div>
+                                    <div style="margin-left: 1rem;">
+                                        <div style="font-weight: 500; color: var(--text-primary);">
+                                            {{ booking.get("Name", "N/A") }}
+                                        </div>
+                                        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                            Ref: {{ booking.get("reference", "N/A") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Contact -->
+                            <td class="table-cell">
+                                <div style="font-weight: 500;">{{ booking.get("mobile", "N/A") }}</div>
+                            </td>
+
+                            <!-- Group -->
+                            <td class="table-cell">
+                                <span class="badge badge-group">
+                                    {{ booking.get("group", "N/A") }}
+                                </span>
+                            </td>
+
+                            <!-- Bookings -->
+                            <td class="table-cell">
+                                <div style="max-width: 250px;">
+                                    {% if booking.get("bookings") %}
+                                        {% for date, items in booking["bookings"].items() %}
+                                            <div style="margin-bottom: 0.5rem;">
+                                                <div style="font-weight: 500; font-size: 0.75rem; color: var(--text-primary);">{{ date }}</div>
+                                                <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ items|join(", ") }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span style="font-size: 0.75rem; color: var(--text-secondary);">No bookings</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Financial Info -->
+                            <td class="table-cell">
+                                <div style="font-size: 0.875rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <span style="color: var(--text-secondary);">Deposit:</span>
+                                        <span style="font-weight: 500;">₹{{ booking.get("deposit", 0)|float|round(2) }}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <span style="color: var(--text-secondary);">Total:</span>
+                                        <span style="font-weight: 500;">₹{{ booking.get("total_price", 0)|float|round(2) }}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-secondary);">Given:</span>
+                                        <span style="font-weight: 500;">₹{{ booking.get("given_price", 0)|float|round(2) }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Status -->
+                            <td class="table-cell">
+                                {% set remaining = (booking.get("remaining", 0)|float) %}
+                                {% if remaining > 0 %}
+                                    <span class="badge badge-pending">
+                                        Pending: ₹{{ remaining|round(2) }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-paid">
+                                        Paid
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="mobile-view" style="padding: 1rem;">
+            {% for booking in bookings %}
+            <div class="booking-card booking-card-mobile" 
+                 data-group="{{ booking.get('group', 'N/A') }}"
+                 data-reference="{{ booking.get('reference', 'N/A') }}"
+                 onclick="window.location.href='{{ url_for('auth.profile', mobile=booking.get('mobile', '')) }}'">
+                
+                <!-- Header -->
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center;">
+                        <div class="avatar" style="width: 48px; height: 48px;">
+                            {{ booking.get("Name", "N/A")[:2].upper() }}
+                        </div>
+                        <div style="margin-left: 1rem;">
+                            <h3 style="font-size: 1.125rem; font-weight: 500; color: var(--text-primary); margin: 0 0 0.25rem 0;">{{ booking.get("Name", "N/A") }}</h3>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">{{ booking.get("mobile", "N/A") }}</p>
+                        </div>
+                    </div>
+                    <span class="badge badge-group">
+                        {{ booking.get("group", "N/A") }}
+                    </span>
+                </div>
+
+                <!-- Bookings -->
+                {% if booking.get("bookings") %}
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary); margin: 0 0 0.75rem 0;">Bookings:</h4>
+                    {% for date, items in booking["bookings"].items() %}
+                        <div class="booking-item">
+                            <div style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary);">{{ date }}</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">{{ items|join(", ") }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Financial Summary -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.875rem; margin-bottom: 0.75rem;">
+                        <div>
+                            <span style="color: var(--text-secondary);">Deposit: </span>
+                            <span style="font-weight: 500;">₹{{ booking.get("deposit", 0)|float|round(2) }}</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-secondary);">Total: </span>
+                            <span style="font-weight: 500;">₹{{ booking.get("total_price", 0)|float|round(2) }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div>
+                        {% set remaining = (booking.get("remaining", 0)|float) %}
+                        {% if remaining > 0 %}
+                            <span class="badge badge-pending">
+                                Remaining: ₹{{ remaining|round(2) }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-paid">
+                                Fully Paid
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    {% if not bookings %}
+    <div class="empty-state">
+        <svg style="width: 48px; height: 48px; color: var(--text-secondary); margin-bottom: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <h3 style="font-size: 1.125rem; font-weight: 500; color: var(--text-primary); margin: 0 0 0.5rem 0;">No bookings found</h3>
+        <p style="color: var(--text-secondary); margin: 0;">Get started by creating your first booking.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    // Global variables
+    let selectedGroups = [];
+    let selectedReferences = [];
+
+    // Responsive table/card view switching
+    function updateViewMode() {
+        const desktopView = document.querySelector('.desktop-view');
+        const mobileView = document.querySelector('.mobile-view');
+        
+        if (!desktopView || !mobileView) return;
+        
+        if (window.innerWidth >= 1024) {
+            desktopView.style.display = 'block';
+            mobileView.style.display = 'none';
+        } else {
+            desktopView.style.display = 'none';
+            mobileView.style.display = 'block';
+        }
+    }
+
+    // Toggle dropdown functions
+    function toggleGroupDropdown() {
+        const dropdown = document.getElementById('groupDropdown');
+        const button = document.getElementById('groupFilterButton');
+        if (!dropdown || !button) return;
+        
+        closeOtherDropdowns('group');
+        toggleDropdown(dropdown, button);
+    }
+
+    function toggleReferenceDropdown() {
+        const dropdown = document.getElementById('referenceDropdown');
+        const button = document.getElementById('referenceFilterButton');
+        if (!dropdown || !button) return;
+        
+        closeOtherDropdowns('reference');
+        toggleDropdown(dropdown, button);
+    }
+
+    function toggleDropdown(dropdown, button) {
+        const isActive = dropdown.classList.contains('active');
+        
+        if (isActive) {
+            dropdown.classList.remove('active');
+            button.classList.remove('active');
+        } else {
+            dropdown.classList.add('active');
+            button.classList.add('active');
+        }
+    }
+
+    function closeOtherDropdowns(except) {
+        const elements = [
+            { dropdown: 'groupDropdown', button: 'groupFilterButton', type: 'group' },
+            { dropdown: 'referenceDropdown', button: 'referenceFilterButton', type: 'reference' }
+        ];
+        
+        elements.forEach(el => {
+            if (el.type !== except) {
+                const dropdown = document.getElementById(el.dropdown);
+                const button = document.getElementById(el.button);
+                if (dropdown) dropdown.classList.remove('active');
+                if (button) button.classList.remove('active');
+            }
+        });
+    }
+
+    // Update summary text functions
+    function updateGroupSummary() {
+        const summary = document.getElementById('groupSummary');
+        if (!summary) return;
+        
+        if (selectedGroups.length === 0) {
+            summary.textContent = 'All Groups';
+            summary.style.color = 'var(--text-primary)';
+        } else if (selectedGroups.length === 1) {
+            summary.textContent = selectedGroups[0];
+            summary.style.color = '#3b82f6';
+        } else {
+            summary.innerHTML = selectedGroups.length + ' Groups Selected <span class="selected-count">' + selectedGroups.length + '</span>';
+            summary.style.color = '#3b82f6';
+        }
+    }
+
+    function updateReferenceSummary() {
+        const summary = document.getElementById('referenceSummary');
+        if (!summary) return;
+        
+        if (selectedReferences.length === 0) {
+            summary.textContent = 'All References';
+            summary.style.color = 'var(--text-primary)';
+        } else if (selectedReferences.length === 1) {
+            summary.textContent = selectedReferences[0];
+            summary.style.color = '#3b82f6';
+        } else {
+            summary.innerHTML = selectedReferences.length + ' References Selected <span class="selected-count">' + selectedReferences.length + '</span>';
+            summary.style.color = '#3b82f6';
+        }
+    }
+
+    // Handle checkbox changes
+    function handleGroupChange(checkbox) {
+        const value = checkbox.value;
+        
+        if (checkbox.checked) {
+            if (selectedGroups.indexOf(value) === -1) {
+                selectedGroups.push(value);
+            }
+        } else {
+            selectedGroups = selectedGroups.filter(function(group) {
+                return group !== value;
+            });
+        }
+        
+        updateGroupSummary();
+        performSearch();
+        updateClearButtonState();
+    }
+
+    function handleReferenceChange(checkbox) {
+        const value = checkbox.value;
+        
+        if (checkbox.checked) {
+            if (selectedReferences.indexOf(value) === -1) {
+                selectedReferences.push(value);
+            }
+        } else {
+            selectedReferences = selectedReferences.filter(function(reference) {
+                return reference !== value;
+            });
+        }
+        
+        updateReferenceSummary();
+        performSearch();
+        updateClearButtonState();
+    }
+
+    // Clear all filters
+    function clearAllFilters() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = '';
+        
+        // Clear all group checkboxes
+        document.querySelectorAll('.group-checkbox').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        
+        // Clear all reference checkboxes
+        document.querySelectorAll('.reference-checkbox').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        
+        selectedGroups = [];
+        selectedReferences = [];
+        updateGroupSummary();
+        updateReferenceSummary();
+        performSearch();
+        updateClearButtonState();
+    }
+
+    // Update clear button state
+    function updateClearButtonState() {
+        const clearBtn = document.getElementById('clearFiltersBtn');
+        const searchInput = document.getElementById('searchInput');
+        if (!clearBtn || !searchInput) return;
+        
+        const searchValue = searchInput.value;
+        const hasFilters = searchValue !== '' || selectedGroups.length > 0 || selectedReferences.length > 0;
+        
+        clearBtn.disabled = !hasFilters;
+    }
+
+    // Enhanced search functionality
+    function performSearch() {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+        
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        const desktopRows = document.querySelectorAll('.booking-row');
+        const mobileCards = document.querySelectorAll('.booking-card-mobile');
+        
+        // Filter desktop table rows
+        desktopRows.forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            const group = row.getAttribute('data-group');
+            const reference = row.getAttribute('data-reference');
+            
+            const matchesSearch = text.indexOf(searchTerm) !== -1;
+            const matchesGroup = selectedGroups.length === 0 || selectedGroups.indexOf(group) !== -1;
+            const matchesReference = selectedReferences.length === 0 || selectedReferences.indexOf(reference) !== -1;
+            
+            row.style.display = (matchesSearch && matchesGroup && matchesReference) ? '' : 'none';
+        });
+        
+        // Filter mobile cards
+        mobileCards.forEach(function(card) {
+            const text = card.textContent.toLowerCase();
+            const group = card.getAttribute('data-group');
+            const reference = card.getAttribute('data-reference');
+            
+            const matchesSearch = text.indexOf(searchTerm) !== -1;
+            const matchesGroup = selectedGroups.length === 0 || selectedGroups.indexOf(group) !== -1;
+            const matchesReference = selectedReferences.length === 0 || selectedReferences.indexOf(reference) !== -1;
+            
+            card.style.display = (matchesSearch && matchesGroup && matchesReference) ? '' : 'none';
+        });
+        
+        // Update results count
+        updateResultsCount();
+    }
+
+    // Update results count and financial summary
+    function updateResultsCount() {
+        const visibleDesktop = document.querySelectorAll('.booking-row:not([style*="display: none"])');
+        const visibleMobile = document.querySelectorAll('.booking-card-mobile:not([style*="display: none"])');
+        const visibleRows = window.innerWidth >= 1024 ? visibleDesktop : visibleMobile;
+        
+        const totalVisible = visibleRows.length;
+        
+        // Calculate financial totals for filtered bookings
+        let totalRevenue = 0;
+        let pendingAmount = 0;
+        
+        // Create bookings data safely
+        const bookingsData = [];
+        {% for booking in bookings %}
+        bookingsData.push({
+            name: {{ booking.get('Name', 'N/A')|tojson }},
+            mobile: {{ booking.get('mobile', 'N/A')|tojson }},
+            group: {{ booking.get('group', 'N/A')|tojson }},
+            reference: {{ booking.get('reference', 'N/A')|tojson }},
+            total_price: {{ booking.get('total_price', 0)|float }},
+            remaining: {{ booking.get('remaining', 0)|float }},
+            deposit: {{ booking.get('deposit', 0)|float }},
+            given_price: {{ booking.get('given_price', 0)|float }}
+        });
+        {% endfor %}
+        
+        // Calculate totals based on current filters
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        bookingsData.forEach(function(booking) {
+            const matchesSearch = searchTerm === '' || 
+                booking.name.toLowerCase().indexOf(searchTerm) !== -1 ||
+                booking.mobile.indexOf(searchTerm) !== -1 ||
+                booking.reference.toLowerCase().indexOf(searchTerm) !== -1;
+            
+            const matchesGroup = selectedGroups.length === 0 || selectedGroups.indexOf(booking.group) !== -1;
+            const matchesReference = selectedReferences.length === 0 || selectedReferences.indexOf(booking.reference) !== -1;
+            
+            if (matchesSearch && matchesGroup && matchesReference) {
+                totalRevenue += booking.total_price;
+                pendingAmount += booking.remaining;
+            }
+        });
+        
+        // Update the stats cards
+        const bookingsCountEl = document.getElementById('bookingsCount');
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        const pendingAmountEl = document.getElementById('pendingAmount');
+        const pendingCard = document.getElementById('pendingCard');
+        
+        const searchValue = searchInput ? searchInput.value : '';
+        const isFiltered = searchValue !== '' || selectedGroups.length > 0 || selectedReferences.length > 0;
+        
+        if (bookingsCountEl) {
+            if (isFiltered) {
+                bookingsCountEl.textContent = totalVisible + ' / {{ bookings|length }}';
+                bookingsCountEl.style.color = totalVisible > 0 ? '#3b82f6' : '#ef4444';
+            } else {
+                bookingsCountEl.textContent = '{{ bookings|length }}';
+                bookingsCountEl.style.color = '#3b82f6';
+            }
+        }
+        
+        if (totalRevenueEl) {
+            totalRevenueEl.textContent = '₹' + totalRevenue.toFixed(2);
+            totalRevenueEl.style.color = isFiltered && totalRevenue > 0 ? '#10b981' : (isFiltered ? '#ef4444' : '#10b981');
+        }
+        
+        if (pendingAmountEl && pendingCard) {
+            pendingAmountEl.textContent = '₹' + pendingAmount.toFixed(2);
+            
+            // Show pending card only if there's pending amount or filters are active
+            if (pendingAmount > 0 || isFiltered) {
+                pendingCard.style.display = 'block';
+                pendingAmountEl.style.color = pendingAmount > 0 ? '#f59e0b' : '#10b981';
+            } else {
+                pendingCard.style.display = 'none';
+            }
+        }
+        
+        // Update summary text for better UX
+        updateFilterSummary(totalVisible, totalRevenue, pendingAmount, isFiltered);
+    }
+
+    // Add filter summary for better user feedback
+    function updateFilterSummary(visibleCount, revenue, pending, isFiltered) {
+        let existingSummary = document.getElementById('filterSummary');
+        
+        if (isFiltered) {
+            if (!existingSummary) {
+                existingSummary = document.createElement('div');
+                existingSummary.id = 'filterSummary';
+                existingSummary.style.cssText = 'background: var(--secondary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-secondary);';
+                
+                const container = document.querySelector('.bookings-table');
+                if (container && container.parentNode) {
+                    container.parentNode.insertBefore(existingSummary, container);
+                }
+            }
+            
+            let filterText = '';
+            if (selectedGroups.length > 0) {
+                filterText += selectedGroups.length === 1 ? 
+                    ' from group "' + selectedGroups[0] + '"' : 
+                    ' from ' + selectedGroups.length + ' selected groups';
+            }
+            
+            if (selectedReferences.length > 0) {
+                filterText += selectedReferences.length === 1 ? 
+                    ' with reference "' + selectedReferences[0] + '"' : 
+                    ' with ' + selectedReferences.length + ' selected references';
+            }
+            
+            const searchInput = document.getElementById('searchInput');
+            const searchText = searchInput && searchInput.value ? ' matching search term' : '';
+            
+            existingSummary.innerHTML = 
+                '<svg style="width: 14px; height: 14px; margin-right: 0.5rem; display: inline-block;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"/></svg>' +
+                'Showing <strong>' + visibleCount + ' bookings</strong>' + filterText + searchText + ' • ' + 
+                'Revenue: <strong style="color: #10b981;">₹' + revenue.toFixed(2) + '</strong> • ' + 
+                'Pending: <strong style="color: #f59e0b;">₹' + pending.toFixed(2) + '</strong>';
+        } else {
+            if (existingSummary) {
+                existingSummary.remove();
+            }
+        }
+    }
+
+    // Close dropdown when clicking outside
+    function handleOutsideClick(event) {
+        const groupContainer = document.getElementById('groupFilterButton');
+        const referenceContainer = document.getElementById('referenceFilterButton');
+        
+        if (groupContainer && !groupContainer.parentNode.contains(event.target)) {
+            const groupDropdown = document.getElementById('groupDropdown');
+            const groupButton = document.getElementById('groupFilterButton');
+            if (groupDropdown) groupDropdown.classList.remove('active');
+            if (groupButton) groupButton.classList.remove('active');
+        }
+        
+        if (referenceContainer && !referenceContainer.parentNode.contains(event.target)) {
+            const referenceDropdown = document.getElementById('referenceDropdown');
+            const referenceButton = document.getElementById('referenceFilterButton');
+            if (referenceDropdown) referenceDropdown.classList.remove('active');
+            if (referenceButton) referenceButton.classList.remove('active');
+        }
+    }
+
+    // Initialize event listeners
+    function initEventListeners() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                performSearch();
+                updateClearButtonState();
+            });
+        }
+
+        const groupButton = document.getElementById('groupFilterButton');
+        if (groupButton) {
+            groupButton.addEventListener('click', toggleGroupDropdown);
+        }
+
+        const referenceButton = document.getElementById('referenceFilterButton');
+        if (referenceButton) {
+            referenceButton.addEventListener('click', toggleReferenceDropdown);
+        }
+
+        const clearButton = document.getElementById('clearFiltersBtn');
+        if (clearButton) {
+            clearButton.addEventListener('click', clearAllFilters);
+        }
+
+        // Add event listeners to all checkboxes
+        document.querySelectorAll('.group-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                handleGroupChange(this);
+            });
+        });
+
+        document.querySelectorAll('.reference-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                handleReferenceChange(this);
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', handleOutsideClick);
+    }
+
+    // Initialize everything when DOM is ready
+    function initialize() {
+        updateViewMode();
+        updateResultsCount();
+        initEventListeners();
+        
+        // Set up resize listener
+        window.addEventListener('resize', function() {
+            updateViewMode();
+            updateResultsCount();
+        });
+    }
+
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
+})();
+</script>
+{% endblock %}

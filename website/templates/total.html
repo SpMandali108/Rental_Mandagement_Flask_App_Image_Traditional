@@ -410,14 +410,14 @@
   <div class="summary-section">
     <h2 class="section-title">📸 Traditional Bookings</h2>
     <div class="summary-grid">
-      <a href="{{ url_for('auth.listing') }}" style="text-decoration: none; color: inherit;">
+      <a href="{{ url_for('auth.dashboard_listing') }}" style="text-decoration: none; color: inherit;">
   <div class="summary-card">
     <div class="card-title">👥 Total Customers</div>
     <div class="card-value">{{ total_customers_trad }}</div>
   </div>
 </a>
 
-      <div class="summary-card">
+      <div class="summary-card" >
         <div class="card-title">💰 Total Collection</div>
         <div class="card-value"><span class="currency">₹</span>{{ total_collection_trad }}</div>
       </div>

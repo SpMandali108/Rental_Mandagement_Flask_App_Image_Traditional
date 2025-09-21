@@ -1356,3 +1356,13 @@ def product():
     codes = [f"C{i}" for i in range(1, 151)] + [f"K{i}" for i in range(1, 174)]
     return render_template("product.html", codes=codes)
 
+@auth.route("/dashboard_listing",methods=['GET', 'POST'])
+def dashboard_listing():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    bookings = list(collection.find())
+    for b in bookings:
+        b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
+
+    return render_template("dashboard_listing.html", bookings=bookings)
