@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align:center; padding:40px;">
+    <h2>No bookings found for {{ code }}</h2>
+    <p>Please try another code or check later.</p>
+    <a href="{{ url_for('auth.product') }}"
+       style="display:inline-block; margin-top:20px; padding:10px 20px;
+              background:#007BFF; color:#fff; border-radius:6px; text-decoration:none;">
+        Back to Code Library
+    </a>
+</div>
+{% endblock %}

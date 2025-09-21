@@ -1264,6 +1264,8 @@ from pymongo import ASCENDING
 
 @auth.route("/code/<code>")
 def code_detail(code):
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
 
 
     pipeline = [
@@ -1321,7 +1323,7 @@ def code_detail(code):
 
 
     if not results:
-        return abort(404, description=f"No bookings found for {code}")
+        return render_template("no_booking.html", code=code)
 
     # simplify for template
     bookings_by_date = [{"date": r["_id"], "bookings": r["bookings"]} for r in results]
@@ -1340,3 +1342,11 @@ def code_detail(code):
         image_url=image_url,
         bookings_by_date=bookings_by_date
     )
+@auth.route("/product")
+def product():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    # Capitalize first letter for URLs
+    codes = [f"C{i}" for i in range(1, 151)] + [f"K{i}" for i in range(1, 174)]
+    return render_template("product.html", codes=codes)
+

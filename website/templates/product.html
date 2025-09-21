@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.filter-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95rem;
+}
+/* Modern Code Library Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: #64748b;
+}
+
+.filter-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #374151;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.radio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #374151;
+    font-weight: 500;
+}
+
+.radio-label input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.radio-label input[type="radio"]:checked {
+    border-color: #3b82f6;
+    background: #3b82f6;
+}
+
+.radio-label input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+}
+
+.radio-label input[type="radio"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.radio-text {
+    user-select: none;
+}
+
+.results-counter {
+    margin-left: auto;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.code-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.code-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.code-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.code-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
+
+.code-card:hover::before {
+    transform: scaleX(1);
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.code-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.series-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.series-c {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.series-k {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.series-other {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: #64748b;
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    opacity: 0.5;
+}
+
+.no-codes-state {
+    text-align: center;
+    padding: 6rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    margin: 2rem 0;
+}
+
+.no-codes-icon {
+    margin: 0 auto 2rem;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px -5px rgb(59 130 246 / 0.3);
+}
+
+.no-codes-icon svg {
+    width: 40px;
+    height: 40px;
+    color: white;
+}
+
+.no-codes-state h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+
+.no-codes-state p {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.no-codes-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.refresh-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgb(59 130 246 / 0.4);
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+    
+    .search-container {
+        min-width: auto;
+    }
+    
+    .radio-container {
+        align-items: center;
+    }
+    
+    .results-counter {
+        text-align: center;
+    }
+    
+    .code-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Code Library</h1>
+        <p>Browse and explore your code collection</p>
+    </div>
+
+    <div class="filter-section">
+        <div class="search-container">
+            <label for="searchInput" class="filter-label">Search Codes:</label>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by code name..." oninput="filterCodes()">
+        </div>
+        
+        <div class="radio-container">
+            <span class="filter-label">Filter by Series:</span>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="series" value="all" checked onchange="filterCodes()">
+                    <span class="radio-text">All</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="series" value="C" onchange="filterCodes()">
+                    <span class="radio-text">C Series</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="series" value="K" onchange="filterCodes()">
+                    <span class="radio-text">K Series</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="results-counter" id="resultsCounter">
+            Showing <span id="resultCount">0</span> codes
+        </div>
+    </div>
+
+    {% if codes %}
+    <div class="code-grid" id="codeGrid">
+        {% for code in codes %}
+        <a href="/code/{{ code }}" class="code-card" data-series="{{ code[0] }}">
+            <div class="code-header">
+                <div class="code-title">{{ code }}</div>
+                <div class="series-badge {% if code[0] == 'C' %}series-c{% elif code[0] == 'K' %}series-k{% else %}series-other{% endif %}">
+                    {{ code[0] }} Series
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h6a1 1 0 100-2H9z"/>
+            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h1a1 1 0 000 2H6v6.586l.293-.293a1 1 0 011.414 0l4 4a1 1 0 001.414-1.414L10.414 11H15a1 1 0 100-2h-5.586l2.707-2.707a1 1 0 00-1.414-1.414l-4 4A1 1 0 006 9.586V5z" clip-rule="evenodd"/>
+        </svg>
+        <h3>No codes found</h3>
+        <p>Try adjusting your search or filter to see more results.</p>
+    </div>
+    {% else %}
+    <div class="no-codes-state">
+        <div class="no-codes-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                <path d="M8 11l2 2 4-4" stroke="white" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+        <h2>No Codes Available</h2>
+        <p>Your code library is empty. Start by adding some codes to see them here.</p>
+        <div class="no-codes-actions">
+            <button onclick="window.location.reload()" class="refresh-btn">
+                Refresh Page
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function filterCodes() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    const selectedSeries = document.querySelector('input[name="series"]:checked').value;
+    const cards = document.querySelectorAll(".code-card");
+    const emptyState = document.getElementById("emptyState");
+    const resultCount = document.getElementById("resultCount");
+    
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+        const codeTitle = card.querySelector('.code-title').textContent.toLowerCase();
+        const series = card.getAttribute("data-series");
+        
+        const matchesSearch = codeTitle.includes(searchTerm);
+        const matchesSeries = selectedSeries === "all" || selectedSeries === series;
+        
+        const shouldShow = matchesSearch && matchesSeries;
+        
+        if (shouldShow) {
+            card.style.display = "block";
+            card.classList.add("fade-in");
+            visibleCount++;
+        } else {
+            card.style.display = "none";
+            card.classList.remove("fade-in");
+        }
+    });
+    
+    resultCount.textContent = visibleCount;
+    
+    if (visibleCount === 0) {
+        emptyState.style.display = "block";
+    } else {
+        emptyState.style.display = "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Only run filter if codes exist
+    if (document.querySelectorAll('.code-card').length > 0) {
+        filterCodes();
+        
+        const cards = document.querySelectorAll(".code-card");
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add("fade-in");
+        });
+    }
+});
+</script>
+{% endblock %}
