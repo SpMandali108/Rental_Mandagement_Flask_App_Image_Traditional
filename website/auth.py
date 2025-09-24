@@ -1336,9 +1336,9 @@ def code_detail(code):
 
     # build image path (static/images/c1.jpg, k1.jpg etc.)
     if code.startswith("K"):
-        image_url = url_for("static", filename=f"Kediya/{code}.jpg")
+        image_url = url_for("static", filename=f"Kediya/{code}.webp")
     elif code.startswith("C"):
-        image_url = url_for("static", filename=f"Choli/{code}.jpg")
+        image_url = url_for("static", filename=f"Choli/{code}.webp")
     else:
         image_url = None
 
@@ -1366,3 +1366,72 @@ def dashboard_listing():
         b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
 
     return render_template("dashboard_listing.html", bookings=bookings)
+
+# Put these imports near top of your file if not already present
+from flask import render_template, request, session, redirect, url_for
+from datetime import datetime
+
+# Add/replace this route in your blueprint (auth)
+@auth.route('/available', methods=['GET', 'POST'])
+def available():
+    # require login (same pattern as your other routes)
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    date = None
+    filter_val = "all"   # default filter
+    remaining_c = []
+    remaining_k = []
+
+    # Generate inventory codes (no image filenames here; template builds .webp path)
+    all_c = [{"code": f"C{i}"} for i in range(1, 151)]
+    all_k = [{"code": f"K{i}"} for i in range(1, 174)]
+
+    if request.method == 'POST':
+        date = request.form.get('date')              # YYYY-MM-DD from form
+        filter_val = request.form.get('filter', 'all')
+
+        if date:
+            # convert date to your DB key format (DD-MM-YY). fallback to raw if parse fails
+            try:
+                date_obj = datetime.strptime(date, "%Y-%m-%d")
+                formatted_date = date_obj.strftime("%d-%m-%y")
+            except Exception:
+                formatted_date = date
+
+            # Collect booked codes for that date (safe check, handles list or comma-string)
+            booked = set()
+            for doc in collection.find({}):
+                bookings = doc.get("bookings", {})
+                if not isinstance(bookings, dict):
+                    continue
+                if formatted_date in bookings:
+                    value = bookings.get(formatted_date, [])
+                    # normalize: could be list or string like "C1,C2"
+                    if isinstance(value, str):
+                        items = [p.strip() for p in value.split(',') if p.strip()]
+                    elif isinstance(value, list):
+                        items = value
+                    else:
+                        items = []
+
+                    for p in items:
+                        if not isinstance(p, str):
+                            continue
+                        booked.add(p.strip().upper())
+
+            # Debug prints (check server console)
+            print(f"[DEBUG] Booked on {formatted_date} => {len(booked)} items: {sorted(booked)[:50]}")
+
+            # Build remaining lists (exclude booked codes)
+            remaining_c = [p for p in all_c if p["code"].upper() not in booked]
+            remaining_k = [p for p in all_k if p["code"].upper() not in booked]
+
+    # Render template and pass filter to make radio sticky
+    return render_template(
+        "available.html",
+        date=date,
+        remaining_c=remaining_c,
+        remaining_k=remaining_k,
+        filter=filter_val
+    )
