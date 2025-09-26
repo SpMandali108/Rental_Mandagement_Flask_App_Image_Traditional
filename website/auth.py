@@ -631,10 +631,10 @@ def dashboard_summary():
                     return 0
 
             total_customers_trad = len(traditional_data)
-            total_collection_trad = sum(safe_int(b.get('total_price')) for b in traditional_data) + 18500
+            total_collection_trad = sum(safe_int(b.get('total_price')) for b in traditional_data) + 29500
             total_given_trad = sum(safe_int(b.get('given_price')) for b in traditional_data)
             total_rem_trad = total_collection_trad - total_given_trad
-
+7
             best_c, best_c_count, best_k, best_k_count = find_best_products_by_letter(traditional_data)
             highest_booking_person, highest_booking_value = find_highest_booking_customer(traditional_data)
             avg_trad = total_collection_trad / total_customers_trad if total_customers_trad > 0 else 0
