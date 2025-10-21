@@ -11,7 +11,7 @@ import io
 from flask import send_file
 import json
 from flask import send_from_directory
-
+from bson.objectid import ObjectId
  # Find correct static image
 from flask import current_app
 auth = Blueprint('auth', __name__)
@@ -24,6 +24,8 @@ db = client['Image_Traditional']
 collection = db['Form']
 fancy_collection = db['Fancy']
 products_collection = db['products']
+bags = db['bags']
+products = db['Storage']
 
 ADMIN_ID = os.environ.get("ADMIN_ID")
 ADMIN_PASS = os.environ.get("ADMIN_PASS")
@@ -49,6 +51,8 @@ def check_booking_conflict(date, products, exclude_mobile=None):
             })
     
     return len(conflicts) > 0, conflicts
+
+
 
 @auth.route('/admin')
 def admin():
@@ -1435,3 +1439,81 @@ def available():
         remaining_k=remaining_k,
         filter=filter_val
     )
+
+@auth.route('/add_bag', methods=['POST'])
+def add_bag():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    name = request.form.get('name')
+    desc = request.form.get('bag_description', '')
+    bags.insert_one({'name': name, 'description': desc})
+    return redirect(url_for('auth.Storage'))
+
+# -----------------------
+# ADD MULTIPLE PRODUCTS
+# -----------------------
+@auth.route('/add_product', methods=['POST'])
+def add_product():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    bag_id = request.form['bag_id']
+    codes = request.form.getlist('product_codes')  # checkboxes
+    custom_code = request.form.get('custom_code', '').strip()
+
+    # Include custom code if provided
+    if custom_code:
+        codes.append(custom_code)
+
+    for code in codes:
+        code = code.strip()
+        if code:
+            try:
+                products.insert_one({
+                    "_id": code,
+                    "bag_id": str(bag_id)
+                })
+            except Exception as e:
+                print(f"Skipping duplicate code: {code}")
+
+    return redirect(url_for('auth.Storage'))
+
+# -----------------------
+# STORAGE PAGE / SEARCH
+# -----------------------
+@auth.route('/Storage', methods=['GET', 'POST'])
+def Storage():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    result = None
+    if request.method == 'POST':
+        search_type = request.form['search_type']
+        query = request.form['query'].strip()
+
+        if search_type == 'product':
+            result = products.find_one({"_id": query})
+            if result:
+                bag_id = result.get('bag_id')
+                bag = bags.find_one({"_id": ObjectId(bag_id)}) if ObjectId.is_valid(bag_id) else bags.find_one({"_id": bag_id})
+                if bag:
+                    result['bag_name'] = bag.get('name', 'Unknown')
+                    result['bag_description'] = bag.get('description', 'No description')
+                else:
+                    result['bag_name'] = 'Unknown'
+                    result['bag_description'] = 'No description'
+
+        elif search_type == 'bag':
+            bag = bags.find_one({"name": query})
+            if bag:
+                bag_id_str = str(bag['_id'])
+                result = list(products.find({"bag_id": bag_id_str}))
+            else:
+                result = []
+
+    all_bags = list(bags.find())
+
+    # Generate available codes (for checkboxes)
+    all_codes = [f'C{i}' for i in range(1, 151)] + [f'K{i}' for i in range(1, 174)]
+    used_codes = [p['_id'] for p in products.find({}, {"_id": 1})]
+    available_codes = [c for c in all_codes if c not in used_codes]
+
+    return render_template('Storage.html', result=result, bags=all_bags, available_codes=available_codes)
