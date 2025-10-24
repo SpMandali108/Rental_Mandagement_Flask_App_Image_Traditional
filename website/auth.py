@@ -576,29 +576,7 @@ def fancy():
     return render_template('fancy.html')
 
 
-    if request.method == 'POST':
-        booking_data = {
-            'name': request.form['name'],
-            'mobile': request.form['mobile'],
-            'Address': request.form['address'],
-            'start_date': request.form['start_date'],
-            'end_date': request.form['end_date'],
-            'price': float(request.form['price']),
-            'costume': request.form['costume'],
-            'details': request.form['details'],
-            'timestamp': datetime.now()
-        }
-
-        # Save to MongoDB
-        fancy_collection.insert_one(booking_data)
-
-
-        
-      
-        flash('Booking submitted successfully', 'success')
-        return redirect(url_for('auth.fancy'))
-
-    return render_template('fancy.html')
+    
 @auth.route('/dashboard')
 def dashboard_summary():
     if not session.get('logged_in'):
@@ -1111,6 +1089,8 @@ def search():
 
 @auth.route("/export_bookings")
 def export_bookings():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     docs = list(collection.find())
 
     # Collect all unique booking dates (keys in bookings except prices)
