@@ -265,6 +265,12 @@
                 <textarea class="form-control" name="address" id="address" rows="3" placeholder="Enter your complete address"></textarea>
             </div>
 
+            <!-- New School Field -->
+            <div class="form-group">
+                <label for="school" class="form-label" style="color: #16213e;">School Name / Other</label>
+                <input type="text" class="form-control" name="school" id="school" placeholder="Enter school name (optional)">
+            </div>
+
             <div class="form-row">
                 <div class="form-col">
                     <div class="form-group">
@@ -314,8 +320,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const endDateInput = document.getElementById('end_date');
     const mobileInput = document.getElementById('mobile');
 
-   
-
     // Ensure end date is not before start date
     startDateInput.addEventListener('change', function () {
         endDateInput.setAttribute('min', this.value);
@@ -324,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    
+    // Mobile number validation
     mobileInput.addEventListener('input', function () {
         this.value = this.value.replace(/[^0-9]/g, '');
         if (this.value.length > 10) {
@@ -332,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    
+    // Form submission
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -351,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        
+        // Collect form data
         const formData = new FormData(form);
         const data = {};
         formData.forEach((value, key) => {
@@ -398,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-   
+    // Form control animations
     const formControls = document.querySelectorAll('.form-control');
     formControls.forEach(control => {
         control.addEventListener('focus', function () {

@@ -558,6 +558,7 @@ from flask import request, jsonify
 def fancy():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
+
     if request.method == 'POST':
         data = request.get_json()
 
@@ -565,6 +566,7 @@ def fancy():
             'name': data.get('name'),
             'mobile': data.get('mobile'),
             'Address': data.get('address'),
+            'School': data.get('school'),  # ✅ new field added
             'start_date': data.get('start_date'),
             'end_date': data.get('end_date'),
             'price': float(data.get('price', 0)),
@@ -577,6 +579,7 @@ def fancy():
         return jsonify({'status': 'success'}), 200
 
     return render_template('fancy.html')
+
 
 
     
