@@ -1,3 +1,6 @@
+import csv
+import io
+from flask import Response
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash, Response
 from pymongo import MongoClient
 from datetime import datetime, timedelta
@@ -22,7 +25,7 @@ mongoUrl = os.environ.get("client")
 client = MongoClient(mongoUrl, tls=True, tlsAllowInvalidCertificates=True)
 db = client['Image_Traditional']
 collection = db['Form']
-fancy_collection = db['Fancy']
+fancy_collection = db['Fancy_2025_2026']
 products_collection = db['products']
 bags = db['bags']
 products = db['Storage']
@@ -1497,3 +1500,97 @@ def Storage():
     available_codes = [c for c in all_codes if c not in used_codes]
 
     return render_template('Storage.html', result=result, bags=all_bags, available_codes=available_codes)
+
+def get_all_product_counts():
+    """
+    Loops through the entire database ONCE and counts all product bookings.
+    
+    Returns a dictionary of all product codes and their total booking count.
+    Example: {'C1': 12, 'K5': 9, 'C10': 5}
+    """
+    
+    # 1. Initialize an empty dictionary to store the counts
+    product_counts = {}
+    
+    # 2. Get all customers from the database
+    all_customers = collection.find({})
+    
+    # 3. Loop through each customer
+    for customer in all_customers:
+        bookings_dict = customer.get("bookings", {})
+        
+        # Skip if bookings data is not a dictionary
+        if not isinstance(bookings_dict, dict):
+            continue
+            
+        # 4. Loop through all booking dates for that customer
+        for date_key, products_data in bookings_dict.items():
+            
+            # Skip special keys that aren't dates
+            if date_key in ["total_price", "given_price"]:
+                continue
+            
+            # 5. Standardize the 'products' data
+            # (Your DB sometimes has a list, sometimes a comma-string)
+            products_list = []
+            if isinstance(products_data, list):
+                products_list = products_data
+            elif isinstance(products_data, str):
+                products_list = [p.strip() for p in products_data.split(',') if p.strip()]
+            
+            # 6. Loop through the products for this one booking
+            for product_code in products_list:
+                
+                # Clean the product code
+                cleaned_code = product_code.strip().upper()
+                
+                # Skip empty strings
+                if not cleaned_code:
+                    continue
+                
+                # 7. Increment the count for this product
+                # .get(cleaned_code, 0) fetches the current count, or 0 if it's the first time
+                product_counts[cleaned_code] = product_counts.get(cleaned_code, 0) + 1
+                    
+    return product_counts
+
+
+@auth.route('/export_product_report')
+def export_product_report():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    # 1. Get the dictionary of all counts
+    #    Example: {'C1': 12, 'K5': 9, 'C10': 5}
+    try:
+        all_counts = get_all_product_counts()
+    except Exception as e:
+        return f"Error running get_all_product_counts: {e}"
+
+    # 2. Sort the products by count (most popular first)
+    #    This converts the dict to a list of tuples: [('C1', 12), ('K5', 9), ...]
+    sorted_products = sorted(all_counts.items(), key=lambda item: item[1], reverse=True)
+
+    # 3. Create an in-memory text buffer
+    output = io.StringIO()
+    
+    # 4. Create a CSV writer object
+    writer = csv.writer(output)
+
+    # 5. Write the Header Row
+    writer.writerow(['Product_Code', 'Times_Rented'])
+
+    # 6. Write all the data rows
+    for product_code, count in sorted_products:
+        writer.writerow([product_code, count])
+
+    # 7. Go back to the start of the in-memory file
+    output.seek(0)
+
+    # 8. Send the file to the browser as a download
+    return Response(
+        output,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=product_popularity_report.csv"}
+    )
+
