@@ -25,10 +25,12 @@ mongoUrl = os.environ.get("client")
 client = MongoClient(mongoUrl, tls=True, tlsAllowInvalidCertificates=True)
 db = client['Image_Traditional']
 collection = db['Form']
+fancy_2024_2025 = db['Fancy']
 fancy_collection = db['Fancy_2025_2026']
 products_collection = db['products']
 bags = db['bags']
 products = db['Storage']
+fcustomers = db['Fancy_Customers']
 
 ADMIN_ID = os.environ.get("ADMIN_ID")
 ADMIN_PASS = os.environ.get("ADMIN_PASS")
@@ -563,24 +565,37 @@ def fancy():
         data = request.get_json()
 
         booking_data = {
-            'name': data.get('name'),
-            'mobile': data.get('mobile'),
+            'Name': data.get('name'),
+            'Mobile': data.get('mobile'),
             'Address': data.get('address'),
-            'School': data.get('school'),  # ✅ new field added
-            'start_date': data.get('start_date'),
-            'end_date': data.get('end_date'),
-            'price': float(data.get('price', 0)),
-            'costume': data.get('costume'),
-            'details': data.get('details'),
-            'timestamp': datetime.now()
+            'School': data.get('school'),
+            'Start_date': data.get('start_date'),
+            'End_date': data.get('end_date'),
+            'Price': float(data.get('price', 0)),
+            'Costume': data.get('costume'),
+            'Details': data.get('details'),
+            'Timestamp': datetime.now()
         }
 
+        customer_data = {
+            'Name': data.get('name'),
+            'Mobile': data.get('mobile'),
+            'Address': data.get('address'),
+            'School': data.get('school')
+        }
+
+        # ✅ FIXED – avoids duplicates
+        fcustomers.update_one(
+            {'Mobile': data.get('mobile')},
+            {'$set': customer_data},
+            upsert=True
+        )
+
         fancy_collection.insert_one(booking_data)
+
         return jsonify({'status': 'success'}), 200
 
     return render_template('fancy.html')
-
-
 
     
 @auth.route('/dashboard')
@@ -1161,6 +1176,16 @@ def listing():
         b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
 
     return render_template("listing.html", bookings=bookings)
+
+@auth.route("/fancy_listing",methods=['GET','POST'])
+def flisting():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    
+    fbookings = list(fancy_collection.find())
+
+    return render_template("fancy_listing.html",fbookings = fbookings)
+
 @auth.route("/download-bill", methods=["GET", "POST"])
 def download_bill_page():
     mobile = request.args.get("mobile", "")
@@ -1597,3 +1622,42 @@ def export_product_report():
         headers={"Content-Disposition": "attachment;filename=product_popularity_report.csv"}
     )
 
+@auth.route("/migration", methods=['GET', 'POST'])
+def migration():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    
+    for b in fancy_collection.find():
+        mobile = b.get("mobile")
+        name = b.get("name")
+        address = b.get("Address")
+        school = b.get("School")
+
+        # Skip if already exists
+        if fcustomers.find_one({"mobile": mobile}):
+            continue
+
+        # Insert only if mobile exists
+        if mobile:
+            fcustomers.insert_one({
+                "mobile": mobile,
+                "name": name,
+                "address": address,
+                "School":school
+            })
+
+    return "Migration completed!"
+
+@auth.route("/get_customer")
+def get_customer():
+    mobile = request.args.get("mobile")
+
+    customer = fcustomers.find_one(
+        {"mobile": mobile},     # lowercase mobile
+        {"_id": 0}
+    )
+
+    if customer:
+        return jsonify({"exists": True, "data": customer})
+
+    return jsonify({"exists": False})

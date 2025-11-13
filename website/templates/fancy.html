@@ -315,12 +315,103 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
     const form = document.getElementById('fancyBookingForm');
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
     const mobileInput = document.getElementById('mobile');
+    const nameInput = document.getElementById('name');
+    const addressInput = document.getElementById('address');
+    const schoolInput = document.getElementById('school');
 
-    // Ensure end date is not before start date
+    // -----------------------------------------------------
+    // 1️⃣ MOBILE NUMBER VALIDATION (digits only + max 10)
+    // -----------------------------------------------------
+    mobileInput.addEventListener('input', function () {
+        // Remove any non-numeric character
+        this.value = this.value.replace(/\D/g, '');
+
+        // Max length = 10 digits
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+        }
+
+        // ✨ LIVE AUTOFILL - trigger when exactly 10 digits
+        if (this.value.length === 10) {
+            fetchCustomerData(this.value);
+        }
+    });
+
+    // -----------------------------------------------------
+    // 2️⃣ AUTOFILL CUSTOMER DETAILS BASED ON MOBILE
+    // -----------------------------------------------------
+    async function fetchCustomerData(mobile) {
+        console.log("🔍 Fetching data for mobile:", mobile);
+        
+        if (mobile.length !== 10) {
+            console.log("❌ Mobile length not 10:", mobile.length);
+            return;
+        }
+
+        try {
+            console.log("📡 Making fetch request to:", `/get_customer?mobile=${mobile}`);
+            
+            const res = await fetch(`/get_customer?mobile=${mobile}`);
+            console.log("📥 Response status:", res.status, res.statusText);
+            
+            const data = await res.json();
+            console.log("📦 Full Response Data:", JSON.stringify(data, null, 2));
+
+            if (data.exists && data.data) {
+                const c = data.data;
+                console.log("👤 Customer object:", c);
+
+                // Handle both lowercase and uppercase field names
+                const name = c.Name || c.name || "";
+                const address = c.Address || c.address || "";
+                const school = c.School || c.school || "";
+
+                console.log("📝 Extracted values:", { name, address, school });
+
+                nameInput.value = name;
+                addressInput.value = address;
+                schoolInput.value = school;
+
+                // Visual feedback - highlight autofilled fields
+                [nameInput, addressInput, schoolInput].forEach(field => {
+                    if (field.value) {
+                        field.style.backgroundColor = '#e8f5e9'; // Light green
+                        field.style.transition = 'background-color 0.3s ease';
+                        
+                        // Remove highlight after 2 seconds
+                        setTimeout(() => {
+                            field.style.backgroundColor = '';
+                        }, 2000);
+                    }
+                });
+
+                console.log("✅ Customer data autofilled successfully!");
+            } else {
+                console.log("ℹ️ No existing customer found for this mobile number");
+                console.log("exists:", data.exists, "data:", data.data);
+            }
+
+        } catch (err) {
+            console.error("❌ Autofill error:", err);
+            console.error("Error stack:", err.stack);
+        }
+    }
+
+    // Also trigger autofill on blur (backup for paste events)
+    mobileInput.addEventListener('blur', function() {
+        if (this.value.length === 10) {
+            fetchCustomerData(this.value);
+        }
+    });
+
+    // -----------------------------------------------------
+    // 3️⃣ DATE VALIDATION
+    // -----------------------------------------------------
     startDateInput.addEventListener('change', function () {
         endDateInput.setAttribute('min', this.value);
         if (endDateInput.value && endDateInput.value < this.value) {
@@ -328,15 +419,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Mobile number validation
-    mobileInput.addEventListener('input', function () {
-        this.value = this.value.replace(/[^0-9]/g, '');
-        if (this.value.length > 10) {
-            this.value = this.value.slice(0, 10);
-        }
-    });
-
-    // Form submission
+    // -----------------------------------------------------
+    // 4️⃣ FORM SUBMISSION (AJAX)
+    // -----------------------------------------------------
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -344,7 +429,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const endDate = new Date(endDateInput.value);
         const mobile = mobileInput.value;
 
-        // Date and mobile validation
         if (startDate > endDate) {
             alert('End date must be on or after the start date!');
             return;
@@ -355,12 +439,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Collect form data
         const formData = new FormData(form);
         const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
+        formData.forEach((value, key) => data[key] = value);
 
         try {
             const response = await fetch("/fancy", {
@@ -377,12 +458,16 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 alert('Failed to submit booking. Please try again.');
             }
+
         } catch (error) {
             console.error('Error submitting form:', error);
             alert('An error occurred. Please try again.');
         }
     });
 
+    // -----------------------------------------------------
+    // 5️⃣ SUCCESS MESSAGE
+    // -----------------------------------------------------
     function showSuccess() {
         const alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-success alert-dismissible fade show';
@@ -395,6 +480,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const main = document.querySelector('main');
         main.insertBefore(alertDiv, main.firstChild);
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         setTimeout(() => {
@@ -402,18 +488,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // Form control animations
+    // -----------------------------------------------------
+    // 6️⃣ FOCUS ANIMATIONS
+    // -----------------------------------------------------
     const formControls = document.querySelectorAll('.form-control');
     formControls.forEach(control => {
         control.addEventListener('focus', function () {
             this.parentElement.style.transform = 'scale(1.02)';
             this.parentElement.style.transition = 'transform 0.2s ease';
         });
-
         control.addEventListener('blur', function () {
             this.parentElement.style.transform = 'scale(1)';
         });
     });
+
 });
 </script>
 
