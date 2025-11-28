@@ -483,7 +483,9 @@
 
             <div class="card-header">
                 <div class="customer-info">
-                    <div class="avatar">{{ fb.name[:2].upper() }}</div>
+                    <div class="avatar">{{ (fb.get('name') or fb.get('Name') or '??')[:2].upper() }}</div>
+
+
                     <div class="customer-details">
                         <h3>{{ fb.name }}</h3>
                         <p>📱 {{ fb.mobile }}</p>
