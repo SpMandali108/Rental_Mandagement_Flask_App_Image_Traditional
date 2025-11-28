@@ -579,7 +579,7 @@ def fancy():
 
         customer_data = {
             'name': data.get('name'),
-            'Mobile': data.get('mobile'),
+            'mobile': data.get('mobile'),
             'Address': data.get('address'),
             'School': data.get('school')
         }
