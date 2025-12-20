@@ -75,7 +75,7 @@ def login():
         if entered_id == ADMIN_ID and entered_pass == ADMIN_PASS:
             session['logged_in'] = True
             flash("✅ Login successful!", "success")
-            return redirect(url_for('auth.book'))
+            return redirect(url_for('auth.admin'))
         else:
             flash("❌ Invalid credentials!", "error")
             return render_template('login.html')
@@ -1637,32 +1637,6 @@ def export_product_report():
         headers={"Content-Disposition": "attachment;filename=product_popularity_report.csv"}
     )
 
-@auth.route("/migration", methods=['GET', 'POST'])
-def migration():
-    if not session.get('logged_in'):
-        return redirect(url_for('auth.login'))
-    
-    for b in fancy_collection.find():
-        mobile = b.get("mobile")
-        name = b.get("name")
-        address = b.get("Address")
-        school = b.get("School")
-
-        # Skip if already exists
-        if fcustomers.find_one({"mobile": mobile}):
-            continue
-
-        # Insert only if mobile exists
-        if mobile:
-            fcustomers.insert_one({
-                "mobile": mobile,
-                "name": name,
-                "address": address,
-                "School":school
-            })
-
-    return "Migration completed!"
-
 @auth.route("/get_customer")
 def get_customer():
     mobile = request.args.get("mobile")
@@ -1676,3 +1650,384 @@ def get_customer():
         return jsonify({"exists": True, "data": customer})
 
     return jsonify({"exists": False})
+
+@auth.route('/fancy_profile')
+def fancy_profile():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    mobile = request.args.get('mobile')
+    if not mobile:
+        return "Mobile number missing", 400
+
+    # Customer master
+    customer = fcustomers.find_one({"mobile": mobile})
+    if not customer:
+        return "Customer not found", 404
+
+    all_bookings = []
+
+    # ---------- Fancy 2024–2025 ----------
+    bookings_2425 = list(fancy_2024_2025.find({"mobile": mobile}))
+    for b in bookings_2425:
+        b["season"] = "2024-2025"
+
+        # INLINE DATE FORMAT (NO FILTER, NO FUNCTION)
+        sd = b.get("start_date")
+        if isinstance(sd, datetime):
+            b["start_date"] = sd.strftime("%d-%m-%Y")
+        elif isinstance(sd, str):
+            try:
+                b["start_date"] = datetime.strptime(sd, "%Y-%m-%d").strftime("%d-%m-%Y")
+            except:
+                pass
+
+        ed = b.get("end_date")
+        if isinstance(ed, datetime):
+            b["end_date"] = ed.strftime("%d-%m-%Y")
+        elif isinstance(ed, str):
+            try:
+                b["end_date"] = datetime.strptime(ed, "%Y-%m-%d").strftime("%d-%m-%Y")
+            except:
+                pass
+
+    all_bookings.extend(bookings_2425)
+
+    # ---------- Fancy 2025–2026 ----------
+    bookings_2526 = list(fancy_collection.find({"mobile": mobile}))
+    for b in bookings_2526:
+        b["season"] = "2025-2026"
+
+        # INLINE DATE FORMAT (NO FILTER, NO FUNCTION)
+        sd = b.get("start_date")
+        if isinstance(sd, datetime):
+            b["start_date"] = sd.strftime("%d-%m-%Y")
+        elif isinstance(sd, str):
+            try:
+                b["start_date"] = datetime.strptime(sd, "%Y-%m-%d").strftime("%d-%m-%Y")
+            except:
+                pass
+
+        ed = b.get("end_date")
+        if isinstance(ed, datetime):
+            b["end_date"] = ed.strftime("%d-%m-%Y")
+        elif isinstance(ed, str):
+            try:
+                b["end_date"] = datetime.strptime(ed, "%Y-%m-%d").strftime("%d-%m-%Y")
+            except:
+                pass
+
+    all_bookings.extend(bookings_2526)
+
+    # Sort latest first (safe even if timestamp missing)
+    all_bookings.sort(
+        key=lambda x: x.get("timestamp", datetime.min),
+        reverse=True
+    )
+
+    total_spent = sum(b.get("price", 0) for b in all_bookings)
+
+    return render_template(
+        "fancy_profile.html",
+        customer=customer,
+        bookings=all_bookings,
+        total_spent=total_spent
+    )
+
+@auth.route('/fancy_calendar', methods=['GET', 'POST'])
+def fancy_calendar():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    today = datetime.now().date()
+    selected_date = request.args.get('date')
+
+    # ---------- HANDLE TAKEN / RETURNED ----------
+    if request.method == 'POST':
+        bid = request.form.get('booking_id')
+        field = request.form.get('field')        # taken / returned
+        season = request.form.get('season')      # 2024-2025 / 2025-2026
+
+        col = fancy_2024_2025 if season == '2024-2025' else fancy_collection
+
+        col.update_one(
+            {'_id': ObjectId(bid)},
+            {'$set': {field: True}}
+        )
+
+        return redirect(url_for('auth.fancy_calendar', date=selected_date))
+
+    # ---------- FETCH ALL BOOKINGS ----------
+    all_bookings = []
+    for col, season in [
+        (fancy_2024_2025, '2024-2025'),
+        (fancy_collection, '2025-2026')
+    ]:
+        for b in col.find():
+            b['season'] = season
+
+            # Inline date normalization (DD-MM-YYYY)
+            for k in ['start_date', 'end_date']:
+                v = b.get(k)
+                if isinstance(v, datetime):
+                    b[k] = v.strftime('%d-%m-%Y')
+                elif isinstance(v, str):
+                    try:
+                        b[k] = datetime.strptime(v, '%Y-%m-%d').strftime('%d-%m-%Y')
+                    except:
+                        pass
+
+            all_bookings.append(b)
+
+    # ---------- CALENDAR HIGHLIGHT DATES ----------
+    booked_dates = set()
+    for b in all_bookings:
+        try:
+            sd = datetime.strptime(b['start_date'], '%d-%m-%Y').date()
+            ed = datetime.strptime(b['end_date'], '%d-%m-%Y').date()
+            cur = sd
+            while cur <= ed:
+                booked_dates.add(cur.strftime('%Y-%m-%d'))
+                cur += timedelta(days=1)
+        except:
+            pass
+
+    # ---------- BOOKINGS FOR SELECTED DATE ----------
+    day_bookings = []
+    if selected_date:
+        sel = datetime.strptime(selected_date, '%Y-%m-%d').date()
+        for b in all_bookings:
+            try:
+                sd = datetime.strptime(b['start_date'], '%d-%m-%Y').date()
+                ed = datetime.strptime(b['end_date'], '%d-%m-%Y').date()
+                if sd <= sel <= ed:
+                    day_bookings.append(b)
+            except:
+                pass
+
+    # ---------- UPCOMING & NOT RETURNED ----------
+    upcoming = []
+    not_returned = []
+
+    for b in all_bookings:
+        try:
+            ed = datetime.strptime(b['end_date'], '%d-%m-%Y').date()
+            if ed >= today:
+                upcoming.append(b)
+            elif ed < today and not b.get('returned'):
+                not_returned.append(b)
+        except:
+            pass
+
+    return render_template(
+        'fancy_calendar.html',
+        booked_dates=list(booked_dates),
+        day_bookings=day_bookings,
+        upcoming=upcoming,
+        not_returned=not_returned,
+        selected_date=selected_date,
+        today=today.strftime('%Y-%m-%d')
+    )
+
+from datetime import datetime
+from collections import Counter
+
+@auth.route('/fancy_dashboard')
+def fancy_dashboard():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    # THIS YEAR ONLY
+    bookings = list(fancy_collection.find())
+
+    today = datetime.now().date()
+
+    total_bookings = len(bookings)
+    total_revenue = sum(b.get('price', 0) for b in bookings)
+
+    returned_count = sum(1 for b in bookings if b.get('returned'))
+    taken_count = sum(1 for b in bookings if b.get('taken'))
+    not_returned = sum(
+        1 for b in bookings
+        if b.get('taken') and not b.get('returned')
+    )
+
+    # Active bookings today
+    active_today = 0
+    for b in bookings:
+        try:
+            sd = datetime.strptime(b['start_date'], '%d-%m-%Y').date()
+            ed = datetime.strptime(b['end_date'], '%d-%m-%Y').date()
+            if sd <= today <= ed:
+                active_today += 1
+        except:
+            pass
+
+    # Most rented costumes
+    costume_counter = Counter()
+    for b in bookings:
+        if b.get('costume'):
+            costume_counter[b['costume']] += 1
+
+    top_costumes = costume_counter.most_common(5)
+
+    return render_template(
+        'fancy_dashboard.html',
+        total_bookings=total_bookings,
+        total_revenue=total_revenue,
+        returned_count=returned_count,
+        taken_count=taken_count,
+        not_returned=not_returned,
+        active_today=active_today,
+        top_costumes=top_costumes
+    )
+
+@auth.route('/fancy_admin')
+def fancy_admin():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    return render_template("fancy_admin.html")
+
+@auth.route('navaratri_admin')
+def navaratri_admin():
+    if session.get('looged_in'):
+        return render_template('/auth.login')
+    return render_template("navaratri_admin.html")
+
+@auth.route('/navaratri_dashboard')
+def navaratri_dashboard():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+
+    try:
+        try:
+            collection.find_one()
+            fancy_collection.find_one()
+        except NameError as e:
+            return f"Error: Database collections not properly defined - {e}"
+        except Exception as e:
+            return f"Error: Database connection failed - {e}"
+
+        traditional_data = list(collection.find())
+
+        if not traditional_data:
+            total_customers_trad = 0
+            total_collection_trad = 0
+            total_given_trad = 0
+            total_rem_trad = 0
+            best_c = "N/A"
+            best_c_count = 0
+            best_k = "N/A"
+            best_k_count = 0
+            highest_booking_person = "N/A"
+            highest_booking_value = 0
+            avg_trad = 0
+        else:
+            def safe_int(val):
+                try:
+                    return int(val)
+                except (ValueError, TypeError):
+                    return 0
+
+            total_customers_trad = len(traditional_data)
+            total_collection_trad = sum(safe_int(b.get('total_price')) for b in traditional_data) + 29500
+            total_given_trad = sum(safe_int(b.get('given_price')) for b in traditional_data)
+            total_rem_trad = total_collection_trad - total_given_trad - 29500
+
+            best_c, best_c_count, best_k, best_k_count = find_best_products_by_letter(traditional_data)
+            highest_booking_person, highest_booking_value = find_highest_booking_customer(traditional_data)
+            avg_trad = total_collection_trad / total_customers_trad if total_customers_trad > 0 else 0
+
+        
+
+        return render_template(
+            'navaratri_dashboard.html',
+            total_customers_trad=total_customers_trad,
+            total_collection_trad=total_collection_trad,
+            total_given_trad=total_given_trad,
+            total_rem_trad=total_rem_trad,
+            best_c=best_c,
+            best_c_count=best_c_count,
+            best_k=best_k,
+            best_k_count=best_k_count,
+            highest_booking_person=highest_booking_person,
+            highest_booking_value=highest_booking_value,
+            avg_trad=avg_trad,
+            
+        )
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+
+        return render_template(
+            'total.html',
+            total_customers_trad=0,
+            total_collection_trad=0,
+            total_given_trad=0,
+            total_rem_trad=0,
+            best_c="Error",
+            best_c_count=0,
+            best_k="Error",
+            best_k_count=0,
+            highest_booking_person="Error",
+            highest_booking_value=0,
+            avg_trad=0,
+            has_error=True,
+            error_message=str(e)
+        )
+
+
+def find_best_products_by_letter(traditional_data):
+    product_c_counts = {}
+    product_k_counts = {}
+
+    for booking in traditional_data:
+        bookings_dict = booking.get('bookings', {})
+        if not isinstance(bookings_dict, dict):
+            continue
+
+        for _, products in bookings_dict.items():
+            if isinstance(products, list):
+                for product in products:
+                    if isinstance(product, str) and product.strip():
+                        product_upper = product.upper().strip()
+                        if product_upper.startswith('C'):
+                            product_c_counts[product_upper] = product_c_counts.get(product_upper, 0) + 1
+                        elif product_upper.startswith('K'):
+                            product_k_counts[product_upper] = product_k_counts.get(product_upper, 0) + 1
+
+    if product_c_counts:
+        best_c = max(product_c_counts, key=product_c_counts.get)
+        best_c_count = product_c_counts[best_c]
+    else:
+        best_c, best_c_count = "N/A", 0
+
+    if product_k_counts:
+        best_k = max(product_k_counts, key=product_k_counts.get)
+        best_k_count = product_k_counts[best_k]
+    else:
+        best_k, best_k_count = "N/A", 0
+
+    return best_c, best_c_count, best_k, best_k_count
+
+
+def find_highest_booking_customer(traditional_data):
+    customer_totals = {}
+
+    for booking in traditional_data:
+        customer_name = booking.get('Name') or booking.get('name', 'Unknown')
+        if not customer_name or customer_name.strip() in ['Unknown', '']:
+            continue
+        try:
+            total_price = int(booking.get('total_price') or 0)
+        except (ValueError, TypeError):
+            total_price = 0
+        customer_totals[customer_name] = customer_totals.get(customer_name, 0) + total_price
+
+    if not customer_totals:
+        return "N/A", 0
+
+    highest_customer = max(customer_totals, key=customer_totals.get)
+    highest_value = customer_totals[highest_customer]
+    return highest_customer, highest_value

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Fancy Dress Admin{% endblock %}
+
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.fancy-admin {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
+}
+
+/* Header */
+.fancy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.fancy-header h2 {
+    font-weight: 800;
+    color: #2b6dd8;
+}
+
+/* Switch button */
+.switch-btn {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white;
+    border: none;
+    padding: 0.55rem 1.2rem;
+    border-radius: 25px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.switch-btn:hover {
+    opacity: 0.9;
+}
+
+/* Grid */
+.nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+}
+
+/* Cards */
+.nav-card {
+    background: white;
+    border-radius: 18px;
+    padding: 2.2rem 1.8rem;
+    text-align: center;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nav-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 55px rgba(0,0,0,0.18);
+}
+
+/* Icon */
+.nav-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.nav-card h4 {
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    color: #355eb6;
+}
+
+.nav-card p {
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 1.4rem;
+}
+
+.go-btn {
+    display: inline-block;
+    padding: 0.55rem 1.4rem;
+    border-radius: 25px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+/* Card colors */
+.fancy { border-top: 6px solid #8b5cf6; }
+.fancy .go-btn { background: linear-gradient(135deg,#8b5cf6,#6366f1); }
+
+.listing { border-top: 6px solid #22c55e; }
+.listing .go-btn { background: linear-gradient(135deg,#22c55e,#16a34a); }
+
+.calendar { border-top: 6px solid #f59e0b; }
+.calendar .go-btn { background: linear-gradient(135deg,#f59e0b,#f97316); }
+
+.dashboard { border-top: 6px solid #0ea5e9; }
+.dashboard .go-btn { background: linear-gradient(135deg,#0ea5e9,#0284c7); }
+</style>
+
+<div class="fancy-admin">
+
+    <!-- HEADER -->
+    <div class="fancy-header">
+        <h2>🎭 Fancy Dress Admin</h2>
+
+        <!-- SWITCH BUTTON -->
+        <a href="/navaratri_admin" class="switch-btn">
+            🪔 Switch to Navaratri
+        </a>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="nav-grid">
+
+        <!-- Fancy -->
+        <div class="nav-card fancy"
+             onclick="window.location.href='/fancy'">
+            <div class="nav-icon">🎭</div>
+            <h4>Fancy</h4>
+            <p>Create and manage fancy dress bookings.</p>
+            <a href="/fancy" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Listing -->
+        <div class="nav-card listing"
+             onclick="window.location.href='/fancy_listing'">
+            <div class="nav-icon">📋</div>
+            <h4>Listing</h4>
+            <p>View all fancy bookings and customers.</p>
+            <a href="/fancy_listing" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Calendar -->
+        <div class="nav-card calendar"
+             onclick="window.location.href='/fancy_calendar'">
+            <div class="nav-icon">🗓️</div>
+            <h4>Calendar</h4>
+            <p>Track bookings, returns, availability.</p>
+            <a href="/fancy_calendar" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="nav-card dashboard"
+             onclick="window.location.href='/fancy_dashboard'">
+            <div class="nav-icon">📊</div>
+            <h4>Dashboard</h4>
+            <p>Analytics and performance insights.</p>
+            <a href="/fancy_dashboard" class="go-btn">Open →</a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

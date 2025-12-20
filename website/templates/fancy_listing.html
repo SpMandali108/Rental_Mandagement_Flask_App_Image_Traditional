@@ -3,7 +3,7 @@
 {% block title %}Fancy Bookings{% endblock %}
 
 {% block logo_link %}
-<a href="/admin" class="logo">
+<a href="/fancy_admin" class="logo">
     <img src="{{ url_for('static', filename='favicon.png') }}" alt="Logo">
     <span class="logo-text">Image Traditional</span>
 </a>
@@ -479,7 +479,7 @@
              data-name="{{ fb.name }}"
              data-mobile="{{ fb.mobile }}"
              data-costume="{{ fb.costume }}"
-             onclick="window.location.href='{{ url_for('auth.profile', mobile=fb.mobile) }}'">
+             onclick="window.location.href='{{ url_for('auth.fancy_profile', mobile=fb.mobile) }}'">
 
             <div class="card-header">
                 <div class="customer-info">
@@ -540,7 +540,7 @@
                             data-name="{{ fb.name }}"
                             data-mobile="{{ fb.mobile }}"
                             data-costume="{{ fb.costume }}"
-                            onclick="window.location.href='{{ url_for('auth.profile', mobile=fb.mobile) }}'">
+                            onclick="window.location.href='{{ url_for('auth.fancy_profile', mobile=fb.mobile) }}'">
                             
                             <td><strong>{{ fb.name }}</strong></td>
                             <td>{{ fb.mobile }}</td>

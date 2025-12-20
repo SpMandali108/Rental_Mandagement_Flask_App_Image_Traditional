@@ -1,84 +1,164 @@
 {% extends "base.html" %}
-
-{% block title %}Home | Image Traditional{% endblock %}
-
-{% block description %}
-Image Traditional offers vibrant Kediya, Chaniya Choli, and Fancy Dress rentals for Navratri and cultural events. Celebrate tradition with us!
-{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block logo_link %}
-<a href="/admin" class="logo">
+<a href="/" class="logo">
     <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
     <span class="logo-text">Image Traditional</span>
 </a>
 {% endblock %}
 
 {% block content %}
-<div style="background: #ccdbec; padding: 40px 20px; min-height: 90vh; text-align: center;">
-    <div style="max-width: 1000px; margin: auto;">
+<style>
+/* Prevent scrolling */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
 
-        <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo" style="height: 90px; margin-bottom: 20px;">
+/* Full-screen center layout */
+.admin-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-        <h1 style="font-size: 40px; color: #16213e; font-weight: bold;">Celebrate Navaratri with Image Traditional</h1>
+    transform: translateY(-80px);
+}
 
-        <p style="font-size: 18px; color: #5d4037; margin-top: 15px;">
-            Discover the elegance of tradition with our exclusive rental collection of <strong>Kediya</strong>, <strong>Chaniya Choli</strong>, and <strong>Fancy Dresses</strong>. Crafted with vibrant colors, cultural charm, and festive flair.
-        </p>
+/* Wrapper */
+.admin-wrapper {
+    width: 100%;
+    max-width: 900px;
+    padding: 2rem;
+}
 
-       
-<div style="margin-top: 50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+/* Title */
+.admin-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+    color: #1e293b;
+}
 
-    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-        <a href="{{ url_for('auth.catalogue') }}" style="text-decoration: none; color: inherit;">
-            <img src="{{ url_for('static', filename='costume.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-            <h3 style="color: #1565c0; margin-top: 15px;">Fancy Dresses</h3>
-            <p style="font-size: 14px; color: #616161;">Perfect for school events, plays, and cultural days.</p>
-            <br>
-            <a href="{{ url_for('auth.catalogue') }}" target="_blank"
-                style="background-color: #07267c; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                View Catalogue
-            </a>
-        </a>
-    </div>
+/* Card grid */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+}
 
-    
-    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-        <a href="{{ url_for('auth.kediya') }}" style="text-decoration: none; color: inherit;">
-            <img src="{{ url_for('static', filename='kediya.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-            <h3 style="color: #1565c0; margin-top: 15px;">Kediya</h3>
-            <p style="font-size: 14px; color: #616161;">Perfect for Navaratri ANd Events.</p>
-            <br>
-            <a href="{{ url_for('auth.kediya') }}" target="_blank"
-                style="background-color: #07267c; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                View Catalogue
-            </a>
-        </a>
-    </div>
+/* Cards */
+.admin-card {
+    background: white;
+    border-radius: 22px;
+    padding: 2.8rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.14);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
 
-    <!-- 🟣 Chaniya Choli -->
-   <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-        <a href="{{ url_for('auth.choli') }}" style="text-decoration: none; color: inherit;">
-            <img src="{{ url_for('static', filename='choli.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-            <h3 style="color: #1565c0; margin-top: 15px;">Chaniya Choli</h3>
-            <p style="font-size: 14px; color: #616161;">Perfect for Navaratri ANd Events.</p>
-            <br>
-            <a href="{{ url_for('auth.choli') }}" target="_blank"
-                style="background-color: #07267c; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                View Catalogue
-            </a>
-        </a>
-    </div>
+.admin-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 65px rgba(0,0,0,0.2);
+}
 
-</div>
+.admin-icon {
+    font-size: 3.8rem;
+    margin-bottom: 1rem;
+}
 
+.admin-card h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+}
 
-        <div style="margin-top: 50px;">
-            <a href="https://www.instagram.com/image_traditional" target="_blank"
-                style="background-color: #16213e; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                📸 Visit Us on Instagram
-            </a>
+.admin-card p {
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 1.6rem;
+}
+
+/* Fancy card */
+.fancy {
+    border-top: 6px solid #8b5cf6;
+}
+
+/* Navaratri card */
+.navaratri {
+    border-top: 6px solid #f59e0b;
+}
+
+/* Buttons */
+.go-btn {
+    display: inline-block;
+    padding: 0.65rem 1.6rem;
+    border-radius: 30px;
+    font-weight: 700;
+    text-decoration: none;
+    color: white;
+}
+
+/* Button colors */
+.fancy .go-btn {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+.navaratri .go-btn {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+}
+
+/* Responsive (mobile) */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+    }
+}
+</style>
+
+<div class="admin-page">
+    <div class="admin-wrapper">
+
+        <h2 class="admin-title">🛠 Admin Dashboard</h2>
+
+        <div class="card-grid">
+
+            <!-- FANCY CARD -->
+            <div class="admin-card fancy"
+                 onclick="window.location.href='/fancy_dashboard'">
+                <div class="admin-icon">🎭</div>
+                <h3>Fancy Dress</h3>
+                <p>
+                    Manage fancy bookings, calendar,
+                    returns, and analytics.
+                </p>
+                <a href="/fancy_admin" class="go-btn">
+                    Open Fancy Panel →
+                </a>
+            </div>
+
+            <!-- NAVARATRI CARD -->
+            <div class="admin-card navaratri"
+                 onclick="window.location.href='/profile'">
+                <div class="admin-icon">🪔</div>
+                <h3>Navaratri</h3>
+                <p>
+                    Manage Navaratri customers,
+                    payments, and profiles.
+                </p>
+                <a href="/navaratri_admin" class="go-btn">
+                    Open Navaratri Panel →
+                </a>
+            </div>
+
         </div>
-        
+
     </div>
 </div>
+
 {% endblock %}

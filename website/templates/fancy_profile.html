@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block title %}Fancy Customer Profile{% endblock %}
+
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+
+<style>
+/* ===============================
+   🎨 EDIT COLOR HERE (ONE LINE)
+   =============================== */
+:root {
+    --costume-bg: #8b5cf6;
+    --costume-text: #ffffff;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-bg: #1e293b;
+    --card-light: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #475569;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+}
+
+/* Page Layout */
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Customer Card */
+.profile-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #667eea, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.badge {
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.profile-card p {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-card strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.stat-box {
+    background: linear-gradient(145deg, #2d3748, #1a202c);
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-box:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+    border-color: #667eea;
+}
+
+.stat-box h3 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-box p {
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Table Card */
+.table-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+.table-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-card thead {
+    background: var(--primary-gradient);
+    position: relative;
+}
+
+.table-card thead::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.table-card th {
+    color: white;
+    padding: 1.2rem 1rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+
+.table-card tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-card tbody tr:hover {
+    background-color: var(--card-light);
+}
+
+.table-card td {
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.table-card tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Season Badge */
+.season-badge {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 0.4rem 0.9rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Costume Box */
+.costume-box {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 14px;
+    font-weight: 700;
+    color: var(--costume-text);
+    background: var(--costume-bg);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.costume-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(139, 92, 246, 0.5);
+}
+
+/* Price */
+.price {
+    font-weight: 800;
+    color: var(--success-color);
+    font-size: 1.1rem;
+}
+
+/* Back Button */
+.back-btn {
+    margin-top: 2rem;
+}
+
+.back-btn .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-btn .btn-secondary {
+    background: var(--card-light);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.back-btn .btn-secondary:hover {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+    transform: translateX(-4px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 1rem;
+    }
+    
+    .profile-card {
+        padding: 1.5rem;
+    }
+    
+    .profile-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-card {
+        overflow-x: auto;
+    }
+}
+</style>
+
+<div class="profile-container">
+
+    <!-- CUSTOMER INFO -->
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>👤 {{ customer.name }}</h2>
+            <span class="badge">Fancy Customer</span>
+        </div>
+
+        <p><strong>📱 Mobile:</strong> {{ customer.mobile }}</p>
+        <p><strong>🏠 Address:</strong> {{ customer.address }}</p>
+        <p><strong>🏫 School:</strong> {{ customer.school }}</p>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>{{ bookings|length }}</h3>
+                <p>Total Bookings</p>
+            </div>
+            <div class="stat-box">
+                <h3>₹{{ total_spent }}</h3>
+                <p>Total Amount Spent</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOKINGS TABLE -->
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Season</th>
+                    <th>Costume</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Price</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if bookings %}
+                    {% for b in bookings %}
+                    <tr>
+                        <td>
+                            <span class="season-badge">{{ b.season }}</span>
+                        </td>
+                        <td>
+                            <span class="costume-box">{{ b.costume }}</span>
+                        </td>
+                        <td>{{ b.start_date }}</td>
+                        <td>{{ b.end_date }}</td>
+                        <td class="price">₹{{ b.price }}</td>
+                        <td>{{ b.details }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:2rem; color: var(--text-secondary);">
+                            No fancy bookings found.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- BACK -->
+    <div class="back-btn">
+        <a href="/fancy_listing" class="btn btn-secondary">⬅ Back to Fancy Bookings</a>
+    </div>
+
+</div>
+
+{% endblock %}

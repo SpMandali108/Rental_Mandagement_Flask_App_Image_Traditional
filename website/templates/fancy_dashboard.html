@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Fancy Dashboard{% endblock %}
+{% block logo_link %}
+<a href="/fancy_admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.dashboard {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 1.5rem;
+}
+
+.kpi {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.kpi h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #4f46e5;
+}
+
+.kpi p {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+</style>
+
+<div class="dashboard">
+
+    <h2 class="mb-4 text-center">🎭 Fancy Dashboard (2025–2026)</h2>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+        <div class="kpi">
+            <h2>{{ total_bookings }}</h2>
+            <p>Total Bookings</p>
+        </div>
+        <div class="kpi">
+            <h2>₹{{ total_revenue }}</h2>
+            <p>Total Revenue</p>
+        </div>
+        <div class="kpi">
+            <h2>{{ active_today }}</h2>
+            <p>Active Today</p>
+        </div>
+        <div class="kpi">
+            <h2>{{ taken_count }}</h2>
+            <p>Costumes Taken</p>
+        </div>
+        <div class="kpi">
+            <h2>{{ returned_count }}</h2>
+            <p>Returned</p>
+        </div>
+        <div class="kpi">
+            <h2>{{ not_returned }}</h2>
+            <p>Not Returned</p>
+        </div>
+    </div>
+
+    <!-- TOP COSTUMES -->
+    <div class="section">
+        <h4>🔥 Most Rented Costumes</h4>
+
+        {% if top_costumes %}
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Costume</th>
+                    <th>Times Rented</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for costume, count in top_costumes %}
+                <tr>
+                    <td>{{ costume }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No data available.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Navaratri Admin{% endblock %}
+
+{% block logo_link %}
+<a href="/admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.nav-admin {
+    max-width: 1300px;
+    margin: auto;
+    padding: 2rem;
+}
+
+/* Header */
+.nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.nav-header h2 {
+    font-weight: 800;
+    color: #2b6dd8;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+/* Switch button */
+.switch-btn {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
+    padding: 0.55rem 1.2rem;
+    border-radius: 25px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.switch-btn:hover {
+    opacity: 0.9;
+}
+
+/* Grid */
+.nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+}
+
+/* Cards */
+.nav-card {
+    background: white;
+    border-radius: 18px;
+    padding: 2.2rem 1.8rem;
+    text-align: center;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nav-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 55px rgba(0,0,0,0.18);
+}
+
+/* Icon */
+.nav-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.nav-card h4 {
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    color:#355eb6;
+}
+
+.nav-card p {
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 1.4rem;
+}
+
+.go-btn {
+    display: inline-block;
+    padding: 0.55rem 1.4rem;
+    border-radius: 25px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+/* Card colors */
+.booking { border-top: 6px solid #22c55e; }
+.booking .go-btn { background: linear-gradient(135deg,#22c55e,#16a34a); }
+
+.listing { border-top: 6px solid #0ea5e9; }
+.listing .go-btn { background: linear-gradient(135deg,#0ea5e9,#0284c7); }
+
+.calendar { border-top: 6px solid #f59e0b; }
+.calendar .go-btn { background: linear-gradient(135deg,#f59e0b,#f97316); }
+
+.dashboard { border-top: 6px solid #6366f1; }
+.dashboard .go-btn { background: linear-gradient(135deg,#6366f1,#4f46e5); }
+
+.available { border-top: 6px solid #14b8a6; }
+.available .go-btn { background: linear-gradient(135deg,#14b8a6,#0d9488); }
+
+.check { border-top: 6px solid #ec4899; }
+.check .go-btn { background: linear-gradient(135deg,#ec4899,#db2777); }
+
+.storage { border-top: 6px solid #8b5cf6; }
+.storage .go-btn { background: linear-gradient(135deg,#8b5cf6,#7c3aed); }
+</style>
+
+<div class="nav-admin">
+
+    <!-- HEADER -->
+    <div class="nav-header">
+        <h2>🪔 Navaratri Admin</h2>
+
+        <div class="header-actions">
+            <a href="/fancy_admin" class="switch-btn">🎭 Fancy Admin</a>
+        </div>
+    </div>
+
+    <!-- NAV GRID -->
+    <div class="nav-grid">
+
+        <!-- Booking -->
+        <div class="nav-card booking" onclick="window.location.href='/book'">
+            <div class="nav-icon">📝</div>
+            <h4>Booking</h4>
+            <p>Create new Navaratri bookings.</p>
+            <a href="/book" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Listing -->
+        <div class="nav-card listing" onclick="window.location.href='/listing'">
+            <div class="nav-icon">📋</div>
+            <h4>Listing</h4>
+            <p>View all Navaratri bookings.</p>
+            <a href="/listing" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Calendar -->
+        <div class="nav-card calendar" onclick="window.location.href='/calendar'">
+            <div class="nav-icon">🗓️</div>
+            <h4>Calendar</h4>
+            <p>View bookings on calendar.</p>
+            <a href="/calendar" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="nav-card dashboard" onclick="window.location.href='/navaratri_dashboard'">
+            <div class="nav-icon">📊</div>
+            <h4>Dashboard</h4>
+            <p>Navaratri analytics & insights.</p>
+            <a href="/navaratri_dashboard" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Available List -->
+        <div class="nav-card available" onclick="window.location.href='/available'">
+            <div class="nav-icon">✅</div>
+            <h4>Available List</h4>
+            <p>Check available dresses.</p>
+            <a href="/available" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Check Availability -->
+        <div class="nav-card check" onclick="window.location.href='/check'">
+            <div class="nav-icon">🔍</div>
+            <h4>Check Availability</h4>
+            <p>Check availability by date.</p>
+            <a href="/check" class="go-btn">Open →</a>
+        </div>
+
+        <!-- Storage Manager -->
+        <div class="nav-card storage" onclick="window.location.href='/Storage'">
+            <div class="nav-icon">📦</div>
+            <h4>Storage Manager</h4>
+            <p>Manage stock & storage.</p>
+            <a href="/Storage" class="go-btn">Open →</a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
