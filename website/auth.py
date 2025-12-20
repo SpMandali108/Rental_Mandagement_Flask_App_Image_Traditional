@@ -562,32 +562,45 @@ def fancy():
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
-        data = request.get_json()
+        data = request.get_json(silent=True)
+
+        if not data:
+            return jsonify({"error": "Invalid JSON"}), 400
+
+        # Normalize keys
+        data = {k.lower(): v for k, v in data.items()}
+
+        mobile = str(data.get('mobile', '')).strip()
+        if not mobile or len(mobile) != 10:
+            return jsonify({"error": "Invalid mobile"}), 400
 
         booking_data = {
-            'Name': data.get('name'),
-            'Mobile': data.get('mobile'),
-            'Address': data.get('address'),
-            'School': data.get('school'),
-            'Start_date': data.get('start_date'),
-            'End_date': data.get('end_date'),
-            'Price': float(data.get('price', 0)),
-            'Costume': data.get('costume'),
-            'Details': data.get('details'),
-            'Timestamp': datetime.now()
+            'name': data.get('name', ''),
+            'mobile': mobile,
+            'address': data.get('address', ''),
+            'school': data.get('school', ''),
+            'start_date': data.get('start_date', ''),
+            'end_date': data.get('end_date', ''),
+            'price': float(data.get('price', 0)),
+            'costume': data.get('costume', ''),
+            'details': data.get('details', ''),
+            'timestamp': datetime.utcnow()
         }
 
         customer_data = {
-            'name': data.get('name'),
-            'mobile': data.get('mobile'),
-            'Address': data.get('address'),
-            'School': data.get('school')
+            'name': booking_data['name'],
+            'mobile': mobile,
+            'address': booking_data['address'],
+            'school': booking_data['school'],
+            'updated_at': datetime.utcnow()
         }
 
-        # ✅ FIXED – avoids duplicates
         fcustomers.update_one(
-            {'Mobile': data.get('mobile')},
-            {'$set': customer_data},
+            {'mobile': mobile},
+            {
+                '$set': customer_data,
+                '$setOnInsert': {'created_at': datetime.utcnow()}
+            },
             upsert=True
         )
 
@@ -595,7 +608,9 @@ def fancy():
 
         return jsonify({'status': 'success'}), 200
 
+    # ✅ GET request — data is NOT used here
     return render_template('fancy.html')
+
 
     
 @auth.route('/dashboard')

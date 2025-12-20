@@ -367,9 +367,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("👤 Customer object:", c);
 
                 // Handle both lowercase and uppercase field names
-                const name = c.Name || c.name || "";
-                const address = c.Address || c.address || "";
-                const school = c.School || c.school || "";
+                const name = (c.Name || c.name || "").toLowerCase();
+                const address = (c.Address || c.address || "").toLowerCase();
+                const school = (c.School || c.school || "").toLowerCase();
 
                 console.log("📝 Extracted values:", { name, address, school });
 
