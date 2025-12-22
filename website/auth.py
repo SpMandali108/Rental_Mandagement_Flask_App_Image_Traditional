@@ -1852,24 +1852,29 @@ def fancy_dashboard():
         if b.get('taken') and not b.get('returned')
     )
 
-    # Active bookings today
-    active_today = 0
-    for b in bookings:
-        try:
-            sd = datetime.strptime(b['start_date'], '%d-%m-%Y').date()
-            ed = datetime.strptime(b['end_date'], '%d-%m-%Y').date()
-            if sd <= today <= ed:
-                active_today += 1
-        except:
-            pass
-
     # Most rented costumes
     costume_counter = Counter()
     for b in bookings:
         if b.get('costume'):
             costume_counter[b['costume']] += 1
 
-    top_costumes = costume_counter.most_common(5)
+    top_costumes = sorted(
+    costume_counter.items(),
+    key=lambda x: x[1],
+    reverse=True
+)
+
+    school_counter = Counter()
+    for b in bookings:
+        if b.get('school'):
+            school_counter[b['school']] += 1
+
+    top_school = sorted(
+    school_counter.items(),
+    key=lambda x: x[1],
+    reverse=True
+)
+
 
     return render_template(
         'fancy_dashboard.html',
@@ -1878,8 +1883,8 @@ def fancy_dashboard():
         returned_count=returned_count,
         taken_count=taken_count,
         not_returned=not_returned,
-        active_today=active_today,
-        top_costumes=top_costumes
+        top_costumes=top_costumes,
+        top_school = top_school
     )
 
 @auth.route('/fancy_admin')

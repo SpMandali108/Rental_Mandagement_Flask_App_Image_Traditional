@@ -64,10 +64,6 @@
             <p>Total Revenue</p>
         </div>
         <div class="kpi">
-            <h2>{{ active_today }}</h2>
-            <p>Active Today</p>
-        </div>
-        <div class="kpi">
             <h2>{{ taken_count }}</h2>
             <p>Costumes Taken</p>
         </div>
@@ -97,6 +93,31 @@
                 {% for costume, count in top_costumes %}
                 <tr>
                     <td>{{ costume }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No data available.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h4>🔥 Top Schools</h4>
+
+        {% if top_costumes %}
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>School</th>
+                    <th>Times Rented</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for school, count in top_school %}
+                <tr>
+                    <td>{{ school }}</td>
                     <td>{{ count }}</td>
                 </tr>
                 {% endfor %}
