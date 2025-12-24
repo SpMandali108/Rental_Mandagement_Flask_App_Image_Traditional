@@ -1893,10 +1893,10 @@ def fancy_admin():
         return redirect(url_for('auth.login'))
     return render_template("fancy_admin.html")
 
-@auth.route('navaratri_admin')
+@auth.route('/navaratri_admin')
 def navaratri_admin():
-    if session.get('looged_in'):
-        return render_template('/auth.login')
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     return render_template("navaratri_admin.html")
 
 @auth.route('/navaratri_dashboard')

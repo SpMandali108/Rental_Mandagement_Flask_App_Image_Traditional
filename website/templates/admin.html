@@ -10,113 +10,291 @@
 
 {% block content %}
 <style>
-/* Prevent scrolling */
-html, body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
+/* Root variables */
+:root {
+    --navy: #0a1628;
+    --dark-blue: #0f2847;
+    --medium-blue: #1e3a5f;
+    --accent-blue: #2b5797;
+    --gold: #c9a961;
+    --light-gold: #e4c88a;
+    --pale-gold: #f5e6c8;
 }
 
-/* Full-screen center layout */
-.admin-page {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Allow scrolling */
+html, body {
+    margin: 0;
+    overflow-x: hidden;
+}
 
-    transform: translateY(-80px);
+/* Main container */
+.admin-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 50%, var(--medium-blue) 100%);
+    position: relative;
+    padding: 2rem 1rem;
+}
+
+/* Decorative background elements */
+.admin-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(201, 169, 97, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(43, 87, 151, 0.15) 0%, transparent 50%);
+    pointer-events: none;
 }
 
 /* Wrapper */
 .admin-wrapper {
-    width: 100%;
-    max-width: 900px;
-    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
-/* Title */
-.admin-title {
+/* Title section */
+.admin-header {
     text-align: center;
-    font-size: 2rem;
-    font-weight: 800;
     margin-bottom: 2.5rem;
-    color: #1e293b;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--gold);
+    position: relative;
 }
 
-/* Card grid */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+.admin-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--light-gold), transparent);
+}
+
+.admin-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--pale-gold);
+    margin: 0;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.title-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 8px rgba(201, 169, 97, 0.5));
+}
+
+/* Card container - Horizontal layout */
+.card-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
 }
 
 /* Cards */
 .admin-card {
-    background: white;
-    border-radius: 22px;
-    padding: 2.8rem 2rem;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    border: 2px solid rgba(201, 169, 97, 0.25);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
     text-align: center;
     cursor: pointer;
-    box-shadow: 0 18px 45px rgba(0,0,0,0.14);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
+}
+
+/* Card decorative top border */
+.admin-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--gold), var(--light-gold), var(--gold));
+}
+
+/* Card glow effect */
+.admin-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.2), transparent);
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
 }
 
 .admin-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 30px 65px rgba(0,0,0,0.2);
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--gold);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+    box-shadow: 0 20px 60px rgba(201, 169, 97, 0.25), 0 0 40px rgba(201, 169, 97, 0.15);
+}
+
+.admin-card:hover::after {
+    width: 300px;
+    height: 300px;
 }
 
 .admin-icon {
-    font-size: 3.8rem;
-    margin-bottom: 1rem;
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 4px 12px rgba(201, 169, 97, 0.4));
+    position: relative;
+    z-index: 1;
 }
 
 .admin-card h3 {
     font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: 0.6rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--pale-gold);
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
 }
 
 .admin-card p {
-    color: #64748b;
-    font-weight: 600;
-    margin-bottom: 1.6rem;
-}
-
-/* Fancy card */
-.fancy {
-    border-top: 6px solid #8b5cf6;
-}
-
-/* Navaratri card */
-.navaratri {
-    border-top: 6px solid #f59e0b;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Buttons */
 .go-btn {
     display: inline-block;
-    padding: 0.65rem 1.6rem;
-    border-radius: 30px;
+    padding: 0.75rem 1.8rem;
+    border-radius: 8px;
     font-weight: 700;
     text-decoration: none;
-    color: white;
+    color: var(--navy);
+    background: linear-gradient(135deg, var(--gold), var(--light-gold));
+    box-shadow: 0 4px 15px rgba(201, 169, 97, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    border: 1px solid var(--light-gold);
+    font-size: 0.95rem;
 }
 
-/* Button colors */
-.fancy .go-btn {
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+.go-btn:hover {
+    background: linear-gradient(135deg, var(--light-gold), var(--pale-gold));
+    box-shadow: 0 6px 25px rgba(201, 169, 97, 0.5);
+    transform: translateY(-2px);
 }
 
-.navaratri .go-btn {
-    background: linear-gradient(135deg, #f59e0b, #f97316);
+/* Fancy card specific styling */
+.fancy {
+    border-image: linear-gradient(135deg, #8b5cf6, var(--gold)) 1;
 }
 
-/* Responsive (mobile) */
+.fancy .admin-icon {
+    color: #a78bfa;
+}
+
+/* Navaratri card specific styling */
+.navaratri {
+    border-image: linear-gradient(135deg, #f59e0b, var(--gold)) 1;
+}
+
+.navaratri .admin-icon {
+    color: #fbbf24;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .card-grid {
-        grid-template-columns: 1fr;
-        gap: 1.8rem;
+    .admin-page {
+        padding: 1.5rem 1rem;
+    }
+    
+    .admin-title {
+        font-size: 1.8rem;
+    }
+    
+    .title-icon {
+        font-size: 2rem;
+    }
+    
+    .admin-header {
+        margin-bottom: 2rem;
+    }
+    
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .admin-card {
+        min-width: 280px;
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+    }
+    
+    .admin-icon {
+        font-size: 3.5rem;
+    }
+    
+    .admin-card h3 {
+        font-size: 1.4rem;
+    }
+    
+    .admin-card p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .card-container {
+        gap: 1.5rem;
+    }
+    
+    .admin-card {
+        min-width: 280px;
+        max-width: 400px;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .admin-page {
+        padding: 1rem 0.5rem;
+    }
+    
+    .admin-title {
+        font-size: 1.5rem;
+    }
+    
+    .admin-card {
+        min-width: 260px;
+        padding: 1.8rem 1.2rem;
     }
 }
 </style>
@@ -124,9 +302,16 @@ html, body {
 <div class="admin-page">
     <div class="admin-wrapper">
 
-        <h2 class="admin-title">🛠 Admin Dashboard</h2>
+        <!-- Header -->
+        <div class="admin-header">
+            <h2 class="admin-title">
+                <span class="title-icon">🛠</span>
+                <span>Administration Dashboard</span>
+            </h2>
+        </div>
 
-        <div class="card-grid">
+        <!-- Card Container - Horizontal Layout -->
+        <div class="card-container">
 
             <!-- FANCY CARD -->
             <div class="admin-card fancy"
@@ -134,11 +319,10 @@ html, body {
                 <div class="admin-icon">🎭</div>
                 <h3>Fancy Dress</h3>
                 <p>
-                    Manage fancy bookings, calendar,
-                    returns, and analytics.
+                    Comprehensive management system for fancy dress bookings, calendar scheduling, return tracking, and detailed analytics.
                 </p>
                 <a href="/fancy_admin" class="go-btn">
-                    Open Fancy Panel →
+                    Access Panel →
                 </a>
             </div>
 
@@ -148,11 +332,10 @@ html, body {
                 <div class="admin-icon">🪔</div>
                 <h3>Navaratri</h3>
                 <p>
-                    Manage Navaratri customers,
-                    payments, and profiles.
+                    Complete control center for Navaratri customer management, payment processing, and profile administration.
                 </p>
                 <a href="/navaratri_admin" class="go-btn">
-                    Open Navaratri Panel →
+                    Access Panel →
                 </a>
             </div>
 

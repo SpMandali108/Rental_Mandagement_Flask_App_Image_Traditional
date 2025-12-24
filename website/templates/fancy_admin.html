@@ -10,110 +10,208 @@
 
 {% block content %}
 <style>
-.fancy-admin {
-    max-width: 1200px;
-    margin: auto;
-    padding: 2rem;
+/* Root variables */
+:root {
+    --navy: #0f1c3f;
+    --dark-blue: #1a2b5c;
+    --medium-blue: #2d4a8f;
+    --accent-blue: #3b5fb8;
+    --gold: #d4af37;
+    --light-gold: #f0d785;
+    --pale-gold: #fef9e7;
 }
 
-/* Header */
-.fancy-header {
+/* Main container */
+.formal-admin {
+    height: calc(100vh - 80px);
+    background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header section */
+.admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--gold);
 }
 
-.fancy-header h2 {
-    font-weight: 800;
-    color: #2b6dd8;
+.admin-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-title h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--light-gold);
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.title-icon {
+    font-size: 2.5rem;
 }
 
 /* Switch button */
 .switch-btn {
-    background: linear-gradient(135deg, #f59e0b, #f97316);
-    color: white;
+    background: linear-gradient(135deg, var(--gold), #b8941f);
+    color: var(--navy);
     border: none;
-    padding: 0.55rem 1.2rem;
-    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
     font-weight: 700;
+    font-size: 0.95rem;
     text-decoration: none;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .switch-btn:hover {
-    opacity: 0.9;
+    background: linear-gradient(135deg, var(--light-gold), var(--gold));
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
 }
 
-/* Grid */
-.nav-grid {
+/* Grid container */
+.admin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    flex: 1;
+    max-height: calc(100vh - 200px);
 }
 
 /* Cards */
-.nav-card {
-    background: white;
-    border-radius: 18px;
-    padding: 2.2rem 1.8rem;
-    text-align: center;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+.admin-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
 }
 
-.nav-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 22px 55px rgba(0,0,0,0.18);
+.admin-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--light-gold));
 }
 
-/* Icon */
-.nav-icon {
-    font-size: 3rem;
+.admin-card:hover {
+    border-color: var(--gold);
+    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
+}
+
+/* Card header */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 1rem;
 }
 
-.nav-card h4 {
-    font-weight: 800;
-    margin-bottom: 0.6rem;
-    color: #355eb6;
+.card-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4));
 }
 
-.nav-card p {
-    color: #64748b;
-    font-weight: 600;
-    margin-bottom: 1.4rem;
-}
-
-.go-btn {
-    display: inline-block;
-    padding: 0.55rem 1.4rem;
-    border-radius: 25px;
+.card-header h3 {
+    font-size: 1.5rem;
     font-weight: 700;
-    color: white;
-    text-decoration: none;
+    color: var(--light-gold);
+    margin: 0;
 }
 
-/* Card colors */
-.fancy { border-top: 6px solid #8b5cf6; }
-.fancy .go-btn { background: linear-gradient(135deg,#8b5cf6,#6366f1); }
+/* Card content */
+.card-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
 
-.listing { border-top: 6px solid #22c55e; }
-.listing .go-btn { background: linear-gradient(135deg,#22c55e,#16a34a); }
+/* Card footer */
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
 
-.calendar { border-top: 6px solid #f59e0b; }
-.calendar .go-btn { background: linear-gradient(135deg,#f59e0b,#f97316); }
+.card-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.5rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--medium-blue));
+    color: white;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
 
-.dashboard { border-top: 6px solid #0ea5e9; }
-.dashboard .go-btn { background: linear-gradient(135deg,#0ea5e9,#0284c7); }
+.card-btn:hover {
+    background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue));
+    border-color: var(--light-gold);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .admin-card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-height: 768px) {
+    .formal-admin {
+        padding: 1.5rem;
+    }
+    
+    .admin-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+    
+    .admin-card {
+        padding: 1.5rem;
+    }
+}
 </style>
 
-<div class="fancy-admin">
+<div class="formal-admin">
 
     <!-- HEADER -->
-    <div class="fancy-header">
-        <h2>🎭 Fancy Dress Admin</h2>
+    <div class="admin-header">
+        <div class="admin-title">
+            <span class="title-icon">🎭</span>
+            <h1>Fancy Dress Administration</h1>
+        </div>
 
         <!-- SWITCH BUTTON -->
         <a href="/navaratri_admin" class="switch-btn">
@@ -121,43 +219,71 @@
         </a>
     </div>
 
-    <!-- NAVIGATION -->
-    <div class="nav-grid">
+    <!-- NAVIGATION GRID -->
+    <div class="admin-grid">
 
-        <!-- Fancy -->
-        <div class="nav-card fancy"
-             onclick="window.location.href='/fancy'">
-            <div class="nav-icon">🎭</div>
-            <h4>Fancy</h4>
-            <p>Create and manage fancy dress bookings.</p>
-            <a href="/fancy" class="go-btn">Open →</a>
+        <!-- Fancy Bookings -->
+        <div class="admin-card" onclick="window.location.href='/fancy'">
+            <div>
+                <div class="card-header">
+                    <span class="card-icon">🎭</span>
+                    <h3>Fancy Bookings</h3>
+                </div>
+                <div class="card-content">
+                    <p>Create and manage fancy dress bookings. Add new customers, assign costumes, and track rental periods.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/fancy" class="card-btn">Open Module →</a>
+            </div>
         </div>
 
-        <!-- Listing -->
-        <div class="nav-card listing"
-             onclick="window.location.href='/fancy_listing'">
-            <div class="nav-icon">📋</div>
-            <h4>Listing</h4>
-            <p>View all fancy bookings and customers.</p>
-            <a href="/fancy_listing" class="go-btn">Open →</a>
+        <!-- Bookings Listing -->
+        <div class="admin-card" onclick="window.location.href='/fancy_listing'">
+            <div>
+                <div class="card-header">
+                    <span class="card-icon">📋</span>
+                    <h3>Bookings Listing</h3>
+                </div>
+                <div class="card-content">
+                    <p>View comprehensive lists of all fancy dress bookings and customer information with advanced filtering options.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/fancy_listing" class="card-btn">Open Module →</a>
+            </div>
         </div>
 
-        <!-- Calendar -->
-        <div class="nav-card calendar"
-             onclick="window.location.href='/fancy_calendar'">
-            <div class="nav-icon">🗓️</div>
-            <h4>Calendar</h4>
-            <p>Track bookings, returns, availability.</p>
-            <a href="/fancy_calendar" class="go-btn">Open →</a>
+        <!-- Calendar View -->
+        <div class="admin-card" onclick="window.location.href='/fancy_calendar'">
+            <div>
+                <div class="card-header">
+                    <span class="card-icon">🗓️</span>
+                    <h3>Calendar View</h3>
+                </div>
+                <div class="card-content">
+                    <p>Track bookings, returns, and availability through an intuitive calendar interface for better planning.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/fancy_calendar" class="card-btn">Open Module →</a>
+            </div>
         </div>
 
-        <!-- Dashboard -->
-        <div class="nav-card dashboard"
-             onclick="window.location.href='/fancy_dashboard'">
-            <div class="nav-icon">📊</div>
-            <h4>Dashboard</h4>
-            <p>Analytics and performance insights.</p>
-            <a href="/fancy_dashboard" class="go-btn">Open →</a>
+        <!-- Analytics Dashboard -->
+        <div class="admin-card" onclick="window.location.href='/fancy_dashboard'">
+            <div>
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <h3>Analytics Dashboard</h3>
+                </div>
+                <div class="card-content">
+                    <p>Access comprehensive analytics, performance metrics, and insights to optimize your business operations.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/fancy_dashboard" class="card-btn">Open Module →</a>
+            </div>
         </div>
 
     </div>
