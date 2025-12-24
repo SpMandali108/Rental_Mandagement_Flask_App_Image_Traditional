@@ -12,9 +12,15 @@
 {% block content %}
 
 <style>
+/* Fix logo hover */
+.logo:hover {
+    background:transparent !important;
+    opacity:0.9;
+}
+
 /* Modern gradient background */
 .fancy-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0a1628 0%, #0d1b2a 50%, #1a2332 100%);
     min-height: calc(100vh - 120px);
     padding: 2rem;
     position: relative;
@@ -27,7 +33,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     pointer-events: none;
 }
 
@@ -40,12 +46,13 @@
 
 /* Header section */
 .page-header {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(13, 27, 42, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(212, 175, 55, 0.3);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -57,50 +64,50 @@
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #d4af37;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
 }
 
 .header-content p {
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.7);
     margin: 0.5rem 0 0 0;
     font-size: 1rem;
 }
 
 /* Stats card */
 .stats-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
     padding: 1.5rem 2.5rem;
     border-radius: 16px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
     min-width: 140px;
 }
 
 .stats-card .label {
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(10, 22, 40, 0.8);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
 .stats-card .count {
     font-size: 2.5rem;
     font-weight: 800;
-    color: white;
+    color: #0a1628;
 }
 
 /* Search section */
 .search-section {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(13, 27, 42, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(212, 175, 55, 0.3);
 }
 
 .search-wrapper {
@@ -111,17 +118,23 @@
 .search-input {
     width: 100%;
     padding: 1rem 1rem 1rem 3rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid rgba(212, 175, 55, 0.3);
     border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: white;
+    background: rgba(10, 22, 40, 0.5);
+    color: #fff;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    border-color: #d4af37;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+    background: rgba(10, 22, 40, 0.7);
 }
 
 .search-icon {
@@ -131,26 +144,26 @@
     transform: translateY(-50%);
     width: 18px;
     height: 18px;
-    color: #94a3b8;
+    color: #d4af37;
 }
 
 /* Booking cards */
 .fancy-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(13, 27, 42, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 1.75rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 2px solid rgba(212, 175, 55, 0.3);
 }
 
 .fancy-card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
-    border-color: #667eea;
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+    border-color: #d4af37;
 }
 
 .card-header {
@@ -172,26 +185,26 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
+    color: #0a1628;
     font-weight: 800;
     font-size: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }
 
 .customer-details h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1e293b;
+    color: #d4af37;
 }
 
 .customer-details p {
     margin: 0.25rem 0 0 0;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.95rem;
 }
 
@@ -200,9 +213,9 @@
     border-radius: 12px;
     font-size: 0.875rem;
     font-weight: 600;
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+    background: linear-gradient(135deg, #1e3a5f 0%, #2a4a6f 100%);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.3);
     white-space: nowrap;
 }
 
@@ -210,9 +223,10 @@
     display: grid;
     gap: 1rem;
     padding: 1.5rem;
-    background: #f8fafc;
+    background: rgba(10, 22, 40, 0.5);
     border-radius: 12px;
     margin-bottom: 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .info-row {
@@ -223,12 +237,12 @@
 
 .info-label {
     font-weight: 700;
-    color: #475569;
+    color: #d4af37;
     min-width: 90px;
 }
 
 .info-value {
-    color: #1e293b;
+    color: rgba(255, 255, 255, 0.85);
     flex: 1;
 }
 
@@ -237,9 +251,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
     border-radius: 12px;
-    color: white;
+    color: #0a1628;
 }
 
 .price-label {
@@ -254,31 +268,32 @@
 
 /* Empty state */
 .empty-state {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(13, 27, 42, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 4rem 2rem;
     text-align: center;
-    border: 3px dashed #cbd5e1;
+    border: 3px dashed rgba(212, 175, 55, 0.3);
 }
 
 .empty-state h3 {
     font-size: 1.5rem;
-    color: #475569;
+    color: #d4af37;
     margin-bottom: 0.5rem;
 }
 
 .empty-state p {
-    color: #94a3b8;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* Desktop table */
 .desktop-table {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(13, 27, 42, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(212, 175, 55, 0.3);
 }
 
 .desktop-table table {
@@ -287,33 +302,32 @@
 }
 
 .desktop-table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a5f 0%, #2a4a6f 100%);
 }
 
 .desktop-table th {
     padding: 1.25rem;
     text-align: left;
     font-weight: 700;
-    color: white;
+    color: #d4af37;
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .desktop-table tbody tr {
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     transition: all 0.2s ease;
     cursor: pointer;
 }
 
 .desktop-table tbody tr:hover {
-    background: #f8fafc;
-    transform: scale(1.01);
+    background: rgba(212, 175, 55, 0.1);
 }
 
 .desktop-table td {
     padding: 1.25rem;
-    color: #1e293b;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .table-badge {
@@ -322,13 +336,14 @@
     border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 600;
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    color: white;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2a4a6f 100%);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .table-price {
     font-weight: 700;
-    color: #10b981;
+    color: #d4af37;
     font-size: 1.125rem;
 }
 
@@ -347,10 +362,10 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
+    color: #0a1628;
     border: none;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -369,7 +384,8 @@
 
 .float-btn:hover {
     transform: scale(1.1) translateY(-2px);
-    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 12px 32px rgba(212, 175, 55, 0.6);
+    background: linear-gradient(135deg, #f0d785 0%, #d4af37 100%);
 }
 
 .float-btn:active {
@@ -384,10 +400,10 @@
 /* Pulse animation for buttons */
 @keyframes pulse {
     0%, 100% {
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
     }
     50% {
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.6), 0 0 0 8px rgba(102, 126, 234, 0.2);
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6), 0 0 0 8px rgba(212, 175, 55, 0.2);
     }
 }
 
@@ -484,7 +500,6 @@
             <div class="card-header">
                 <div class="customer-info">
                 <div class="avatar">{{ (fb.get('name') or fb.get('Name') or '??')[:2].upper() }}</div>
-
 
                     <div class="customer-details">
                         <h3>{{ fb.name }}</h3>
@@ -621,14 +636,12 @@ function updateFloatButtons() {
     const clientHeight = document.documentElement.clientHeight;
     const scrollBottom = scrollHeight - scrollTop - clientHeight;
 
-    // Show "Back to Top" when scrolled down 300px
     if (scrollTop > 300) {
         scrollToTopBtn.classList.add('show');
     } else {
         scrollToTopBtn.classList.remove('show');
     }
 
-    // Show "Go to Bottom" when not at the bottom (more than 300px from bottom)
     if (scrollBottom > 300) {
         scrollToBottomBtn.classList.add('show');
     } else {

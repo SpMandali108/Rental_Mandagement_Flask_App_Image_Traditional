@@ -31,6 +31,7 @@ products_collection = db['products']
 bags = db['bags']
 products = db['Storage']
 fcustomers = db['Fancy_Customers']
+finventory = db['Fancy_Inventory']
 
 ADMIN_ID = os.environ.get("ADMIN_ID")
 ADMIN_PASS = os.environ.get("ADMIN_PASS")
@@ -1903,6 +1904,7 @@ def navaratri_admin():
 def navaratri_dashboard():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
+    
 
     try:
         try:
@@ -2036,3 +2038,43 @@ def find_highest_booking_customer(traditional_data):
     highest_customer = max(customer_totals, key=customer_totals.get)
     highest_value = customer_totals[highest_customer]
     return highest_customer, highest_value
+
+@auth.route("/fancy_inventory", methods=["GET", "POST"])
+def fancy_inventory():
+
+    if request.method == "POST":
+        finventory.insert_one({
+            "name": request.form["name"].strip(),
+            "color": request.form["color"].strip(),
+            "size": request.form["size"].strip(),
+            "category": request.form["category"].strip(),
+            "quantity": int(request.form["quantity"])
+        })
+        return redirect(url_for("auth.fancy_inventory"))
+
+    products = list(finventory.find())
+    return render_template("fancy_inventory.html", products=products)
+
+
+# ✏️ UPDATE
+@auth.route("/fancy_inventory/update/<id>", methods=["POST"])
+def update_fancy_inventory(id):
+    finventory.update_one(
+        {"_id": ObjectId(id)},
+        {"$set": {
+            "name": request.form["name"],
+            "color": request.form["color"],
+            "size": request.form["size"],
+            "category": request.form["category"],
+            "quantity": int(request.form["quantity"])
+        }}
+    )
+    return redirect(url_for("auth.fancy_inventory"))
+
+
+# ❌ DELETE
+@auth.route("/fancy_inventory/delete/<id>")
+def delete_fancy_inventory(id):
+    finventory.delete_one({"_id": ObjectId(id)})
+    return redirect(url_for("auth.fancy_inventory"))
+

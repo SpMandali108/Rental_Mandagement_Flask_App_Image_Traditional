@@ -10,12 +10,18 @@
 
 {% block content %}
 <style>
+/* Fix logo hover - prevent red background */
+.logo:hover {
+    background:transparent !important;
+    opacity:0.9;
+}
+
 /* Root variables */
 :root {
-    --navy: #0f1c3f;
-    --dark-blue: #1a2b5c;
-    --medium-blue: #2d4a8f;
-    --accent-blue: #3b5fb8;
+    --navy: #0a1628;
+    --dark-blue: #0d1b2a;
+    --medium-blue: #1a2332;
+    --accent-blue: #1e3a5f;
     --gold: #d4af37;
     --light-gold: #f0d785;
     --pale-gold: #fef9e7;
@@ -23,12 +29,11 @@
 
 /* Main container */
 .formal-admin {
-    height: calc(100vh - 80px);
-    background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%);
+    min-height: calc(100vh - 80px);
+    background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 50%, #0f1c3f 100%);
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 /* Header section */
@@ -38,7 +43,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--gold);
+    border-bottom: 2px solid rgba(212, 175, 55, 0.5);
 }
 
 .admin-title {
@@ -50,18 +55,20 @@
 .admin-title h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--light-gold);
+    color: var(--gold);
     margin: 0;
     letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
 }
 
 .title-icon {
     font-size: 2.5rem;
+    filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5));
 }
 
 /* Switch button */
 .switch-btn {
-    background: linear-gradient(135deg, var(--gold), #b8941f);
+    background: linear-gradient(135deg, var(--gold), #aa8a2e);
     color: var(--navy);
     border: none;
     padding: 0.75rem 1.5rem;
@@ -70,29 +77,28 @@
     font-size: 0.95rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }
 
 .switch-btn:hover {
     background: linear-gradient(135deg, var(--light-gold), var(--gold));
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
     transform: translateY(-2px);
 }
 
 /* Grid container */
 .admin-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     gap: 1.5rem;
     flex: 1;
-    max-height: calc(100vh - 200px);
 }
 
 /* Cards */
 .admin-card {
-    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    background: rgba(13, 27, 42, 0.9);
     border: 2px solid rgba(212, 175, 55, 0.3);
-    border-radius: 12px;
+    border-radius: 15px;
     padding: 2rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -102,6 +108,7 @@
     backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .admin-card::before {
@@ -111,14 +118,14 @@
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, var(--gold), var(--light-gold));
+    background: linear-gradient(90deg, var(--gold), var(--light-gold), var(--gold));
 }
 
 .admin-card:hover {
     border-color: var(--gold);
-    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+    background: rgba(13, 27, 42, 1);
     transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
+    box-shadow: 0 12px 40px rgba(212, 175, 55, 0.3);
 }
 
 /* Card header */
@@ -137,13 +144,13 @@
 .card-header h3 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--light-gold);
+    color: var(--gold);
     margin: 0;
 }
 
 /* Card content */
 .card-content p {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
@@ -160,9 +167,9 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.65rem 1.5rem;
-    background: linear-gradient(135deg, var(--accent-blue), var(--medium-blue));
-    color: white;
-    border: 1px solid var(--gold);
+    background: linear-gradient(135deg, var(--accent-blue), #2a4a6f);
+    color: var(--gold);
+    border: 1px solid rgba(212, 175, 55, 0.4);
     border-radius: 6px;
     font-weight: 600;
     text-decoration: none;
@@ -171,9 +178,15 @@
 }
 
 .card-btn:hover {
-    background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue));
-    border-color: var(--light-gold);
+    background: linear-gradient(135deg, #2a4a6f, var(--accent-blue));
+    border-color: var(--gold);
+    color: var(--light-gold);
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Prevent card click when clicking button */
+.card-btn:hover {
+    z-index: 10;
 }
 
 /* Responsive */
@@ -186,11 +199,17 @@
     .admin-card {
         padding: 1.5rem;
     }
+    
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
 }
 
-@media (max-height: 768px) {
+@media (max-width: 640px) {
     .formal-admin {
-        padding: 1.5rem;
+        padding: 1rem;
     }
     
     .admin-header {
@@ -198,8 +217,20 @@
         padding-bottom: 1rem;
     }
     
+    .admin-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .title-icon {
+        font-size: 2rem;
+    }
+    
     .admin-card {
-        padding: 1.5rem;
+        padding: 1.25rem;
+    }
+    
+    .card-header h3 {
+        font-size: 1.25rem;
     }
 }
 </style>
@@ -234,7 +265,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="/fancy" class="card-btn">Open Module →</a>
+                <a href="/fancy" class="card-btn" onclick="event.stopPropagation()">Open Module →</a>
             </div>
         </div>
 
@@ -250,7 +281,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="/fancy_listing" class="card-btn">Open Module →</a>
+                <a href="/fancy_listing" class="card-btn" onclick="event.stopPropagation()">Open Module →</a>
             </div>
         </div>
 
@@ -266,7 +297,23 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="/fancy_calendar" class="card-btn">Open Module →</a>
+                <a href="/fancy_calendar" class="card-btn" onclick="event.stopPropagation()">Open Module →</a>
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div class="admin-card" onclick="window.location.href='/fancy_inventory'">
+            <div>
+                <div class="card-header">
+                    <span class="card-icon">📦</span>
+                    <h3>Inventory</h3>
+                </div>
+                <div class="card-content">
+                    <p>Manage your costume inventory with searchable lists. Track stock levels, colors, sizes, and categories efficiently.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/fancy_inventory" class="card-btn" onclick="event.stopPropagation()">Open Module →</a>
             </div>
         </div>
 
@@ -282,7 +329,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="/fancy_dashboard" class="card-btn">Open Module →</a>
+                <a href="/fancy_dashboard" class="card-btn" onclick="event.stopPropagation()">Open Module →</a>
             </div>
         </div>
 

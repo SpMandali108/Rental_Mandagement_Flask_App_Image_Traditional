@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block title %}Fancy Inventory{% endblock %}
+
+{% block logo_link %}
+<a href="/fancy_admin" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<div style="min-height:100vh; background:linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0d1b2a 100%); padding:40px 20px;">
+
+<div style="max-width:1200px; margin:auto;">
+
+<!-- HEADER -->
+<div style="text-align:center; margin-bottom:40px;">
+    <h1 style="color:#fff; font-size:2.5em; margin-bottom:10px; text-shadow:0 2px 10px rgba(212,175,55,0.5);">
+        🎭 Fancy Dress Inventory
+    </h1>
+    <p style="color:#b8c5d6; font-size:1.1em;">Manage your costume collection with elegance</p>
+</div>
+
+<!-- SEARCH BAR -->
+<div style="background:rgba(13,27,42,0.9); backdrop-filter:blur(10px); 
+    border-radius:15px; padding:20px; margin-bottom:30px; 
+    border:1px solid rgba(212,175,55,0.3); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+    
+    <input type="text" id="searchInput" placeholder="🔍 Search inventory by name, color, size, or category..." 
+        style="width:100%; padding:15px 20px; border-radius:10px; border:2px solid rgba(212,175,55,0.4);
+        background:rgba(10,22,40,0.6); color:#fff; font-size:1.05em;
+        transition:all 0.3s;">
+</div>
+
+<!-- ADD PRODUCT CARD -->
+<div style="background:rgba(13,27,42,0.9); backdrop-filter:blur(10px); 
+    border-radius:15px; padding:30px; margin-bottom:30px; 
+    border:1px solid rgba(212,175,55,0.3); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+    
+    <h3 style="color:#d4af37; margin-bottom:20px; font-size:1.3em;">➕ Add New Product</h3>
+    
+    <form method="POST" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:15px;">
+        <input name="name" placeholder="Product Name" required
+            style="padding:12px 15px; border-radius:8px; border:1px solid rgba(212,175,55,0.4);
+            background:rgba(10,22,40,0.5); color:#fff; font-size:0.95em;
+            transition:all 0.3s;">
+        
+        <input name="color" placeholder="Color" required
+            style="padding:12px 15px; border-radius:8px; border:1px solid rgba(212,175,55,0.4);
+            background:rgba(10,22,40,0.5); color:#fff; font-size:0.95em;
+            transition:all 0.3s;">
+        
+        <input name="size" placeholder="Size" required
+            style="padding:12px 15px; border-radius:8px; border:1px solid rgba(212,175,55,0.4);
+            background:rgba(10,22,40,0.5); color:#fff; font-size:0.95em;
+            transition:all 0.3s;">
+        
+        <input name="category" placeholder="Category" required
+            style="padding:12px 15px; border-radius:8px; border:1px solid rgba(212,175,55,0.4);
+            background:rgba(10,22,40,0.5); color:#fff; font-size:0.95em;
+            transition:all 0.3s;">
+        
+        <input name="quantity" type="number" placeholder="Quantity" required
+            style="padding:12px 15px; border-radius:8px; border:1px solid rgba(212,175,55,0.4);
+            background:rgba(10,22,40,0.5); color:#fff; font-size:0.95em;
+            transition:all 0.3s;">
+        
+        <button type="submit" style="padding:12px 25px; border-radius:8px; border:none;
+            background:linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
+            color:#0a1628; font-size:1em; font-weight:600; cursor:pointer;
+            transition:all 0.3s; box-shadow:0 4px 15px rgba(212,175,55,0.4);
+            grid-column:span 1;">
+            Add Product
+        </button>
+    </form>
+</div>
+
+<!-- INVENTORY TABLE CARD -->
+<div style="background:rgba(13,27,42,0.9); backdrop-filter:blur(10px); 
+    border-radius:15px; padding:30px; 
+    border:1px solid rgba(212,175,55,0.3); box-shadow:0 8px 32px rgba(0,0,0,0.3);
+    overflow-x:auto;">
+    
+    <h3 style="color:#d4af37; margin-bottom:20px; font-size:1.3em;">📋 Current Inventory</h3>
+    
+    <table width="100%" style="border-collapse:collapse;" id="inventoryTable">
+        <thead>
+            <tr style="background:linear-gradient(135deg, #1e3a5f 0%, #2a4a6f 100%);">
+                <th style="padding:15px; text-align:left; color:#d4af37; font-weight:600; border-bottom:2px solid rgba(212,175,55,0.5);">Name</th>
+                <th style="padding:15px; text-align:left; color:#d4af37; font-weight:600; border-bottom:2px solid rgba(212,175,55,0.5);">Color</th>
+                <th style="padding:15px; text-align:left; color:#d4af37; font-weight:600; border-bottom:2px solid rgba(212,175,55,0.5);">Size</th>
+                <th style="padding:15px; text-align:left; color:#d4af37; font-weight:600; border-bottom:2px solid rgba(212,175,55,0.5);">Category</th>
+                <th style="padding:15px; text-align:center; color:#d4af37; font-weight:600; border-bottom:2px solid rgba(212,175,55,0.5);">Qty</th>
+                <th style="padding:15px; text-align:center; color:#d4af37; font-weight:600; border-bottom:2px solid rgba(212,175,55,0.5);">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            {% for p in products %}
+            <tr class="inventory-row" style="border-bottom:1px solid rgba(212,175,55,0.2); transition:background 0.3s;"
+                onmouseover="this.style.background='rgba(212,175,55,0.1)'"
+                onmouseout="this.style.background='transparent'">
+                <form method="POST" action="{{ url_for('auth.update_fancy_inventory', id=p._id) }}">
+                    <td style="padding:12px;">
+                        <input name="name" value="{{ p.name }}" class="search-field"
+                            style="width:100%; padding:8px 10px; border-radius:6px; 
+                            border:1px solid rgba(212,175,55,0.3);
+                            background:rgba(10,22,40,0.3); color:#e0e0e0; font-size:0.9em;">
+                    </td>
+                    <td style="padding:12px;">
+                        <input name="color" value="{{ p.color }}" class="search-field"
+                            style="width:100%; padding:8px 10px; border-radius:6px; 
+                            border:1px solid rgba(212,175,55,0.3);
+                            background:rgba(10,22,40,0.3); color:#e0e0e0; font-size:0.9em;">
+                    </td>
+                    <td style="padding:12px;">
+                        <input name="size" value="{{ p.size }}" class="search-field"
+                            style="width:100%; padding:8px 10px; border-radius:6px; 
+                            border:1px solid rgba(212,175,55,0.3);
+                            background:rgba(10,22,40,0.3); color:#e0e0e0; font-size:0.9em;">
+                    </td>
+                    <td style="padding:12px;">
+                        <input name="category" value="{{ p.category }}" class="search-field"
+                            style="width:100%; padding:8px 10px; border-radius:6px; 
+                            border:1px solid rgba(212,175,55,0.3);
+                            background:rgba(10,22,40,0.3); color:#e0e0e0; font-size:0.9em;">
+                    </td>
+                    <td style="padding:12px; text-align:center;">
+                        <input name="quantity" type="number" value="{{ p.quantity }}" 
+                            style="width:70px; padding:8px 10px; border-radius:6px; 
+                            border:1px solid rgba(212,175,55,0.3);
+                            background:rgba(10,22,40,0.3); color:#e0e0e0; font-size:0.9em; text-align:center;">
+                    </td>
+                    <td style="padding:12px; text-align:center;">
+                        <button type="submit" style="padding:8px 16px; border-radius:6px; border:none;
+                            background:linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
+                            color:#0a1628; font-size:0.85em; font-weight:600; cursor:pointer;
+                            transition:all 0.3s; margin-right:8px;">
+                            Update
+                        </button>
+                        <a href="{{ url_for('auth.delete_fancy_inventory', id=p._id) }}"
+                           onclick="return confirm('Delete this item?')"
+                           style="display:inline-block; padding:8px 12px; border-radius:6px;
+                           background:rgba(220,53,69,0.8); color:#fff; text-decoration:none;
+                           font-size:0.85em; transition:all 0.3s;">
+                            ❌
+                        </a>
+                    </td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div id="noResults" style="display:none; text-align:center; color:#b8c5d6; padding:40px; font-size:1.1em;">
+        No matching items found. Try a different search term. 🔍
+    </div>
+    
+    {% if not products %}
+    <p style="text-align:center; color:#b8c5d6; padding:40px; font-size:1.1em;">
+        No products in inventory. Add your first item above! 🎭
+    </p>
+    {% endif %}
+</div>
+
+</div>
+
+</div>
+
+<style>
+    /* Fix logo hover - prevent red background */
+    .logo:hover {
+        background:transparent !important;
+        opacity:0.9;
+    }
+    
+    input:focus {
+        outline:none;
+        border-color:#d4af37 !important;
+        box-shadow:0 0 0 3px rgba(212,175,55,0.2);
+    }
+    
+    button:hover {
+        transform:translateY(-2px);
+        box-shadow:0 6px 20px rgba(212,175,55,0.6);
+    }
+    
+    button:active {
+        transform:translateY(0);
+    }
+    
+    /* Only apply red hover to delete links, not all anchors */
+    .inventory-row a:hover {
+        transform:scale(1.1);
+        background:rgba(220,53,69,1) !important;
+    }
+    
+    ::placeholder {
+        color:#6b7fa8;
+    }
+    
+    #searchInput:focus {
+        border-color:#d4af37;
+        box-shadow:0 0 0 4px rgba(212,175,55,0.3);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('tableBody');
+    const noResults = document.getElementById('noResults');
+    const rows = document.querySelectorAll('.inventory-row');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const searchFields = row.querySelectorAll('.search-field');
+            let matchFound = false;
+            
+            searchFields.forEach(field => {
+                if (field.value.toLowerCase().includes(searchTerm)) {
+                    matchFound = true;
+                }
+            });
+            
+            if (matchFound || searchTerm === '') {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Show/hide no results message
+        if (visibleCount === 0 && searchTerm !== '') {
+            noResults.style.display = 'block';
+            tableBody.style.display = 'none';
+        } else {
+            noResults.style.display = 'none';
+            tableBody.style.display = '';
+        }
+    });
+});
+</script>
+
+{% endblock %}

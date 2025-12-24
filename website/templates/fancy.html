@@ -8,56 +8,83 @@
 
 {% block head %}
 <style>
+    /* Fix logo hover */
+    .logo:hover {
+        background:transparent !important;
+        opacity:0.9;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0a1628 0%, #0d1b2a 50%, #1a2332 100%);
+        min-height: 100vh;
+    }
     
     .booking-container {
         max-width: 800px;
         margin: 0 auto;
+        padding: 2rem 1rem;
     }
 
     .booking-card {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(13, 27, 42, 0.95);
         border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(212, 175, 55, 0.3);
         transition: all 0.3s ease;
     }
 
+    .booking-card:hover {
+        border-color: rgba(212, 175, 55, 0.5);
+        box-shadow: 0 12px 50px rgba(212, 175, 55, 0.2);
+    }
+
     body.dark-mode .booking-card {
-        background: rgba(30, 30, 30, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
+        background: rgba(13, 27, 42, 0.95);
+        border: 2px solid rgba(212, 175, 55, 0.3);
     }
 
     .booking-header {
         text-align: center;
         margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .booking-header::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        margin: 1rem auto 0;
     }
 
     .booking-header .emoji {
         font-size: 3rem;
         margin-bottom: 1rem;
         display: block;
+        filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5));
     }
 
     .booking-header h2 {
-        color: #c62828;
+        color: #d4af37;
         font-weight: 600;
         margin-bottom: 0.5rem;
+        text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
     }
 
     body.dark-mode .booking-header h2 {
-        color: #ff6b6b;
+        color: #d4af37;
     }
 
     .booking-header p {
-        color: #666;
+        color: rgba(255, 255, 255, 0.7);
         font-size: 1.1rem;
     }
 
     body.dark-mode .booking-header p {
-        color: #ccc;
+        color: rgba(255, 255, 255, 0.7);
     }
 
     .form-group {
@@ -66,49 +93,51 @@
 
     .form-label {
         font-weight: 500;
-        color: #333;
+        color: #d4af37;
         margin-bottom: 0.5rem;
         display: block;
+        font-size: 0.95rem;
     }
 
     body.dark-mode .form-label {
-        color: #e0e0e0;
+        color: #d4af37;
     }
 
     .form-control {
         width: 100%;
         padding: 0.75rem 1rem;
-        border: 2px solid #e0e0e0;
+        border: 2px solid rgba(212, 175, 55, 0.3);
         border-radius: 8px;
         font-size: 1rem;
         transition: all 0.3s ease;
-        background: white;
-        color: #333;
+        background: rgba(10, 22, 40, 0.5);
+        color: #fff;
     }
 
     body.dark-mode .form-control {
-        background: #2a2a2a;
-        border-color: #444;
-        color: white;
+        background: rgba(10, 22, 40, 0.5);
+        border-color: rgba(212, 175, 55, 0.3);
+        color: #fff;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: #c62828;
-        box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+        border-color: #d4af37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        background: rgba(10, 22, 40, 0.7);
     }
 
     body.dark-mode .form-control:focus {
-        border-color: #ff6b6b;
-        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        border-color: #d4af37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
     }
 
     .form-control::placeholder {
-        color: #999;
+        color: rgba(255, 255, 255, 0.4);
     }
 
     body.dark-mode .form-control::placeholder {
-        color: #666;
+        color: rgba(255, 255, 255, 0.4);
     }
 
     .form-row {
@@ -121,8 +150,8 @@
     }
 
     .submit-btn {
-        background: #16213e;
-        color: white;
+        background: linear-gradient(135deg, #d4af37, #aa8a2e);
+        color: #0a1628;
         border: none;
         padding: 1rem 2rem;
         border-radius: 50px;
@@ -132,13 +161,13 @@
         transition: all 0.3s ease;
         display: block;
         margin: 2rem auto 0;
-        box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
     }
 
     .submit-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
-        background: #16213e;
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+        background: linear-gradient(135deg, #f0d785, #d4af37);
     }
 
     .submit-btn:active {
@@ -146,16 +175,14 @@
     }
 
     body.dark-mode .submit-btn {
-        background: linear-gradient(135deg, #ff6b6b, #ff5252);
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        background: linear-gradient(135deg, #d4af37, #aa8a2e);
+        color: #0a1628;
     }
 
     body.dark-mode .submit-btn:hover {
-        background: linear-gradient(135deg, #ff5252, #ff4444);
-        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        background: linear-gradient(135deg, #f0d785, #d4af37);
     }
 
-    
     @media (max-width: 768px) {
         .booking-card {
             margin: 1rem;
@@ -176,7 +203,6 @@
         }
     }
 
-    
     .booking-card {
         animation: slideInUp 0.6s ease-out;
     }
@@ -192,38 +218,64 @@
         }
     }
 
-    
     input[type="date"] {
         position: relative;
+        color-scheme: dark;
     }
 
     input[type="date"]::-webkit-calendar-picker-indicator {
-        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23c62828" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23d4af37" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
         background-size: 16px;
         cursor: pointer;
+        filter: brightness(1.2);
     }
 
     body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
-        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23ff6b6b" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23d4af37" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat;
         background-size: 16px;
+        filter: brightness(1.2);
     }
 
-    
     .alert {
         border-radius: 8px;
         margin-bottom: 1rem;
+        padding: 1rem;
+        border: 2px solid;
     }
 
-    body.dark-mode .alert-success {
-        background-color: rgba(76, 175, 80, 0.2);
+    .alert-success {
+        background-color: rgba(76, 175, 80, 0.15);
         border-color: #4caf50;
         color: #81c784;
     }
 
-    body.dark-mode .alert-danger {
-        background-color: rgba(244, 67, 54, 0.2);
+    body.dark-mode .alert-success {
+        background-color: rgba(76, 175, 80, 0.15);
+        border-color: #4caf50;
+        color: #81c784;
+    }
+
+    .alert-danger {
+        background-color: rgba(244, 67, 54, 0.15);
         border-color: #f44336;
         color: #e57373;
+    }
+
+    body.dark-mode .alert-danger {
+        background-color: rgba(244, 67, 54, 0.15);
+        border-color: #f44336;
+        color: #e57373;
+    }
+
+    /* Autofill highlight effect */
+    .form-control.autofilled {
+        background-color: rgba(76, 175, 80, 0.2) !important;
+        border-color: #4caf50 !important;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
     }
 </style>
 {% endblock %}
@@ -240,7 +292,7 @@
     <div class="booking-card">
         <div class="booking-header">
             <span class="emoji">🎭</span>
-            <h2 style="color: #16213e;">Fancy Dress Booking</h2>
+            <h2>Fancy Dress Booking</h2>
             <p>Book your perfect costume for any occasion</p>
         </div>
 
@@ -248,39 +300,38 @@
             <div class="form-row">
                 <div class="form-col">
                     <div class="form-group">
-                        <label for="name" class="form-label" style="color: #16213e;">Full Name</label>
+                        <label for="name" class="form-label">Full Name</label>
                         <input type="text" class="form-control" name="name" id="name" required placeholder="Enter your full name">
                     </div>
                 </div>
                 <div class="form-col">
                     <div class="form-group">
-                        <label for="mobile" class="form-label" style="color: #16213e;">Mobile Number</label>
+                        <label for="mobile" class="form-label">Mobile Number</label>
                         <input type="tel" class="form-control" name="mobile" id="mobile" pattern="[0-9]{10}" required placeholder="10-digit mobile number">
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="address" class="form-label" style="color: #16213e;">Address</label>
+                <label for="address" class="form-label">Address</label>
                 <textarea class="form-control" name="address" id="address" rows="3" placeholder="Enter your complete address"></textarea>
             </div>
 
-            <!-- New School Field -->
             <div class="form-group">
-                <label for="school" class="form-label" style="color: #16213e;">School Name / Other</label>
+                <label for="school" class="form-label">School Name / Other</label>
                 <input type="text" class="form-control" name="school" id="school" placeholder="Enter school name (optional)">
             </div>
 
             <div class="form-row">
                 <div class="form-col">
                     <div class="form-group">
-                        <label for="start_date" class="form-label" style="color: #16213e;">Start Date</label>
+                        <label for="start_date" class="form-label">Start Date</label>
                         <input type="date" class="form-control" name="start_date" id="start_date" required>
                     </div>
                 </div>
                 <div class="form-col">
                     <div class="form-group">
-                        <label for="end_date" class="form-label" style="color: #16213e;">End Date</label>
+                        <label for="end_date" class="form-label">End Date</label>
                         <input type="date" class="form-control" name="end_date" id="end_date" required>
                     </div>
                 </div>
@@ -289,20 +340,20 @@
             <div class="form-row">
                 <div class="form-col">
                     <div class="form-group">
-                        <label for="price" class="form-label" style="color: #16213e;">Price (₹)</label>
+                        <label for="price" class="form-label">Price (₹)</label>
                         <input type="number" class="form-control" name="price" id="price" min="0" step="1" required placeholder="Enter price">
                     </div>
                 </div>
                 <div class="form-col">
                     <div class="form-group">
-                        <label for="costume" class="form-label" style="color: #16213e;">Costume Type</label>
+                        <label for="costume" class="form-label">Costume Type</label>
                         <input type="text" class="form-control" name="costume" id="costume" required placeholder="e.g., Superhero, Historical, Character">
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="details" class="form-label" style="color: #16213e;">Additional Details / Special Requirements</label>
+                <label for="details" class="form-label">Additional Details / Special Requirements</label>
                 <textarea class="form-control" name="details" id="details" rows="4" placeholder="Any specific requirements, size details, or additional information..."></textarea>
             </div>
 
@@ -324,27 +375,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const addressInput = document.getElementById('address');
     const schoolInput = document.getElementById('school');
 
-    // -----------------------------------------------------
-    // 1️⃣ MOBILE NUMBER VALIDATION (digits only + max 10)
-    // -----------------------------------------------------
+    // Mobile number validation
     mobileInput.addEventListener('input', function () {
-        // Remove any non-numeric character
         this.value = this.value.replace(/\D/g, '');
-
-        // Max length = 10 digits
         if (this.value.length > 10) {
             this.value = this.value.slice(0, 10);
         }
-
-        // ✨ LIVE AUTOFILL - trigger when exactly 10 digits
         if (this.value.length === 10) {
             fetchCustomerData(this.value);
         }
     });
 
-    // -----------------------------------------------------
-    // 2️⃣ AUTOFILL CUSTOMER DETAILS BASED ON MOBILE
-    // -----------------------------------------------------
+    // Autofill customer details
     async function fetchCustomerData(mobile) {
         console.log("🔍 Fetching data for mobile:", mobile);
         
@@ -366,7 +408,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const c = data.data;
                 console.log("👤 Customer object:", c);
 
-                // Handle both lowercase and uppercase field names
                 const name = (c.Name || c.name || "").toLowerCase();
                 const address = (c.Address || c.address || "").toLowerCase();
                 const school = (c.School || c.school || "").toLowerCase();
@@ -380,12 +421,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Visual feedback - highlight autofilled fields
                 [nameInput, addressInput, schoolInput].forEach(field => {
                     if (field.value) {
-                        field.style.backgroundColor = '#e8f5e9'; // Light green
-                        field.style.transition = 'background-color 0.3s ease';
-                        
-                        // Remove highlight after 2 seconds
+                        field.classList.add('autofilled');
                         setTimeout(() => {
-                            field.style.backgroundColor = '';
+                            field.classList.remove('autofilled');
                         }, 2000);
                     }
                 });
@@ -393,25 +431,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("✅ Customer data autofilled successfully!");
             } else {
                 console.log("ℹ️ No existing customer found for this mobile number");
-                console.log("exists:", data.exists, "data:", data.data);
             }
 
         } catch (err) {
             console.error("❌ Autofill error:", err);
-            console.error("Error stack:", err.stack);
         }
     }
 
-    // Also trigger autofill on blur (backup for paste events)
     mobileInput.addEventListener('blur', function() {
         if (this.value.length === 10) {
             fetchCustomerData(this.value);
         }
     });
 
-    // -----------------------------------------------------
-    // 3️⃣ DATE VALIDATION
-    // -----------------------------------------------------
+    // Date validation
     startDateInput.addEventListener('change', function () {
         endDateInput.setAttribute('min', this.value);
         if (endDateInput.value && endDateInput.value < this.value) {
@@ -419,9 +452,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // -----------------------------------------------------
-    // 4️⃣ FORM SUBMISSION (AJAX)
-    // -----------------------------------------------------
+    // Form submission
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -465,21 +496,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // -----------------------------------------------------
-    // 5️⃣ SUCCESS MESSAGE
-    // -----------------------------------------------------
+    // Success message
     function showSuccess() {
         const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.className = 'alert alert-success';
         alertDiv.innerHTML = `
             <strong>Success!</strong> Your fancy dress booking has been submitted successfully.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
         `;
 
-        const main = document.querySelector('main');
-        main.insertBefore(alertDiv, main.firstChild);
+        const container = document.querySelector('.booking-container');
+        container.insertBefore(alertDiv, container.firstChild);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -488,13 +514,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // -----------------------------------------------------
-    // 6️⃣ FOCUS ANIMATIONS
-    // -----------------------------------------------------
+    // Focus animations
     const formControls = document.querySelectorAll('.form-control');
     formControls.forEach(control => {
         control.addEventListener('focus', function () {
-            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transform = 'scale(1.01)';
             this.parentElement.style.transition = 'transform 0.2s ease';
         });
         control.addEventListener('blur', function () {
