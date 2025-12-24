@@ -14,71 +14,72 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
-/* Wrap the entire content in a styled container */
+:root {
+    --navy-900: #0a1628;
+    --navy-800: #0f2847;
+    --navy-700: #1a3a5c;
+    --navy-600: #2d4a6e;
+    --navy-500: #3d5a80;
+    --gold-500: #d4af37;
+    --gold-400: #f4d03f;
+    --gold-300: #ffd700;
+    --gold-600: #b8941f;
+    --gold-700: #9c7c1a;
+    --accent-blue: #4a90e2;
+    --success: #2ecc71;
+    --success-dark: #27ae60;
+    --danger: #e74c3c;
+    --danger-dark: #c0392b;
+    --text-light: #ecf0f1;
+    --text-muted: #95a5a6;
+    --border-dark: #34495e;
+    --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.3);
+    --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 .calendar-content-wrapper {
-    background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
-    min-height: calc(100vh - 56px); /* Adjust based on navbar height */
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 50%, var(--navy-700) 100%);
+    min-height: calc(100vh - 56px);
     padding: 2rem 1rem;
     margin-left: -15px;
     margin-right: -15px;
 }
-:root {
-    --primary: #8b5cf6;
-    --primary-dark: #7c3aed;
-    --success: #10b981;
-    --success-dark: #059669;
-    --danger: #f43f5e;
-    --danger-dark: #e11d48;
-    --warning: #f59e0b;
-    --surface: #ffffff;
-    --surface-hover: #fafafa;
-    --border: #e5e7eb;
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.calendar-body-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    margin-top: 0;
-}
-
-.calendar-body-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    margin-top: 0;
-}
 
 .calendar-container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
 .page-header {
     text-align: center;
     margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--navy-800), var(--navy-700));
+    border-radius: 20px;
+    border: 2px solid var(--gold-500);
+    box-shadow: var(--shadow-gold);
 }
 
 .page-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-300), var(--gold-500));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 0.5rem;
-    text-shadow: none;
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    letter-spacing: -0.5px;
 }
 
 .page-subtitle {
     font-size: 1.125rem;
-    color: #64748b;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
 .calendar-grid {
@@ -87,9 +88,9 @@
     gap: 1.5rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
     .calendar-grid {
-        grid-template-columns: 2fr 1fr;
+        grid-template-columns: 1.5fr 1fr;
     }
 }
 
@@ -106,51 +107,79 @@
 }
 
 .card {
-    background: var(--surface);
+    background: linear-gradient(135deg, var(--navy-800), var(--navy-700));
     border-radius: 20px;
-    padding: 1.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 2rem;
+    box-shadow: var(--shadow-dark);
+    border: 1px solid var(--gold-600);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-300), var(--gold-500), var(--gold-300));
 }
 
 .card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold), var(--shadow-dark);
+    transform: translateY(-4px);
+    border-color: var(--gold-400);
 }
 
 .card-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: space-between;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid var(--gold-600);
+}
+
+.card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .card-icon {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    filter: drop-shadow(0 0 10px var(--gold-400));
 }
 
 .card-title {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--gold-300);
     margin: 0;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.batch-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .badge {
     display: inline-flex;
     align-items: center;
     padding: 0.375rem 0.875rem;
-    border-radius: 12px;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.025em;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .badge-season {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--accent-blue), #357abd);
     color: white;
 }
 
@@ -160,63 +189,19 @@
     animation: pulse 2s infinite;
 }
 
+.badge-taken {
+    background: linear-gradient(135deg, var(--success), var(--success-dark));
+    color: white;
+}
+
+.badge-pending {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+}
+
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.table-modern {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.table-modern thead th {
-    background: linear-gradient(135deg, #faf5ff, #f3e8ff);
-    color: #0f172a;
-    font-weight: 700;
-    font-size: 0.8125rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 2px solid #e9d5ff;
-}
-
-.table-modern thead th:first-child {
-    border-radius: 12px 0 0 0;
-}
-
-.table-modern thead th:last-child {
-    border-radius: 0 12px 0 0;
-}
-
-.table-modern tbody tr {
-    transition: background-color 0.15s;
-}
-
-.table-modern tbody tr:hover {
-    background: var(--surface-hover);
-}
-
-.table-modern tbody td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border);
-    color: #1e293b;
-    font-weight: 500;
-}
-
-.table-modern tbody td strong {
-    color: #0f172a;
-    font-weight: 700;
-}
-
-.table-modern tbody tr:last-child td:first-child {
-    border-radius: 0 0 0 12px;
-}
-
-.table-modern tbody tr:last-child td:last-child {
-    border-radius: 0 0 12px 0;
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
 }
 
 .btn-group {
@@ -228,20 +213,23 @@
 .btn-modern {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 1rem;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
     border: none;
-    border-radius: 10px;
-    font-size: 0.8125rem;
-    font-weight: 600;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .btn-modern:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 .btn-modern:active:not(:disabled) {
@@ -249,8 +237,9 @@
 }
 
 .btn-modern:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
+    filter: grayscale(0.5);
 }
 
 .btn-success {
@@ -258,98 +247,208 @@
     color: white;
 }
 
+.btn-success:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--success-dark), #229954);
+}
+
 .btn-danger {
     background: linear-gradient(135deg, var(--danger), var(--danger-dark));
     color: white;
 }
 
+.btn-danger:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--danger-dark), #a93226);
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+    color: var(--navy-900);
+    font-weight: 800;
+}
+
+.btn-gold:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.checkbox-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--gold-500);
+}
+
 .empty-state {
     text-align: center;
     padding: 3rem 1.5rem;
-    color: var(--text-secondary);
+    color: var(--text-muted);
 }
 
 .empty-state-icon {
-    font-size: 3rem;
+    font-size: 4rem;
     margin-bottom: 1rem;
     opacity: 0.5;
+    filter: grayscale(0.3);
 }
 
 .empty-state-text {
-    font-size: 1rem;
+    font-size: 1.125rem;
     font-weight: 500;
-    color: #475569;
+    color: var(--text-muted);
 }
 
 #calendar {
-    background: var(--surface);
+    background: var(--navy-700);
     border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: var(--shadow-lg);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .fc {
     font-family: inherit;
+    color: var(--text-light);
 }
 
 .fc .fc-button-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
     border: none;
     border-radius: 10px;
     padding: 0.5rem 1rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--navy-900);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .fc .fc-button-primary:hover {
-    background: linear-gradient(135deg, var(--primary-dark), #4338ca);
+    background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }
 
 .fc .fc-button-primary:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
+}
+
+.fc .fc-toolbar-title {
+    color: var(--gold-300);
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: var(--border-dark);
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    border-color: var(--border-dark);
+}
+
+.fc .fc-col-header-cell {
+    background: var(--navy-600);
+    color: var(--gold-300);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.fc .fc-daygrid-day {
+    background: var(--navy-800);
+    color: var(--text-light);
+}
+
+.fc .fc-daygrid-day:hover {
+    background: rgba(212, 175, 55, 0.1);
+    cursor: pointer;
 }
 
 .fc-day-today {
-    background: rgba(99, 102, 241, 0.1) !important;
+    background: rgba(212, 175, 55, 0.2) !important;
+    border: 2px solid var(--gold-500) !important;
 }
 
-.fc-daygrid-day:hover {
-    background: rgba(99, 102, 241, 0.05);
-    cursor: pointer;
+.fc .fc-daygrid-day-number {
+    color: var(--text-light);
+    font-weight: 600;
 }
 
 .date-range {
     font-size: 0.875rem;
-    color: #475569;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.stat-card {
-    background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+.booking-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-dark);
     border-radius: 12px;
     padding: 1rem;
-    text-align: center;
-    border: 1px solid #e9d5ff;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
 }
 
-.stat-number {
-    font-size: 1.75rem;
+.booking-card:hover {
+    background: rgba(212, 175, 55, 0.05);
+    border-color: var(--gold-600);
+}
+
+.booking-card:last-child {
+    margin-bottom: 0;
+}
+
+.booking-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.booking-info {
+    margin-bottom: 0.75rem;
+}
+
+.booking-name {
+    font-size: 1.125rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--gold-300);
+    margin-bottom: 0.25rem;
 }
 
-.stat-label {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 0.25rem;
+.booking-costume {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.booking-dates {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-top: 0.375rem;
+}
+
+.booking-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -357,17 +456,22 @@
         font-size: 2rem;
     }
     
-    .table-modern {
-        font-size: 0.875rem;
+    .calendar-grid {
+        grid-template-columns: 1fr;
     }
     
-    .table-modern thead th,
-    .table-modern tbody td {
-        padding: 0.75rem 0.5rem;
+    .btn-modern {
+        font-size: 0.75rem;
+        padding: 0.5rem 1rem;
     }
     
-    .btn-group {
+    .batch-actions {
         flex-direction: column;
+        width: 100%;
+    }
+    
+    .batch-actions button {
+        width: 100%;
     }
 }
 </style>
@@ -375,8 +479,8 @@
 <div class="calendar-content-wrapper">
 <div class="calendar-container">
     <div class="page-header">
-        <h1 class="page-title">🎭 Fancy Booking Calendar</h1>
-        <p class="page-subtitle">Manage your costume bookings with style</p>
+        <h1 class="page-title">✨ Luxury Booking Calendar</h1>
+        <p class="page-subtitle">Premium Costume Management System</p>
     </div>
 
     <div class="calendar-grid">
@@ -391,60 +495,60 @@
             {% if selected_date %}
             <div class="card">
                 <div class="card-header">
-                    <span class="card-icon">📅</span>
-                    <h2 class="card-title">Bookings for {{ selected_date }}</h2>
+                    <div class="card-header-left">
+                        <span class="card-icon">📅</span>
+                        <h2 class="card-title">{{ selected_date }}</h2>
+                    </div>
+                    {% if day_bookings %}
+                    <div class="batch-actions">
+                        <button class="btn-modern btn-success btn-small" onclick="batchAction('taken', 'day')">
+                            <span>✔</span> Mark All Taken
+                        </button>
+                        <button class="btn-modern btn-danger btn-small" onclick="batchAction('returned', 'day')">
+                            <span>↩</span> Mark All Returned
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
 
                 {% if day_bookings %}
-                <div style="overflow-x: auto;">
-                    <table class="table-modern">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Costume</th>
-                                <th>Duration</th>
-                                <th>Season</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for b in day_bookings %}
-                            <tr>
-                                <td><strong>{{ b.name }}</strong></td>
-                                <td>{{ b.costume }}</td>
-                                <td>
-                                    <div class="date-range">
-                                        {{ b.start_date }} → {{ b.end_date }}
-                                    </div>
-                                </td>
-                                <td><span class="badge badge-season">{{ b.season }}</span></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="booking_id" value="{{ b._id }}">
-                                            <input type="hidden" name="season" value="{{ b.season }}">
-                                            <input type="hidden" name="field" value="taken">
-                                            <button class="btn-modern btn-success"
-                                                {% if b.taken %}disabled{% endif %}>
-                                                <span>✔</span> Taken
-                                            </button>
-                                        </form>
-
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="booking_id" value="{{ b._id }}">
-                                            <input type="hidden" name="season" value="{{ b.season }}">
-                                            <input type="hidden" name="field" value="returned">
-                                            <button class="btn-modern btn-danger"
-                                                {% if b.returned %}disabled{% endif %}>
-                                                <span>↩</span> Returned
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div id="day-bookings-container">
+                    {% for b in day_bookings %}
+                    <div class="booking-card" data-booking-id="{{ b._id }}" data-season="{{ b.season }}">
+                        <div class="booking-header">
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="booking-checkbox-day" value="{{ b._id }}|{{ b.season }}">
+                                <span class="booking-name">{{ b.name }}</span>
+                            </div>
+                            <div>
+                                {% if b.taken %}
+                                <span class="badge badge-taken">Taken</span>
+                                {% else %}
+                                <span class="badge badge-pending">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-costume">{{ b.costume }}</div>
+                            <div class="booking-dates">{{ b.start_date }} → {{ b.end_date }}</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-season">{{ b.season }}</span>
+                            </div>
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-modern btn-success btn-small" 
+                                onclick="markStatus('{{ b._id }}', '{{ b.season }}', 'taken', this)"
+                                {% if b.taken %}disabled{% endif %}>
+                                <span>✔</span> Taken
+                            </button>
+                            <button class="btn-modern btn-danger btn-small" 
+                                onclick="markStatus('{{ b._id }}', '{{ b.season }}', 'returned', this)"
+                                {% if b.returned %}disabled{% endif %}>
+                                <span>↩</span> Returned
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% else %}
                 <div class="empty-state">
@@ -461,45 +565,60 @@
             <!-- UPCOMING BOOKINGS -->
             <div class="card">
                 <div class="card-header">
-                    <span class="card-icon">🔜</span>
-                    <h2 class="card-title">Upcoming</h2>
+                    <div class="card-header-left">
+                        <span class="card-icon">🔜</span>
+                        <h2 class="card-title">Upcoming</h2>
+                    </div>
+                    {% if upcoming %}
+                    <div class="batch-actions">
+                        <button class="btn-modern btn-success btn-small" onclick="batchAction('taken', 'upcoming')">
+                            <span>✔</span> All Taken
+                        </button>
+                        <button class="btn-modern btn-danger btn-small" onclick="batchAction('returned', 'upcoming')">
+                            <span>↩</span> All Returned
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
 
                 {% if upcoming %}
-                <div style="overflow-x: auto;">
-                    <table class="table-modern">
-                        <tbody>
-                            {% for b in upcoming %}
-                            <tr>
-                                <td>
-                                    <div style="margin-bottom: 0.25rem;">
-                                        <strong>{{ b.name }}</strong>
-                                    </div>
-                                    <div style="font-size: 0.875rem; color: #475569; font-weight: 500;">
-                                        {{ b.costume }}
-                                    </div>
-                                    <div class="date-range" style="margin-top: 0.375rem;">
-                                        {{ b.start_date }} → {{ b.end_date }}
-                                    </div>
-                                    <div style="margin-top: 0.5rem;">
-                                        <span class="badge badge-season">{{ b.season }}</span>
-                                    </div>
-                                    <div style="margin-top: 0.75rem;">
-                                        <form method="POST">
-                                            <input type="hidden" name="booking_id" value="{{ b._id }}">
-                                            <input type="hidden" name="season" value="{{ b.season }}">
-                                            <input type="hidden" name="field" value="returned">
-                                            <button class="btn-modern btn-danger"
-                                                {% if b.returned %}disabled{% endif %}>
-                                                <span>↩</span> Mark Returned
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div id="upcoming-bookings-container">
+                    {% for b in upcoming %}
+                    <div class="booking-card" data-booking-id="{{ b._id }}" data-season="{{ b.season }}">
+                        <div class="booking-header">
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="booking-checkbox-upcoming" value="{{ b._id }}|{{ b.season }}">
+                                <span class="booking-name">{{ b.name }}</span>
+                            </div>
+                            <div>
+                                {% if b.taken %}
+                                <span class="badge badge-taken">Taken</span>
+                                {% else %}
+                                <span class="badge badge-pending">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-costume">{{ b.costume }}</div>
+                            <div class="booking-dates">{{ b.start_date }} → {{ b.end_date }}</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-season">{{ b.season }}</span>
+                            </div>
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-modern btn-success btn-small" 
+                                onclick="markStatus('{{ b._id }}', '{{ b.season }}', 'taken', this)"
+                                {% if b.taken %}disabled{% endif %}>
+                                <span>✔</span> Taken
+                            </button>
+                            <button class="btn-modern btn-danger btn-small" 
+                                onclick="markStatus('{{ b._id }}', '{{ b.season }}', 'returned', this)"
+                                {% if b.returned %}disabled{% endif %}>
+                                <span>↩</span> Returned
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% else %}
                 <div class="empty-state">
@@ -509,37 +628,55 @@
                 {% endif %}
             </div>
 
-            <!-- NOT RETURNED BOOKINGS -->
+            <!-- OVERDUE BOOKINGS -->
             <div class="card">
                 <div class="card-header">
-                    <span class="card-icon">⚠️</span>
-                    <h2 class="card-title">Overdue</h2>
+                    <div class="card-header-left">
+                        <span class="card-icon">⚠️</span>
+                        <h2 class="card-title">Overdue</h2>
+                    </div>
+                    {% if not_returned %}
+                    <div class="batch-actions">
+                        <button class="btn-modern btn-danger btn-small" onclick="batchAction('returned', 'overdue')">
+                            <span>↩</span> All Returned
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
 
                 {% if not_returned %}
-                <div style="overflow-x: auto;">
-                    <table class="table-modern">
-                        <tbody>
-                            {% for b in not_returned %}
-                            <tr>
-                                <td>
-                                    <div style="margin-bottom: 0.25rem;">
-                                        <strong>{{ b.name }}</strong>
-                                    </div>
-                                    <div style="font-size: 0.875rem; color: #475569; font-weight: 500;">
-                                        {{ b.costume }}
-                                    </div>
-                                    <div style="margin-top: 0.375rem;">
-                                        <span class="badge badge-overdue">{{ b.end_date }} - OVERDUE</span>
-                                    </div>
-                                    <div style="margin-top: 0.5rem;">
-                                        <span class="badge badge-season">{{ b.season }}</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div id="overdue-bookings-container">
+                    {% for b in not_returned %}
+                    <div class="booking-card" data-booking-id="{{ b._id }}" data-season="{{ b.season }}">
+                        <div class="booking-header">
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="booking-checkbox-overdue" value="{{ b._id }}|{{ b.season }}">
+                                <span class="booking-name">{{ b.name }}</span>
+                            </div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-costume">{{ b.costume }}</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-overdue">{{ b.end_date }} - OVERDUE</span>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-season">{{ b.season }}</span>
+                            </div>
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-modern btn-success btn-small" 
+                                onclick="markStatus('{{ b._id }}', '{{ b.season }}', 'taken', this)"
+                                {% if b.taken %}disabled{% endif %}>
+                                <span>✔</span> Mark Taken
+                            </button>
+                            <button class="btn-modern btn-danger btn-small" 
+                                onclick="markStatus('{{ b._id }}', '{{ b.season }}', 'returned', this)"
+                                {% if b.returned %}disabled{% endif %}>
+                                <span>↩</span> Mark Returned
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% else %}
                 <div class="empty-state">
@@ -554,6 +691,84 @@
 </div>
 
 <script>
+// Store pending actions
+let pendingActions = [];
+
+// Mark individual booking status
+function markStatus(bookingId, season, field, button) {
+    // Add to pending actions
+    pendingActions.push({ bookingId, season, field });
+    
+    // Disable button and update UI
+    button.disabled = true;
+    button.style.opacity = '0.5';
+    
+    // Execute immediately but don't reload
+    submitPendingActions(false);
+}
+
+// Batch action for selected checkboxes
+function batchAction(field, section) {
+    const checkboxes = document.querySelectorAll(`.booking-checkbox-${section}:checked`);
+    
+    if (checkboxes.length === 0) {
+        alert('Please select at least one booking');
+        return;
+    }
+    
+    checkboxes.forEach(checkbox => {
+        const [bookingId, season] = checkbox.value.split('|');
+        pendingActions.push({ bookingId, season, field });
+        
+        // Update UI
+        const card = checkbox.closest('.booking-card');
+        const buttons = card.querySelectorAll('.btn-modern');
+        buttons.forEach(btn => {
+            if (btn.textContent.toLowerCase().includes(field)) {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+            }
+        });
+        
+        // Uncheck checkbox
+        checkbox.checked = false;
+    });
+    
+    // Submit all at once and reload
+    submitPendingActions(true);
+}
+
+// Submit pending actions
+function submitPendingActions(shouldReload) {
+    if (pendingActions.length === 0) return;
+    
+    const formData = new FormData();
+    formData.append('actions', JSON.stringify(pendingActions));
+    
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (shouldReload) {
+                // Clear pending actions before reload
+                pendingActions = [];
+                window.location.reload();
+            } else {
+                // Just clear this specific action
+                pendingActions = [];
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+
+// Calendar initialization
 document.addEventListener('DOMContentLoaded', function() {
     const bookedDates = {{ booked_dates | tojson }};
     const calendarEl = document.getElementById('calendar');
@@ -575,8 +790,8 @@ document.addEventListener('DOMContentLoaded', function() {
         events: bookedDates.map(d => ({
             start: d,
             display: 'background',
-            backgroundColor: '#fde68a',
-            borderColor: '#fbbf24'
+            backgroundColor: 'rgba(212, 175, 55, 0.3)',
+            borderColor: 'var(--gold-500)'
         }))
     });
 
