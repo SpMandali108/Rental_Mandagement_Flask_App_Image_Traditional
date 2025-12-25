@@ -9,69 +9,226 @@
 
 {% block content %}
 <style>
+:root {
+    --dark-blue: #0a1929;
+    --medium-blue: #1a2942;
+    --light-blue: #2d3f5f;
+    --gold: #d4af37;
+    --light-gold: #f4d35e;
+    --text-light: #e8eaf6;
+}
+
 .dashboard {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: auto;
+    padding: 2rem 1rem;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--dark-blue) 100%);
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.dashboard-header p {
+    margin: 0.5rem 0 0 0;
+    color: var(--text-light);
+    opacity: 0.8;
+    font-size: 1.1rem;
 }
 
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
 }
 
 .kpi {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--light-blue) 100%);
+    padding: 2rem;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--light-gold) 100%);
+}
+
+.kpi:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+}
+
+.kpi-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }
 
 .kpi h2 {
     margin: 0;
-    font-size: 2rem;
-    color: #4f46e5;
+    font-size: 2.5rem;
+    color: var(--gold);
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
 }
 
 .kpi p {
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
     font-weight: 600;
-    color: #64748b;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
 }
 
 .section {
-    background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
+    background: var(--medium-blue);
+    border-radius: 20px;
+    padding: 2rem;
     margin-top: 2rem;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--light-blue);
+}
+
+.section h4 {
+    color: var(--gold);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.table {
+    width: 100%;
+    background: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead {
+    background: linear-gradient(135deg, var(--light-blue) 0%, var(--medium-blue) 100%);
+}
+
+.table thead th {
+    color: var(--gold);
+    font-weight: 700;
+    padding: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    border: none;
+}
+
+.table tbody td {
+    color: var(--text-light);
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    font-size: 1rem;
+    background: transparent;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+.table tbody tr:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: scale(1.01);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.no-data {
+    text-align: center;
+    color: var(--text-light);
+    opacity: 0.7;
+    padding: 2rem;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+    
+    .kpi h2 {
+        font-size: 2rem;
+    }
 }
 </style>
 
 <div class="dashboard">
 
-    <h2 class="mb-4 text-center">🎭 Fancy Dashboard (2025–2026)</h2>
+    <div class="dashboard-header">
+        <h1>✨ Performance Dashboard</h1>
+        <p>Fiscal Year 2025–2026</p>
+    </div>
 
     <!-- KPI CARDS -->
     <div class="kpi-grid">
         <div class="kpi">
+            <div class="kpi-icon">📅</div>
             <h2>{{ total_bookings }}</h2>
             <p>Total Bookings</p>
         </div>
         <div class="kpi">
+            <div class="kpi-icon">💰</div>
             <h2>₹{{ total_revenue }}</h2>
             <p>Total Revenue</p>
         </div>
         <div class="kpi">
+            <div class="kpi-icon">👕</div>
             <h2>{{ taken_count }}</h2>
             <p>Costumes Taken</p>
         </div>
         <div class="kpi">
+            <div class="kpi-icon">✅</div>
             <h2>{{ returned_count }}</h2>
             <p>Returned</p>
         </div>
         <div class="kpi">
+            <div class="kpi-icon">⏳</div>
             <h2>{{ not_returned }}</h2>
             <p>Not Returned</p>
         </div>
@@ -82,10 +239,10 @@
         <h4>🔥 Most Rented Costumes</h4>
 
         {% if top_costumes %}
-        <table class="table table-striped mt-3">
+        <table class="table mt-3">
             <thead>
                 <tr>
-                    <th>Costume</th>
+                    <th>Costume Name</th>
                     <th>Times Rented</th>
                 </tr>
             </thead>
@@ -99,19 +256,20 @@
             </tbody>
         </table>
         {% else %}
-        <p>No data available.</p>
+        <p class="no-data">No data available yet.</p>
         {% endif %}
     </div>
 
+    <!-- TOP SCHOOLS -->
     <div class="section">
-        <h4>🔥 Top Schools</h4>
+        <h4>🏫 Top Schools</h4>
 
-        {% if top_costumes %}
-        <table class="table table-striped mt-3">
+        {% if top_school %}
+        <table class="table mt-3">
             <thead>
                 <tr>
-                    <th>School</th>
-                    <th>Times Rented</th>
+                    <th>School Name</th>
+                    <th>Total Rentals</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,7 +282,7 @@
             </tbody>
         </table>
         {% else %}
-        <p>No data available.</p>
+        <p class="no-data">No data available yet.</p>
         {% endif %}
     </div>
 

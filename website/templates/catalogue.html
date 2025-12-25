@@ -13,217 +13,376 @@
 
 {% block content %}
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
-
-
-<div class="card-grid">
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/bhagwan.png') }}" alt="bhagwan" class="icon" width="70" height="70">
-    <h2>Bhagwan</h2>
-    <p>Explore our divine Bhagwan costumes.</p>
-    <a href="bhagwan">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/mataji.png') }}" alt="mataji" class="icon" width="70" height="70">
-    <h2>Mataji</h2>
-    <p>Beautiful Mataji dresses in vibrant colors and styles.</p>
-    <a href="mataji">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Superhero.png') }}" alt="Superhero" class="icon" width="70" height="70">
-    <h2>Super Hero</h2>
-    <p>Imagine your child as a superhero in style!</p>
-    <a href="superhero">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Bird.png') }}" alt="Bird" class="icon" width="60" height="60">
-    <h2>Birds</h2>
-    <p>Explore the flying world with vibrant bird costumes.</p>
-    <a href="bird">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Nature.png') }}" alt="Nature" class="icon" width="60" height="60">
-    <h2>Nature</h2>
-    <p>Elegant, sustainable designs available on rent.</p>
-    <a href="nature">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Animal.png') }}" alt="Animal" class="icon" width="60" height="60">
-    <h2>Animal</h2>
-    <p>Adorable animal-themed costumes for kids.</p>
-    <a href="animal">View Collection</a>
-  </div>
-
-
-<div class="card">
-    <img src="{{ url_for('static', filename='Icons/Freedom Fighter.png') }}" alt="Freedom Fighter" class="icon" width="60" height="60">
-    <h2>Freedom Fighter</h2>
-    <p>Freedom Fighter For Your child.</p>
-    <a href="freedomfighter">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Fruit-Vegetable.png') }}" alt="Fruit-Vegetable" class="icon" width="60" height="60">
-    <h2>Fruit-Vegetable</h2>
-    <p>Fruit-Vegetable Dresses For You Child.</p>
-    <a href="fruit_vegetable">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Insect.png') }}" alt="Insect" class="icon" width="60" height="60">
-    <h2>Insect</h2>
-    <p>Insects Dress For Your Child.</p>
-    <a href="insect">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Cartoon.png') }}" alt="Cartoon" class="icon" width="60" height="60">
-    <h2>Cartoon</h2>
-    <p>Watch Your Child in his Favorite Character .
-    </p>
-    <a href="cartoon">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Proffesion.png') }}" alt="Profession" class="icon" width="60" height="60">
-    <h2>Profession</h2>
-    <p>Let Us Explore Different Professions.
-    </p>
-    <a href="profession">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Regional.png') }}" alt="Regional" class="icon" width="60" height="60">
-    <h2>Regional</h2>
-    <p>Unity in Diversity, Make Your Child Aware About India.
-    </p>
-    <a href="regional">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Tiranga.png') }}" alt="Tiranga" class="icon" width="60" height="60">
-    <h2>Tiranga</h2>
-    <p>Tricolour Designs For Your Child.
-    </p>
-    <a href="tiranga">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/International.png') }}" alt="International" class="icon" width="60" height="60">
-    <h2>International</h2>
-    <p>Give Your Child An International Look.
-    </p>
-    <a href="international">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Flex.png') }}" alt="Flex" class="icon" width="60" height="60">
-    <h2>Flex</h2>
-    <p>Flex Fancy Dresses For Your Child.
-    </p>
-    <a href="flex">View Collection</a>
-  </div>
-
-  <div class="card">
-    <img src="{{ url_for('static', filename='Icons/Other.png') }}" alt="Other" class="icon" width="60" height="60">
-    <h2>Other</h2>
-    <p>Some Additional Fancy Dresses.
-    </p>
-    <a href="other">View Collection</a>
-  </div>
-
-
-
 <style>
+  :root {
+    --dark-blue: #0a1929;
+    --medium-blue: #1a2942;
+    --light-blue: #2d3f5f;
+    --gold: #d4af37;
+    --light-gold: #f4d35e;
+    --text-light: #e8eaf6;
+  }
+
   body {
     font-family: 'Poppins', sans-serif;
-    background: #f9f9f9;
     margin: 0;
     padding: 0;
-    color: #222;
   }
 
-  .hero {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: white;
+  .catalogue-wrapper {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 50%, var(--light-blue) 100%);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .catalogue-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-section {
     text-align: center;
-    padding: 3rem 1rem;
-    border-bottom-left-radius: 40px;
-    border-bottom-right-radius: 40px;
+    padding: 2rem 1rem 3rem;
+    position: relative;
+    z-index: 1;
   }
 
-  .hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+  .hero-section h1 {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
   }
 
-  .hero p {
-    font-size: 1.1rem;
+  .hero-section p {
+    font-size: 1.2rem;
+    color: var(--text-light);
     opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
-    padding: 3rem 2rem;
-    max-width: 1200px;
+    padding: 1rem;
+    max-width: 1400px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
   }
 
   .card {
-    background: white;
-    border-radius: 1.2rem;
+    background: var(--medium-blue);
+    border-radius: 20px;
     padding: 2rem 1.5rem;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    align-items: center;
+    transition: all 0.3s ease;
+    border: 2px solid var(--light-blue);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--light-gold) 100%);
   }
 
   .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+    border-color: var(--gold);
+  }
+
+  .icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--light-blue) 0%, var(--dark-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--gold);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover .icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    border-color: var(--light-gold);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
   }
 
   .card .icon {
-    font-size: 2.5rem;
-    color: #6a11cb;
-    margin-bottom: 1rem;
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    /* Removed the golden filter - icons now display in their natural colors */
   }
 
   .card h2 {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--gold);
+    font-weight: 700;
   }
 
   .card p {
-    font-size: 0.95rem;
-    margin-bottom: 1.2rem;
-    color: #555;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+    opacity: 0.9;
+    line-height: 1.6;
+    min-height: 48px;
   }
 
   .card a {
     display: inline-block;
-    padding: 0.5rem 1.2rem;
-    background: #07267c;
-    color: white;
-    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    color: var(--dark-blue);
+    border-radius: 10px;
     text-decoration: none;
-    font-weight: 500;
-    transition: background 0.3s ease;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
   }
 
   .card a:hover {
-    background: #1a5de9;
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    color: var(--dark-blue);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 2rem;
+    }
+
+    .hero-section p {
+      font-size: 1rem;
+    }
+
+    .card-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      padding: 1.5rem 1rem;
+    }
+
+    .icon-wrapper {
+      width: 70px;
+      height: 70px;
+    }
+
+    .card .icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      min-height: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .catalogue-wrapper {
+      padding: 1rem 0.5rem;
+    }
+
+    .hero-section {
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    .card-grid {
+      grid-template-columns: 1fr;
+      padding: 0.5rem;
+    }
   }
 </style>
+
+<div class="catalogue-wrapper">
+  <div class="hero-section">
+    <h1>✨ Fancy Dress Collection</h1>
+    <p>Explore our massive collection of fancy dress costumes, perfect for parties and school events</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/bhagwan.png') }}" alt="bhagwan" class="icon">
+      </div>
+      <h2>Bhagwan</h2>
+      <p>Explore our divine Bhagwan costumes.</p>
+      <a href="bhagwan">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/mataji.png') }}" alt="mataji" class="icon">
+      </div>
+      <h2>Mataji</h2>
+      <p>Beautiful Mataji dresses in vibrant colors and styles.</p>
+      <a href="mataji">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Superhero.png') }}" alt="Superhero" class="icon">
+      </div>
+      <h2>Super Hero</h2>
+      <p>Imagine your child as a superhero in style!</p>
+      <a href="superhero">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Bird.png') }}" alt="Bird" class="icon">
+      </div>
+      <h2>Birds</h2>
+      <p>Explore the flying world with vibrant bird costumes.</p>
+      <a href="bird">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Nature.png') }}" alt="Nature" class="icon">
+      </div>
+      <h2>Nature</h2>
+      <p>Elegant, sustainable designs available on rent.</p>
+      <a href="nature">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Animal.png') }}" alt="Animal" class="icon">
+      </div>
+      <h2>Animal</h2>
+      <p>Adorable animal-themed costumes for kids.</p>
+      <a href="animal">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Freedom Fighter.png') }}" alt="Freedom Fighter" class="icon">
+      </div>
+      <h2>Freedom Fighter</h2>
+      <p>Freedom Fighter costumes for your child.</p>
+      <a href="freedomfighter">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Fruit-Vegetable.png') }}" alt="Fruit-Vegetable" class="icon">
+      </div>
+      <h2>Fruit & Vegetable</h2>
+      <p>Fruit and vegetable dresses for your child.</p>
+      <a href="fruit_vegetable">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Insect.png') }}" alt="Insect" class="icon">
+      </div>
+      <h2>Insect</h2>
+      <p>Insect dresses for your child.</p>
+      <a href="insect">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Cartoon.png') }}" alt="Cartoon" class="icon">
+      </div>
+      <h2>Cartoon</h2>
+      <p>Watch your child in their favorite character.</p>
+      <a href="cartoon">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Proffesion.png') }}" alt="Profession" class="icon">
+      </div>
+      <h2>Profession</h2>
+      <p>Let us explore different professions.</p>
+      <a href="profession">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Regional.png') }}" alt="Regional" class="icon">
+      </div>
+      <h2>Regional</h2>
+      <p>Unity in diversity, make your child aware about India.</p>
+      <a href="regional">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Tiranga.png') }}" alt="Tiranga" class="icon">
+      </div>
+      <h2>Tiranga</h2>
+      <p>Tricolour designs for your child.</p>
+      <a href="tiranga">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/International.png') }}" alt="International" class="icon">
+      </div>
+      <h2>International</h2>
+      <p>Give your child an international look.</p>
+      <a href="international">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Flex.png') }}" alt="Flex" class="icon">
+      </div>
+      <h2>Flex</h2>
+      <p>Flex fancy dresses for your child.</p>
+      <a href="flex">View Collection</a>
+    </div>
+
+    <div class="card">
+      <div class="icon-wrapper">
+        <img src="{{ url_for('static', filename='Icons/Other.png') }}" alt="Other" class="icon">
+      </div>
+      <h2>Other</h2>
+      <p>Some additional fancy dresses.</p>
+      <a href="other">View Collection</a>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

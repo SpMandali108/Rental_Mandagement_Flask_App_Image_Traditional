@@ -138,6 +138,7 @@
       visibility: hidden;
       transform: translateY(-10px);
       transition: all 0.2s ease;
+      margin-top: 0.5rem;
     }
 
     .contact-menu.active {
@@ -202,120 +203,59 @@
       transform: translateX(24px);
     }
 
-    /* Hamburger Menu - Admin Protected */
-    .hamburger-btn {
-      background: var(--accent-color);
-      color: var(--primary-bg);
-      border: none;
-      padding: 0.5rem;
+    /* Admin Action Buttons */
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .admin-btn {
+      background: linear-gradient(135deg, #0a1929 0%, #1a2942 100%);
+      color: #d4af37;
+      border: 2px solid #d4af37;
+      padding: 0.5rem 1rem;
       border-radius: 0.5rem;
       cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .hamburger-btn:hover {
-      transform: scale(1.05);
-    }
-
-    /* Hide hamburger when not authenticated */
-    .hamburger-btn.admin-only {
-      display: none;
-    }
-
-    .hamburger-btn.admin-authenticated {
-      display: inline-block;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      right: -100%;
-      top: 0;
-      width: 100%;
-      max-width: 320px;
-      height: 100vh;
-      background: var(--secondary-bg);
-      border-left: 1px solid var(--border-color);
-      transition: right 0.3s ease;
-      overflow-y: auto;
-      z-index: 1100;
-    }
-
-    .sidebar.active {
-      right: 0;
-    }
-
-    .sidebar-header {
-      padding: 1rem;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--primary-bg);
-    }
-
-    .sidebar-header h3 {
-      margin: 0;
-      font-size: 1.125rem;
+      font-size: 0.875rem;
       font-weight: 600;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: var(--text-primary);
-      font-size: 1.25rem;
-      cursor: pointer;
-      padding: 0.25rem;
-      border-radius: 0.25rem;
-      transition: background 0.2s ease;
-    }
-
-    .close-btn:hover {
-      background: var(--secondary-bg);
-    }
-
-    .sidebar-nav {
-      padding: 1rem 0;
-    }
-
-    .sidebar-nav a {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      color: var(--text-primary);
-      text-decoration: none;
-      transition: background 0.2s ease;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .sidebar-nav a:hover {
-      background: var(--primary-bg);
-    }
-
-    .sidebar-nav a i {
-      width: 20px;
-      color: var(--text-secondary);
-    }
-
-    /* Overlay */
-    .sidebar-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1050;
-      opacity: 0;
-      visibility: hidden;
       transition: all 0.3s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
     }
 
-    .sidebar-overlay.active {
-      opacity: 1;
-      visibility: visible;
+    .admin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+      background: linear-gradient(135deg, #d4af37 0%, #f4d35e 100%);
+      color: #0a1929;
+      border-color: #f4d35e;
+    }
+
+    .admin-btn.logout-btn {
+      background: linear-gradient(135deg, #1a2942 0%, #0a1929 100%);
+      border-color: #d4af37;
+    }
+
+    .admin-btn.logout-btn:hover {
+      background: linear-gradient(135deg, #d4af37 0%, #f4d35e 100%);
+      color: #0a1929;
+      border-color: #f4d35e;
+    }
+
+    .admin-btn.panel-btn {
+      background: linear-gradient(135deg, #0a1929 0%, #2d3f5f 100%);
+      border-color: #d4af37;
+    }
+
+    .admin-btn.panel-btn:hover {
+      background: linear-gradient(135deg, #d4af37 0%, #f4d35e 100%);
+      color: #0a1929;
+      border-color: #f4d35e;
     }
 
     /* Main Content */
@@ -387,6 +327,11 @@
         padding: 0.625rem 1.25rem;
       }
 
+      .admin-btn {
+        font-size: 1rem;
+        padding: 0.625rem 1.25rem;
+      }
+
       .theme-toggle {
         width: 56px;
         height: 28px;
@@ -405,10 +350,6 @@
 
       .main-content {
         padding: 1.5rem;
-      }
-
-      .sidebar {
-        width: 350px;
       }
     }
 
@@ -431,13 +372,15 @@
       }
     }
 
-    /* Hide contact text on very small screens */
-    @media (max-width: 480px) {
-      .contact-btn .btn-text {
+    /* Hide text on very small screens */
+    @media (max-width: 580px) {
+      .contact-btn .btn-text,
+      .admin-btn .btn-text {
         display: none;
       }
 
-      .contact-btn {
+      .contact-btn,
+      .admin-btn {
         padding: 0.5rem;
       }
 
@@ -447,6 +390,10 @@
 
       .header-controls {
         gap: 0.5rem;
+      }
+
+      .admin-actions {
+        gap: 0.4rem;
       }
     }
   </style>
@@ -509,50 +456,22 @@
         </div>
       </button>
 
-      <!-- Admin Protected Sidebar toggle -->
+      <!-- Admin Actions (only when logged in) -->
       {% if session.logged_in %}
-      <button class="hamburger-btn admin-authenticated" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-      </button>
-      {% else %}
-      <button class="hamburger-btn admin-only" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-      </button>
+      <div class="admin-actions">
+        <a href="{{ url_for('auth.admin') }}" class="admin-btn panel-btn">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="btn-text">Admin Panel</span>
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="admin-btn logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="btn-text">Logout</span>
+        </a>
+      </div>
       {% endif %}
     </div>
   </div>
 </header>
-
-<!-- Sidebar - Only functional when authenticated -->
-{% if session.logged_in %}
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <h3>Admin Navigation</h3>
-    <button class="close-btn" onclick="toggleSidebar()">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <nav class="sidebar-nav">
-    <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
-    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    <a href="/calendar"><i class="fas fa-calendar-alt"></i> Calendar</a>
-    <a href="/book"><i class="fas fa-shopping-bag"></i> Book Traditional Wear</a>
-    <a href="/fancy"><i class="fas fa-mask"></i> Fancy Dress</a>
-    <a href="/listing"><i class="fa-solid fa-table-list"></i>Listing</a>
-    <a href="/fancy_listing"><i class="fa-solid fa-table-list"></i>Fancy Listing</a>
-    <a href="/product"><i class="fas fa-th-large"></i> Product Codes</a>
-    <a href="/dashboard"><i class="fas fa-chart-bar"></i> Booking Summary</a>
-    <a href="/available"><i class="fa-solid fa-eye"></i> Available List</a>
-    <a href="/Storage"><i class = "fas fa-boxes"></i> Storage </a>
-    <a href="/check"><i class="fas fa-search"></i> Check Availability</a>
-    <a href="/modify"><i class="fas fa-edit"></i> Modify Booking</a>
-    <a href="/delete"><i class="fas fa-trash-alt"></i> Delete Booking</a>
-  </nav>
-</div>
-
-<!-- Overlay - Only when authenticated -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-{% endif %}
 
 <!-- Alerts -->
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -598,21 +517,6 @@
     }
   }
 
-  // Sidebar management - Only works when authenticated
-  function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    // Check if elements exist (only when authenticated)
-    if (sidebar && overlay) {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-      
-      // Prevent body scroll when sidebar is open
-      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-    }
-  }
-
   // Contact menu management
   function toggleContactMenu() {
     const menu = document.getElementById('contactMenu');
@@ -639,15 +543,11 @@
     });
   }
 
-  // Close sidebar on escape key
+  // Close menus on escape key
   function handleKeyPress(event) {
     if (event.key === 'Escape') {
-      const sidebar = document.getElementById('sidebar');
       const contactMenu = document.getElementById('contactMenu');
       
-      if (sidebar && sidebar.classList.contains('active')) {
-        toggleSidebar();
-      }
       if (contactMenu && contactMenu.classList.contains('active')) {
         contactMenu.classList.remove('active');
       }
@@ -662,20 +562,6 @@
     // Event listeners
     document.addEventListener('click', closeContactMenu);
     document.addEventListener('keydown', handleKeyPress);
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-      if (window.innerWidth > 768) {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        
-        if (sidebar && overlay && sidebar.classList.contains('active')) {
-          sidebar.classList.remove('active');
-          overlay.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-      }
-    });
   });
 </script>
 

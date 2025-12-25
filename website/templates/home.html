@@ -14,71 +14,300 @@ Image Traditional offers vibrant Kediya, Chaniya Choli, and Fancy Dress rentals 
 {% endblock %}
 
 {% block content %}
-<div style="background: #ccdbec; padding: 40px 20px; min-height: 90vh; text-align: center;">
-    <div style="max-width: 1000px; margin: auto;">
+<style>
+:root {
+    --dark-blue: #0a1929;
+    --medium-blue: #1a2942;
+    --light-blue: #2d3f5f;
+    --gold: #d4af37;
+    --light-gold: #f4d35e;
+    --text-light: #e8eaf6;
+}
 
-        <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo" style="height: 90px; margin-bottom: 20px;">
+.hero-section {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 50%, var(--light-blue) 100%);
+    padding: 60px 20px;
+    min-height: 90vh;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
 
-        <h1 style="font-size: 40px; color: #16213e; font-weight: bold;">Celebrate Navaratri with Image Traditional</h1>
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
 
-        <p style="font-size: 18px; color: #5d4037; margin-top: 15px;">
+.hero-content {
+    max-width: 1200px;
+    margin: auto;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-logo {
+    height: 100px;
+    margin-bottom: 30px;
+    filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.3));
+}
+
+.hero-title {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    max-width: 800px;
+    margin: 0 auto 20px;
+    line-height: 1.8;
+    opacity: 0.95;
+}
+
+.hero-description strong {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+/* Navigation Buttons (Admin/Logout) */
+.top-nav-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 10;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    color: var(--dark-blue);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    font-size: 0.9rem;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    color: var(--dark-blue);
+}
+
+/* Category Cards */
+.category-grid {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.category-card {
+    background: var(--medium-blue);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--light-blue);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--light-gold) 100%);
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--gold);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+}
+
+.category-image {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border: 3px solid var(--light-blue);
+    transition: all 0.3s ease;
+    background: var(--dark-blue);
+}
+
+.category-card:hover .category-image {
+    border-color: var(--gold);
+    transform: scale(1.05);
+}
+
+.category-title {
+    color: var(--gold);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+.category-description {
+    font-size: 1rem;
+    color: var(--text-light);
+    opacity: 0.9;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.category-btn {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    color: var(--dark-blue);
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.category-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+    color: var(--dark-blue);
+}
+
+/* Instagram Section */
+.instagram-section {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.instagram-btn {
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--light-blue) 100%);
+    color: var(--gold);
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 2px solid var(--gold);
+    font-size: 1.1rem;
+}
+
+.instagram-btn:hover {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+    color: var(--dark-blue);
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .category-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .top-nav-buttons {
+        position: static;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+}
+</style>
+
+<div class="hero-section">
+    <!-- Admin/Logout Buttons (Show only if logged in) -->
+    {% if session.get('user_id') %}
+    <div class="top-nav-buttons">
+        <a href="{{ url_for('auth.fancy_admin') }}" class="nav-btn">🎭 Admin Panel</a>
+        <a href="{{ url_for('auth.logout') }}" class="nav-btn">🚪 Logout</a>
+    </div>
+    {% endif %}
+
+    <div class="hero-content">
+        <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo" class="hero-logo">
+
+        <h1 class="hero-title">Celebrate Navratri with Image Traditional</h1>
+
+        <p class="hero-description">
             Discover the elegance of tradition with our exclusive rental collection of <strong>Kediya</strong>, <strong>Chaniya Choli</strong>, and <strong>Fancy Dresses</strong>. Crafted with vibrant colors, cultural charm, and festive flair.
         </p>
 
-       
-<div style="margin-top: 50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+        <!-- Category Cards Grid -->
+        <div class="category-grid">
+            <!-- Fancy Dresses Card -->
+            <div class="category-card">
+                <a href="{{ url_for('auth.catalogue') }}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ url_for('static', filename='costume.jpg') }}" alt="Fancy Dress" class="category-image">
+                    <h3 class="category-title">Fancy Dresses</h3>
+                    <p class="category-description">Perfect for school events, plays, and cultural days.</p>
+                    <span class="category-btn">View Catalogue</span>
+                </a>
+            </div>
 
-    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-        <a href="{{ url_for('auth.catalogue') }}" style="text-decoration: none; color: inherit;">
-            <img src="{{ url_for('static', filename='costume.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-            <h3 style="color: #1565c0; margin-top: 15px;">Fancy Dresses</h3>
-            <p style="font-size: 14px; color: #616161;">Perfect for school events, plays, and cultural days.</p>
-            <br>
-            <a href="{{ url_for('auth.catalogue') }}" target="_blank"
-                style="background-color: #07267c; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                View Catalogue
-            </a>
-        </a>
-    </div>
+            <!-- Kediya Card -->
+            <div class="category-card">
+                <a href="{{ url_for('auth.kediya') }}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ url_for('static', filename='kediya.jpg') }}" alt="Kediya" class="category-image">
+                    <h3 class="category-title">Kediya</h3>
+                    <p class="category-description">Perfect for Navratri and cultural events.</p>
+                    <span class="category-btn">View Catalogue</span>
+                </a>
+            </div>
 
-    
-    <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-        <a href="{{ url_for('auth.kediya') }}" style="text-decoration: none; color: inherit;">
-            <img src="{{ url_for('static', filename='kediya.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-            <h3 style="color: #1565c0; margin-top: 15px;">Kediya</h3>
-            <p style="font-size: 14px; color: #616161;">Perfect for Navaratri ANd Events.</p>
-            <br>
-            <a href="{{ url_for('auth.kediya') }}" target="_blank"
-                style="background-color: #07267c; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                View Catalogue
-            </a>
-        </a>
-    </div>
+            <!-- Chaniya Choli Card -->
+            <div class="category-card">
+                <a href="{{ url_for('auth.choli') }}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ url_for('static', filename='choli.jpg') }}" alt="Chaniya Choli" class="category-image">
+                    <h3 class="category-title">Chaniya Choli</h3>
+                    <p class="category-description">Perfect for Navratri and cultural events.</p>
+                    <span class="category-btn">View Catalogue</span>
+                </a>
+            </div>
+        </div>
 
-    <!-- 🟣 Chaniya Choli -->
-   <div style="width: 250px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 20px;">
-        <a href="{{ url_for('auth.choli') }}" style="text-decoration: none; color: inherit;">
-            <img src="{{ url_for('static', filename='choli.jpg') }}" alt="Fancy Dress" style="width: 100%; border-radius: 10px;">
-            <h3 style="color: #1565c0; margin-top: 15px;">Chaniya Choli</h3>
-            <p style="font-size: 14px; color: #616161;">Perfect for Navaratri ANd Events.</p>
-            <br>
-            <a href="{{ url_for('auth.choli') }}" target="_blank"
-                style="background-color: #07267c; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
-                View Catalogue
-            </a>
-        </a>
-    </div>
-
-</div>
-
-
-        <div style="margin-top: 50px;">
-            <a href="https://www.instagram.com/image_traditional" target="_blank"
-                style="background-color: #16213e; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none;">
+        <!-- Instagram Section -->
+        <div class="instagram-section">
+            <a href="https://www.instagram.com/image_traditional" target="_blank" class="instagram-btn">
                 📸 Visit Us on Instagram
             </a>
         </div>
-        
     </div>
 </div>
 {% endblock %}
