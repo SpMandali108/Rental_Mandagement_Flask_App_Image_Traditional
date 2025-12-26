@@ -2039,42 +2039,91 @@ def find_highest_booking_customer(traditional_data):
     highest_value = customer_totals[highest_customer]
     return highest_customer, highest_value
 
+
 @auth.route("/fancy_inventory", methods=["GET", "POST"])
 def fancy_inventory():
-
     if request.method == "POST":
+        name = request.form.get("name")
+        color = request.form.get("color")
+        category = request.form.get("category")
+
+        size_names = request.form.getlist("size_name[]")
+        size_qtys = request.form.getlist("size_qty[]")
+
+        sizes = {}
+        for s, q in zip(size_names, size_qtys):
+            if s.strip() and q.strip():
+                sizes[s.strip()] = int(q)
+
         finventory.insert_one({
-            "name": request.form["name"].strip(),
-            "color": request.form["color"].strip(),
-            "size": request.form["size"].strip(),
-            "category": request.form["category"].strip(),
-            "quantity": int(request.form["quantity"])
+            "name": name,
+            "color": color,
+            "category": category,
+            "sizes": sizes
         })
+
         return redirect(url_for("auth.fancy_inventory"))
 
     products = list(finventory.find())
     return render_template("fancy_inventory.html", products=products)
 
 
-# ✏️ UPDATE
 @auth.route("/fancy_inventory/update/<id>", methods=["POST"])
 def update_fancy_inventory(id):
+    name = request.form.get("name")
+    color = request.form.get("color")
+    category = request.form.get("category")
+
+    size_names = request.form.getlist("size_name[]")
+    size_qtys = request.form.getlist("size_qty[]")
+
+    sizes = {}
+    for s, q in zip(size_names, size_qtys):
+        if s.strip() and q.strip():
+            sizes[s.strip()] = int(q)
+
     finventory.update_one(
         {"_id": ObjectId(id)},
         {"$set": {
-            "name": request.form["name"],
-            "color": request.form["color"],
-            "size": request.form["size"],
-            "category": request.form["category"],
-            "quantity": int(request.form["quantity"])
+            "name": name,
+            "color": color,
+            "category": category,
+            "sizes": sizes
         }}
     )
+
     return redirect(url_for("auth.fancy_inventory"))
 
 
-# ❌ DELETE
-@auth.route("/fancy_inventory/delete/<id>")
+@auth.route("/fancy_inventory/delete/<id>", methods=["POST"])
 def delete_fancy_inventory(id):
     finventory.delete_one({"_id": ObjectId(id)})
     return redirect(url_for("auth.fancy_inventory"))
 
+
+
+
+@auth.route('/migration')
+def migration():
+    for item in finventory.find():
+        sizes = item.get("sizes", {})
+
+        # Calculate total quantity from all size values
+        total_qty = 0
+        if isinstance(sizes, dict):
+            for v in sizes.values():
+                try:
+                    total_qty += int(v)
+                except:
+                    pass
+
+        # Replace with ONLY "-" key
+        finventory.update_one(
+            {"_id": item["_id"]},
+            {
+                "$set": {
+                    "sizes": {"-": total_qty}
+                }
+            }
+        )
+    return "Done"
