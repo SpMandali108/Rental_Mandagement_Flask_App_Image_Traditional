@@ -154,9 +154,27 @@
 
     .size-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr auto;
         gap: 1rem;
         margin-bottom: 1rem;
+        align-items: end;
+    }
+
+    .btn-remove-size {
+        background: #8b0000;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        height: fit-content;
+    }
+
+    .btn-remove-size:hover {
+        background: #ff0000;
+        transform: scale(1.05);
     }
 
     .btn {
@@ -432,18 +450,22 @@
 
                 <div class="product-sizes">
                     <h4>📏 Sizes & Quantities</h4>
-                    {% for size, qty in p.sizes.items() %}
-                    <div class="size-row">
-                        <div class="form-group">
-                            <label>Size</label>
-                            <input type="text" name="size_name[]" value="{{ size }}">
+                    <div id="product-sizes-{{ loop.index }}">
+                        {% for size, qty in p.sizes.items() %}
+                        <div class="size-row">
+                            <div class="form-group">
+                                <label>Size</label>
+                                <input type="text" name="size_name[]" value="{{ size }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" name="size_qty[]" value="{{ qty }}">
+                            </div>
+                            <button type="button" class="btn-remove-size" onclick="removeProductSize(this)">❌</button>
                         </div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" name="size_qty[]" value="{{ qty }}">
-                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                    <button type="button" class="btn btn-add-size" onclick="addProductSize('product-sizes-{{ loop.index }}')">➕ Add Another Size</button>
                 </div>
 
                 <div class="product-actions">
@@ -477,6 +499,9 @@
 
 <script>
 function addSize() {
+    const sizesContainer = document.getElementById("sizes");
+    const sizeRows = sizesContainer.getElementsByClassName("size-row");
+    
     const div = document.createElement("div");
     div.className = "size-row";
     div.innerHTML = `
@@ -488,8 +513,52 @@ function addSize() {
             <label>Quantity</label>
             <input type="number" name="size_qty[]" placeholder="0" required>
         </div>
+        ${sizeRows.length > 0 ? '<button type="button" class="btn-remove-size" onclick="removeSize(this)">❌</button>' : ''}
     `;
-    document.getElementById("sizes").appendChild(div);
+    sizesContainer.appendChild(div);
+}
+
+function removeSize(button) {
+    const sizeRow = button.parentElement;
+    const sizesContainer = document.getElementById("sizes");
+    
+    // Only remove if there's more than one size row
+    if (sizesContainer.getElementsByClassName("size-row").length > 1) {
+        sizeRow.remove();
+    } else {
+        alert("You must have at least one size!");
+    }
+}
+
+function addProductSize(containerId) {
+    const sizesContainer = document.getElementById(containerId);
+    
+    const div = document.createElement("div");
+    div.className = "size-row";
+    div.innerHTML = `
+        <div class="form-group">
+            <label>Size</label>
+            <input type="text" name="size_name[]" placeholder="e.g., S, M, L" required>
+        </div>
+        <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" name="size_qty[]" placeholder="0" required>
+        </div>
+        <button type="button" class="btn-remove-size" onclick="removeProductSize(this)">❌</button>
+    `;
+    sizesContainer.appendChild(div);
+}
+
+function removeProductSize(button) {
+    const sizeRow = button.parentElement;
+    const sizesContainer = sizeRow.parentElement;
+    
+    // Only remove if there's more than one size row
+    if (sizesContainer.getElementsByClassName("size-row").length > 1) {
+        sizeRow.remove();
+    } else {
+        alert("You must have at least one size!");
+    }
 }
 
 function searchProducts() {
