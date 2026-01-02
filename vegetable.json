@@ -1,0 +1,13 @@
+[
+  { "name": "Bhindi", "image": "Bhindi.webp" },
+  { "name": "Brinjal", "image": "Brinjal.webp" },
+  { "name": "Cabbage", "image": "Cabbage.webp" },
+  { "name": "Laal Mirchi", "image": "Mirchi.webp" },
+  { "name": "Lemon", "image": "Lemon.webp" },
+  { "name": "Lauki", "image": "Lauki.webp" },
+  { "name": "Onion", "image": "Onion.webp" },
+  { "name": "Peas", "image": "Peas.webp" },
+  { "name": "Potato", "image": "Potato.webp" },
+  { "name": "Pumpkin", "image": "Pumkeen.webp" },
+  { "name": "Shimla Mirch", "image": "Shimla Mirch.webp" }
+]

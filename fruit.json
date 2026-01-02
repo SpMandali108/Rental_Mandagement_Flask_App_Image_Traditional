@@ -1,0 +1,14 @@
+[
+  { "name": "Apple", "image": "Apple.webp" },
+  { "name": "Banana", "image": "Banana.webp" },
+  { "name": "Cherry", "image": "Cherry.webp" },
+  { "name": "Grapes", "image": "Grapes.webp" },
+  { "name": "Mango", "image": "Mango.webp" },
+  { "name": "Muskmelon", "image": "Muskmelon.webp" },
+  { "name": "Orange", "image": "Orange.webp" },
+  { "name": "Pineapple", "image": "Pineapple.webp" },
+  { "name": "Pomegrante", "image": "Pomegranate.webp" },
+  { "name": "Sitafal", "image": "Sitafal.webp" },
+  { "name": "Strawberry / Lychee", "image": "Strawberry-Lychee.webp" },
+  { "name": "Watermelon", "image": "Water Melon.webp" }
+]

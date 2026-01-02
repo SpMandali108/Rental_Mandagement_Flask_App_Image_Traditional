@@ -1,37 +1,48 @@
+# =========================
+# STANDARD LIBRARIES
+# =========================
+import os
+import io
 import csv
-import io
-from flask import Response
-from flask import Blueprint, render_template, request, session, redirect, url_for, flash, Response
-from pymongo import MongoClient
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-import os,csv
-from fpdf import FPDF
-import io
-import qrcode
-from flask import send_file
-import io
-from flask import send_file
 import json
-from flask import send_from_directory
+from datetime import datetime, timedelta
+from collections import Counter
+
+
+# =========================
+# THIRD PARTY LIBRARIES
+# =========================
+from flask import (
+    Blueprint, render_template, request, redirect, url_for,
+    session, flash, jsonify, send_file, send_from_directory,
+    current_app, Response
+)
+from pymongo import MongoClient
 from bson.objectid import ObjectId
- # Find correct static image
-from flask import current_app
-auth = Blueprint('auth', __name__)
+from dotenv import load_dotenv
+from fpdf import FPDF
+import qrcode
+
+# =========================
+# FLASK APP / DB SETUP
+# =========================
+auth = Blueprint("auth", __name__)
 
 load_dotenv()
 
-mongoUrl = os.environ.get("client")
-client = MongoClient(mongoUrl, tls=True, tlsAllowInvalidCertificates=True)
-db = client['Image_Traditional']
-collection = db['Form']
-fancy_2024_2025 = db['Fancy']
-fancy_collection = db['Fancy_2025_2026']
-products_collection = db['products']
-bags = db['bags']
-products = db['Storage']
-fcustomers = db['Fancy_Customers']
-finventory = db['Fancy_Inventory']
+mongo_url = os.environ.get("client")
+client = MongoClient(mongo_url, tls=True, tlsAllowInvalidCertificates=True)
+
+db = client["Image_Traditional"]
+
+collection = db["Form"]
+fancy_2024_2025 = db["Fancy"]
+fancy_collection = db["Fancy_2025_2026"]
+products_collection = db["products"]
+bags = db["bags"]
+products = db["Storage"]
+fcustomers = db["Fancy_Customers"]
+finventory = db["Fancy_Inventory"]
 
 ADMIN_ID = os.environ.get("ADMIN_ID")
 ADMIN_PASS = os.environ.get("ADMIN_PASS")
@@ -198,10 +209,6 @@ def book():
         return redirect(url_for('auth.QR', mobile=mobile))
 
     return render_template("book.html")
-
-
-
-from datetime import datetime
 
 @auth.route('/modify', methods=['GET', 'POST'])
 def modify():
@@ -502,9 +509,6 @@ def check():
     
     return render_template("check.html")
 
-
-from datetime import datetime
-
 @auth.route('/calendar', methods=['GET', 'POST'])
 def calendar():
     if not session.get('logged_in'):
@@ -551,11 +555,6 @@ def calendar():
         date=date,  # Keep original input date for display
         bookings=bookings_on_date
     )
-
-
-
-
-from flask import request, jsonify
 
 @auth.route('/fancy', methods=['GET', 'POST'])
 def fancy():
@@ -959,17 +958,41 @@ def animal():
         products = json.load(f)
     return render_template("animal.html", products=products)
 
+@auth.route("/wildanimal")
+def wild_animal():
+    with open('wild_animal.json') as f:
+        products = json.load(f)
+    return render_template("wild_animal.html", products=products)
+
+@auth.route("/domesticanimal")
+def domestic_animal():
+    with open('domestic_animal.json') as f:
+        products = json.load(f)
+    return render_template("domestic_animal.html", products=products)
+
+@auth.route("/wateranimal")
+def water_animal():
+    with open('water_animal.json') as f:
+        products = json.load(f)
+    return render_template("water_animal.html", products=products)
+
 @auth.route("/freedomfighter")
 def freedomfighter():
     with open('freedomfighter.json') as f:
         products = json.load(f)
     return render_template("freedomfighter.html", products=products)
 
-@auth.route("/fruit_vegetable")
-def fruit_vegetable():
-    with open('fruit_vegetable.json') as f:
+@auth.route("/fruit")
+def fruit():
+    with open('fruit.json') as f:
         products = json.load(f)
-    return render_template("fruit_vegetable.html", products=products)
+    return render_template("fruit.html", products=products)
+
+@auth.route("/vegetable")
+def vegetable():
+    with open('vegetable.json') as f:
+        products = json.load(f)
+    return render_template("vegetable.html", products=products)
 
 @auth.route("/insect")
 def insect():
@@ -994,6 +1017,24 @@ def regional():
     with open('regional.json') as f:
         products = json.load(f)
     return render_template("regional.html", products=products)
+
+@auth.route("/haloween")
+def haloween():
+    with open('haloween.json') as f:
+        products = json.load(f)
+    return render_template("haloween.html" , products=products)
+
+@auth.route("/historical")
+def historical():
+    with open('historical.json') as f:
+        products = json.load(f)
+    return render_template("historical.html" , products=products)
+
+@auth.route("/bollywood")
+def bollywood():
+    with open('bollywood.json') as f:
+        products = json.load(f)
+    return render_template("bollywood.html" , products=products)
 
 @auth.route("/tiranga")
 def tiranga():
@@ -1294,11 +1335,6 @@ def clear_statuses():
     products_collection.delete_many({})
     return jsonify({"success": True})
 
-
-
-from flask import Blueprint, render_template, current_app, url_for, abort
-from pymongo import ASCENDING
-
 @auth.route("/code/<code>")
 def code_detail(code):
     if not session.get('logged_in'):
@@ -1397,11 +1433,6 @@ def dashboard_listing():
         b['remaining'] = b.get('total_price', 0) - b.get('given_price', 0)
 
     return render_template("dashboard_listing.html", bookings=bookings)
-
-# Put these imports near top of your file if not already present
-from flask import render_template, request, session, redirect, url_for
-from datetime import datetime
-
 # Add/replace this route in your blueprint (auth)
 @auth.route('/available', methods=['GET', 'POST'])
 def available():
@@ -1829,9 +1860,6 @@ def fancy_calendar():
         selected_date=selected_date,
         today=today.strftime('%Y-%m-%d')
     )
-
-from datetime import datetime
-from collections import Counter
 
 @auth.route('/fancy_dashboard')
 def fancy_dashboard():

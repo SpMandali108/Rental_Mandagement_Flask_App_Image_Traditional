@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Bollywood | Image traditional {% endblock %}
+
+{% block description %}
+Adorable bollywood-themed costumes for kids.
+{% endblock %}
+
+{% block logo_link %}
+<a href="/" class="logo">
+    <img src="{{ url_for('static', filename='favicon.png') }}" alt="Image Traditional Logo">
+    <span class="logo-text">Image Traditional</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --dark-blue: #0a1929;
+        --medium-blue: #1a2942;
+        --light-blue: #2d3f5f;
+        --gold: #d4af37;
+        --light-gold: #f4d35e;
+        --text-light: #e8eaf6;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 50%, var(--light-blue) 100%);
+        min-height: 100vh;
+    }
+
+    .catalogue-header {
+        text-align: center;
+        padding: 3rem 1rem 2rem;
+        position: relative;
+    }
+
+    .catalogue-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .catalogue-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .catalogue-header p {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        opacity: 0.9;
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .catalogue {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .product-card {
+        background: var(--medium-blue);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--light-blue);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--gold) 0%, var(--light-gold) 100%);
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(212, 175, 55, 0.4);
+        border-color: var(--gold);
+    }
+
+    .product-card a {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+    }
+
+    .image-wrapper {
+        width: 250px;
+        overflow: hidden;
+        border-radius: 12px;
+        position: relative;
+        background: linear-gradient(135deg, var(--light-blue) 0%, var(--dark-blue) 100%);
+        border: 2px solid var(--gold);
+        transition: all 0.3s ease;
+    }
+
+    .product-card:hover .image-wrapper {
+        border-color: var(--light-gold);
+        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    }
+
+    .product-card img {
+        width: 250px;
+        height: auto;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card:hover img {
+        transform: scale(1.08);
+    }
+
+    .product-card h2 {
+        font-size: 1.2rem;
+        color: var(--gold);
+        font-weight: 600;
+        margin: 1rem 0 0 0;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+    }
+
+    .product-card:hover h2 {
+        color: var(--light-gold);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .catalogue-header h1 {
+            font-size: 2rem;
+        }
+
+        .catalogue-header p {
+            font-size: 1rem;
+        }
+
+        .catalogue {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem 1rem;
+        }
+
+        .product-card h2 {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .catalogue-header {
+            padding: 2rem 1rem 1.5rem;
+        }
+
+        .catalogue-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .catalogue {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            padding: 1rem 0.5rem;
+        }
+
+        .product-card {
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .image-wrapper {
+            width: 100%;
+        }
+
+        .product-card img {
+            width: 100%;
+        }
+
+        .product-card h2 {
+            font-size: 0.95rem;
+            margin-top: 0.75rem;
+        }
+    }
+</style>
+
+<div class="catalogue-header">
+    <h1>Bollywood Collection</h1>
+    <p>Discover high-quality bollywood fancy dress costumes for school events and parties</p>
+</div>
+
+<div class="catalogue">
+    {% for product in products %}
+    <div class="product-card">
+        <a href="{{ url_for('static', filename='Bollywood_Webp/' ~ product.image) }}" target="_blank">
+            <div class="image-wrapper">
+                <img src="{{ url_for('static', filename='Bollywood_Webp/' ~ product.image) }}" alt="{{ product.name }}">
+            </div>
+        </a>
+        <h2>{{ product.name }}</h2>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

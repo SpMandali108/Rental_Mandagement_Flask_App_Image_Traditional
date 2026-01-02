@@ -1,0 +1,9 @@
+[
+    {"name":"Lion","image":"Lion.webp"},
+    {"name":"Elephant","image":"Elephant.webp"},
+    {"name":"Tiger","image":"Tiger.webp"},
+    {"name":"Monkey","image":"Monkey.webp"},
+    {"name":"Panda","image":"Panda.webp"},
+    {"name":"Zebra","image":"Zebra.webp"},
+    {"name":"Giraffe","image":"Giraffe.webp"}
+]
