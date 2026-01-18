@@ -286,5 +286,35 @@
         {% endif %}
     </div>
 
+<div class="section">
+    <h4>👑 Top 20 Customers (All-Time)</h4>
+
+    {% if top_20_customers %}
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Dresses Booked</th>
+                <th>Total Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in top_20_customers %}
+            <tr style="cursor:pointer"
+                onclick="window.location.href='{{ url_for('auth.fancy_profile', mobile=c.mobile) }}'">
+                <td>{{ loop.index }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.total_bookings }}</td>
+                <td>₹{{ c.total_amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-data">No customer data available.</p>
+    {% endif %}
+</div>
+
 </div>
 {% endblock %}

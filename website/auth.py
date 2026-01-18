@@ -1776,18 +1776,26 @@ def fancy_calendar():
 
     # ---------- HANDLE TAKEN / RETURNED ----------
     if request.method == 'POST':
-        bid = request.form.get('booking_id')
-        field = request.form.get('field')        # taken / returned
-        season = request.form.get('season')      # 2024-2025 / 2025-2026
+        actions_raw = request.form.get('actions')
+        if not actions_raw:
+            return jsonify(success=False)
 
-        col = fancy_2024_2025 if season == '2024-2025' else fancy_collection
+        actions = json.loads(actions_raw)
 
-        col.update_one(
-            {'_id': ObjectId(bid)},
-            {'$set': {field: True}}
-        )
+        for act in actions:
+            bid = act['bookingId']
+            field = act['field']          # taken / returned
+            season = act['season']
 
-        return redirect(url_for('auth.fancy_calendar', date=selected_date))
+            col = fancy_2024_2025 if season == '2024-2025' else fancy_collection
+
+            col.update_one(
+                {'_id': ObjectId(bid)},
+                {'$set': {field: True}}
+            )
+
+    
+
 
     # ---------- FETCH ALL BOOKINGS ----------
     all_bookings = []
@@ -1866,55 +1874,94 @@ def fancy_dashboard():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
 
-    # THIS YEAR ONLY
-    bookings = list(fancy_collection.find())
+    # -----------------------------
+    # CURRENT YEAR DATA (KPIs)
+    # -----------------------------
+    current_bookings = list(fancy_collection.find())
 
-    today = datetime.now().date()
+    total_bookings_count = len(current_bookings)
+    total_revenue = sum(b.get('price', 0) for b in current_bookings)
 
-    total_bookings = len(bookings)
-    total_revenue = sum(b.get('price', 0) for b in bookings)
-
-    returned_count = sum(1 for b in bookings if b.get('returned'))
-    taken_count = sum(1 for b in bookings if b.get('taken'))
+    returned_count = sum(1 for b in current_bookings if b.get('returned'))
+    taken_count = sum(1 for b in current_bookings if b.get('taken'))
     not_returned = sum(
-        1 for b in bookings
+        1 for b in current_bookings
         if b.get('taken') and not b.get('returned')
     )
 
-    # Most rented costumes
+    # -----------------------------
+    # MOST RENTED COSTUMES (CURRENT)
+    # -----------------------------
     costume_counter = Counter()
-    for b in bookings:
+    for b in current_bookings:
         if b.get('costume'):
             costume_counter[b['costume']] += 1
 
     top_costumes = sorted(
-    costume_counter.items(),
-    key=lambda x: x[1],
-    reverse=True
-)
+        costume_counter.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
 
+    # -----------------------------
+    # TOP SCHOOLS (CURRENT)
+    # -----------------------------
     school_counter = Counter()
-    for b in bookings:
+    for b in current_bookings:
         if b.get('school'):
             school_counter[b['school']] += 1
 
     top_school = sorted(
-    school_counter.items(),
-    key=lambda x: x[1],
-    reverse=True
-)
+        school_counter.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
 
+    # -----------------------------
+    # ALL-TIME CUSTOMER DATA
+    # -----------------------------
+    old_bookings = list(fancy_2024_2025.find())
+    all_bookings = current_bookings + old_bookings
+
+    customer_totals = {}
+
+    for b in all_bookings:
+        mobile = b.get('mobile')
+        name = b.get('name', 'Unknown')
+        price = b.get('price', 0)
+
+        if not mobile:
+            continue
+
+        if mobile not in customer_totals:
+            customer_totals[mobile] = {
+                'name': name,
+                'mobile': mobile,
+                'total_amount': 0,
+                'total_bookings': 0   # number of dresses booked
+            }
+
+        customer_totals[mobile]['total_amount'] += price
+        customer_totals[mobile]['total_bookings'] += 1
+
+    top_20_customers = sorted(
+        customer_totals.values(),
+        key=lambda x: x['total_amount'],
+        reverse=True
+    )[:50]
 
     return render_template(
         'fancy_dashboard.html',
-        total_bookings=total_bookings,
+        total_bookings=total_bookings_count,
         total_revenue=total_revenue,
         returned_count=returned_count,
         taken_count=taken_count,
         not_returned=not_returned,
         top_costumes=top_costumes,
-        top_school = top_school
+        top_school=top_school,
+        top_20_customers=top_20_customers
     )
+
 
 @auth.route('/fancy_admin')
 def fancy_admin():
@@ -2070,6 +2117,8 @@ def find_highest_booking_customer(traditional_data):
 
 @auth.route("/fancy_inventory", methods=["GET", "POST"])
 def fancy_inventory():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     if request.method == "POST":
         name = request.form.get("name")
         color = request.form.get("color")
@@ -2098,6 +2147,8 @@ def fancy_inventory():
 
 @auth.route("/fancy_inventory/update/<id>", methods=["POST"])
 def update_fancy_inventory(id):
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     name = request.form.get("name")
     color = request.form.get("color")
     category = request.form.get("category")
@@ -2125,33 +2176,30 @@ def update_fancy_inventory(id):
 
 @auth.route("/fancy_inventory/delete/<id>", methods=["POST"])
 def delete_fancy_inventory(id):
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
     finventory.delete_one({"_id": ObjectId(id)})
     return redirect(url_for("auth.fancy_inventory"))
 
 
 
 
-@auth.route('/migration')
-def migration():
-    for item in finventory.find():
-        sizes = item.get("sizes", {})
 
-        # Calculate total quantity from all size values
-        total_qty = 0
-        if isinstance(sizes, dict):
-            for v in sizes.values():
-                try:
-                    total_qty += int(v)
-                except:
-                    pass
 
-        # Replace with ONLY "-" key
-        finventory.update_one(
-            {"_id": item["_id"]},
-            {
-                "$set": {
-                    "sizes": {"-": total_qty}
-                }
-            }
-        )
-    return "Done"
+from flask import jsonify
+
+@auth.route('/timepass')
+def timepass():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    
+    result = fancy_collection.update_many(
+        {"returned": True},
+        {"$set": {"taken": True}}
+    )
+
+    return jsonify(
+        success=True,
+        matched=result.matched_count,
+        updated=result.modified_count
+    )
