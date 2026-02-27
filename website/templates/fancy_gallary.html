@@ -1,0 +1,10 @@
+<h2>Fancy Dress / {{ sub.replace('_', ' ').title() }}</h2>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+    {% for image in images %}
+        <img src="{{ url_for('static',
+        filename='products/fancy/' + sub + '/' + image) }}"
+        width="200"
+        style="border-radius:10px;">
+    {% endfor %}
+</div>

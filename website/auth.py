@@ -15,11 +15,15 @@ from flask import send_file
 import json
 from flask import send_from_directory
 from bson.objectid import ObjectId
+import re
+from werkzeug.utils import secure_filename
  # Find correct static image
 from flask import current_app
 auth = Blueprint('auth', __name__)
 
 load_dotenv()
+
+
 
 mongoUrl = os.environ.get("client")
 client = MongoClient(mongoUrl, tls=True, tlsAllowInvalidCertificates=True)
@@ -900,108 +904,7 @@ def download_customer():
 
 
 
-@auth.route("/catalogue",methods=["GET","POST"])
-def catalogue():
-    return render_template("catalogue.html")
 
-
-
-@auth.route("/bhagwan")
-def bhagwan():
-    with open('bhagwan.json') as f:
-        products = json.load(f)
-    return render_template("bhagwan.html", products=products)
-
-@auth.route("/mataji")
-def mataji():
-    with open('mataji.json') as f:
-        products = json.load(f)
-    return render_template("mataji.html", products=products)
-
-
-@auth.route("/superhero")
-def superhero():
-    with open('superhero.json') as f:
-        products = json.load(f)
-    return render_template("superhero.html", products=products)
-
-@auth.route("/bird")
-def bird():
-    with open('birds.json') as f:
-        products = json.load(f)
-    return render_template("bird.html", products=products)
-
-@auth.route("/nature")
-def nature():
-    with open('nature.json') as f:
-        products = json.load(f)
-    return render_template("nature.html", products=products)
-
-@auth.route("/animal")
-def animal():
-    with open('animal.json') as f:
-        products = json.load(f)
-    return render_template("animal.html", products=products)
-
-@auth.route("/freedomfighter")
-def freedomfighter():
-    with open('freedomfighter.json') as f:
-        products = json.load(f)
-    return render_template("freedomfighter.html", products=products)
-
-@auth.route("/fruit_vegetable")
-def fruit_vegetable():
-    with open('fruit_vegetable.json') as f:
-        products = json.load(f)
-    return render_template("fruit_vegetable.html", products=products)
-
-@auth.route("/insect")
-def insect():
-    with open('insect.json') as f:
-        products = json.load(f)
-    return render_template("insect.html", products=products)
-
-@auth.route("/cartoon")
-def cartoon():
-    with open('cartoon.json') as f:
-        products = json.load(f)
-    return render_template("cartoon.html", products=products)
-
-@auth.route("/profession")
-def profession():
-    with open('profession.json') as f:
-        products = json.load(f)
-    return render_template("profession.html", products=products)
-
-@auth.route("/regional")
-def regional():
-    with open('regional.json') as f:
-        products = json.load(f)
-    return render_template("regional.html", products=products)
-
-@auth.route("/tiranga")
-def tiranga():
-    with open('tiranga.json') as f:
-        products = json.load(f)
-    return render_template("tiranga.html", products=products)
-
-@auth.route("/international")
-def international():
-    with open('international.json') as f:
-        products = json.load(f)
-    return render_template("international.html", products=products)
-
-@auth.route("/flex")
-def flex():
-    with open('flexi.json') as f:
-        products = json.load(f)
-    return render_template("flex.html", products=products)
-
-@auth.route("/other")
-def other():
-    with open('other.json') as f:
-        products = json.load(f)
-    return render_template("other.html", products=products)
 
 @auth.route("/choli")
 def choli():
@@ -1661,3 +1564,75 @@ def get_customer():
         return jsonify({"exists": True, "data": customer})
 
     return jsonify({"exists": False})
+
+
+import os
+import re
+from flask import current_app, render_template, abort
+from werkzeug.utils import secure_filename
+
+
+@auth.route('/catalogue/fancy/')
+def catalogue():
+
+    # Map subfolder name → icon filename
+    icon_map = {
+        "Bhagwan":            "bhagwan.png",
+        "Mataji":             "mataji.png",
+        "Profession":         "Proffesion.png",
+        "Freedom Fighter":    "Freedom Fighter.png",
+        "Regional":           "Regional.png",
+        "Wild Animals":       "Wild_Animal.png",
+        "Domestic Animals":   "Domestic_Animal.png",
+        "Water Animals":      "Water_Animal.png",
+        "Insects":            "Insect.png",
+        "Birds":              "Bird.png",
+        "Fruits":             "Fruit.png",
+        "Vegetables":         "Vegetable.png",
+        "Halloween":          "Halloween.png",
+        "Cartoon":            "Cartoon.png",
+        "Superhero":          "Superhero.png",
+        "International":      "International.png",
+        "Flexi":              "Flex.png",
+        "Nature":             "Nature.png",
+        "Tiranga":            "Tiranga.png",
+        "Others":             "Other.png"    
+        
+    }
+
+    subfolders = list(icon_map.keys())
+
+    return render_template(
+        'fancy_subcategories.html',
+        subfolders=subfolders,
+        icon_map=icon_map,
+    )
+
+
+@auth.route('/catalogue/fancy/<sub>/')
+def fancy_sub(sub):
+    sub = secure_filename(sub)
+    BASE_DIR = os.path.join(current_app.root_path, 'static', 'Products')
+    folder_path = os.path.join(BASE_DIR, 'Fancy', sub)
+
+    if not os.path.exists(folder_path):
+        abort(404)
+
+    raw_images = [
+        f for f in os.listdir(folder_path)
+        if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
+    ]
+
+    # Build list of (filename, clean_display_name) tuples
+    images = []
+    for f in sorted(raw_images):
+        stem = os.path.splitext(f)[0]          # "bhagwan1"
+        clean = re.sub(r'\d+$', '', stem)      # "bhagwan"
+        clean = clean.replace('_', ' ').replace('-', ' ').strip().title()  # "Bhagwan"
+        images.append({'file': f, 'name': clean})
+
+    return render_template(
+        'fancy_gallery.html',
+        sub=sub,
+        images=images
+    )
